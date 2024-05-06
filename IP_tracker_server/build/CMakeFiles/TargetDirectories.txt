@@ -1,0 +1,4 @@
+/home/bianca/ip_tracker/IP_tracker_server/build/CMakeFiles/GrpcProtoLib.dir
+/home/bianca/ip_tracker/IP_tracker_server/build/CMakeFiles/Server.dir
+/home/bianca/ip_tracker/IP_tracker_server/build/CMakeFiles/edit_cache.dir
+/home/bianca/ip_tracker/IP_tracker_server/build/CMakeFiles/rebuild_cache.dir

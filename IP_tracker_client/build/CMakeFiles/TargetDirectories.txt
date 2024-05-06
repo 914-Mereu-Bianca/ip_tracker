@@ -1,0 +1,8 @@
+/home/bianca/ip_tracker/IP_tracker_client/build/CMakeFiles/GrpcProtoLib.dir
+/home/bianca/ip_tracker/IP_tracker_client/build/CMakeFiles/Client.dir
+/home/bianca/ip_tracker/IP_tracker_client/build/CMakeFiles/Client_lib.dir
+/home/bianca/ip_tracker/IP_tracker_client/build/CMakeFiles/edit_cache.dir
+/home/bianca/ip_tracker/IP_tracker_client/build/CMakeFiles/rebuild_cache.dir
+/home/bianca/ip_tracker/IP_tracker_client/build/CMakeFiles/GrpcProtoLib_autogen.dir
+/home/bianca/ip_tracker/IP_tracker_client/build/CMakeFiles/Client_autogen.dir
+/home/bianca/ip_tracker/IP_tracker_client/build/CMakeFiles/Client_lib_autogen.dir

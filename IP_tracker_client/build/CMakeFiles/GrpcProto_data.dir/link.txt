@@ -1,0 +1,2 @@
+/usr/bin/ar qc libGrpcProto_data.a CMakeFiles/GrpcProto_data.dir/GrpcProto_data_autogen/mocs_compilation.cpp.o CMakeFiles/GrpcProto_data.dir/proto_generated/data/data.pb.cc.o CMakeFiles/GrpcProto_data.dir/proto_generated/data/data.grpc.pb.cc.o
+/usr/bin/ranlib libGrpcProto_data.a
