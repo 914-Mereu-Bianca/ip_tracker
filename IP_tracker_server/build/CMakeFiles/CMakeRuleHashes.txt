@@ -1,3 +1,0 @@
-# Hashes of file build rules.
-9b5e34a53cd775c0765c0b5d1ec4ae4d proto_generated/auth.pb.cc
-b8a226a8febb60b044e78b64cb42a99e proto_generated/data.pb.cc

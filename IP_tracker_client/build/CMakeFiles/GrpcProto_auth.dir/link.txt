@@ -1,2 +1,0 @@
-/usr/bin/ar qc libGrpcProto_auth.a CMakeFiles/GrpcProto_auth.dir/GrpcProto_auth_autogen/mocs_compilation.cpp.o CMakeFiles/GrpcProto_auth.dir/proto_generated/auth/auth.pb.cc.o CMakeFiles/GrpcProto_auth.dir/proto_generated/auth/auth.grpc.pb.cc.o
-/usr/bin/ranlib libGrpcProto_auth.a

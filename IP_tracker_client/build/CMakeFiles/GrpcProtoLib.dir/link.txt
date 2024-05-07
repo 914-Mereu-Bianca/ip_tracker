@@ -1,2 +1,0 @@
-/usr/bin/ar qc libGrpcProtoLib.a CMakeFiles/GrpcProtoLib.dir/GrpcProtoLib_autogen/mocs_compilation.cpp.o CMakeFiles/GrpcProtoLib.dir/proto_generated/data.pb.cc.o CMakeFiles/GrpcProtoLib.dir/proto_generated/data.grpc.pb.cc.o CMakeFiles/GrpcProtoLib.dir/proto_generated/auth.pb.cc.o CMakeFiles/GrpcProtoLib.dir/proto_generated/auth.grpc.pb.cc.o
-/usr/bin/ranlib libGrpcProtoLib.a

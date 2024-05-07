@@ -10,9 +10,11 @@ class AuthClientImpl {
 public:
     AuthClientImpl(std::shared_ptr<grpc::Channel> channel);
     bool Authenticate(const std::string& username, const std::string& password);
-
+    inline bool isRunning() { return is_running_; }
+    inline void Stop() { is_running_ = 0; }
 private:
     std::unique_ptr<AuthService::Stub> _stub;
+    bool is_running_ = 1;
 
 };
 

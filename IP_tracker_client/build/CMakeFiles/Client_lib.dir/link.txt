@@ -1,2 +1,0 @@
-/usr/bin/ar qc libClient_lib.a CMakeFiles/Client_lib.dir/Client_lib_autogen/mocs_compilation.cpp.o CMakeFiles/Client_lib.dir/main.cpp.o CMakeFiles/Client_lib.dir/src/client_impl.cpp.o CMakeFiles/Client_lib.dir/src/auth_client_impl.cpp.o CMakeFiles/Client_lib.dir/src/main_window.cpp.o
-/usr/bin/ranlib libClient_lib.a

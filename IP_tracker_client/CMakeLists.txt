@@ -112,6 +112,8 @@ set(PROJECT_SOURCES
   src/client_impl.cpp
   src/auth_client_impl.cpp
   src/main_window.cpp
+  src/client_view.cpp
+  src/view/auth_widget.cpp
 )
 
 # Sets the project headers file
@@ -119,6 +121,8 @@ set(PROJECT_HEADERS
   include/client_impl.h
   include/auth_client_impl.h
   include/main_window.h
+  include/client_view.h
+  include/view/auth_widget.h
 )
 
 # Sets the executable
