@@ -43,10 +43,10 @@ else()
 endif()
 
 # Gets the protos file path
-get_filename_component(PROTO_FILE "./proto/data.proto" ABSOLUTE)
+get_filename_component(PROTO_FILE "./../IP_tracker_proto/data.proto" ABSOLUTE)
 get_filename_component(PROTO_FILE_PATH "${PROTO_FILE}" PATH)
 
-get_filename_component(PROTO_FILE_AUTH "./proto/auth.proto" ABSOLUTE)
+get_filename_component(PROTO_FILE_AUTH "./../IP_tracker_proto/auth.proto" ABSOLUTE)
 get_filename_component(PROTO_FILE_AUTH_PATH "${PROTO_FILE_AUTH}" PATH)
 
 # Sets the location for generated files
@@ -111,18 +111,18 @@ set(PROJECT_SOURCES
   main.cpp
   src/client_impl.cpp
   src/auth_client_impl.cpp
-  src/main_window.cpp
+  src/interface/main_window.cpp
   src/client_view.cpp
-  src/view/auth_widget.cpp
+  src/interface/main_widget.cpp
 )
 
 # Sets the project headers file
 set(PROJECT_HEADERS
   include/client_impl.h
   include/auth_client_impl.h
-  include/main_window.h
+  include/interface/main_window.h
   include/client_view.h
-  include/view/auth_widget.h
+  include/interface/main_widget.h
 )
 
 # Sets the executable

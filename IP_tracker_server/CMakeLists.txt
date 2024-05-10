@@ -41,10 +41,10 @@ endif()
 include_directories(${Protobuf_INCLUDE_DIRS})
  
 # Gets the protos file path
-get_filename_component(PROTO_FILE "./proto/data.proto" ABSOLUTE)
+get_filename_component(PROTO_FILE "./../IP_tracker_proto/data.proto" ABSOLUTE)
 get_filename_component(PROTO_FILE_PATH "${PROTO_FILE}" PATH)
 
-get_filename_component(PROTO_FILE_AUTH "./proto/auth.proto" ABSOLUTE)
+get_filename_component(PROTO_FILE_AUTH "./../IP_tracker_proto/auth.proto" ABSOLUTE)
 get_filename_component(PROTO_FILE_AUTH_PATH "${PROTO_FILE_AUTH}" PATH)
 
 # Sets the location for generated files
@@ -109,12 +109,14 @@ set(
   main.cpp
   src/server_impl.cpp
   src/auth_server_impl.cpp
+  src/data_parser.cpp
 )
 
 # Sets the project headers file
 set(PROJECT_HEADERS
   include/server_impl.h
   include/auth_server_impl.h
+  include/data_parser.h
 ) 
 
 add_executable(

@@ -13,13 +13,13 @@ grpc::Status ServiceImpl::StreamData(grpc::ServerContext *context, grpc::ServerR
     data::Request request;
 
     data::Response response;
-    response.set_response("b");
+    /*response.set_response("b");
     do {
         stream->Read(&request);
         
         std::cout<<request.request()<<std::endl;
 
-    } while (stream->Write(response));
+    } while (stream->Write(response));*/
 
     return grpc::Status();
 }

@@ -1,10 +1,13 @@
-#include "view/auth_widget.h"
-#include "main_window.h"
+#include "interface/main_widget.h"
+#include "interface/main_window.h"
 #include <iostream>
+#include <memory>
+#include <thread>
+#include <chrono>
 
 AuthWidget::AuthWidget(QMainWindow *parent)
         :QWidget(parent) {
-    // Setup the layout
+
     layout_ = new QVBoxLayout;
     central_widget_ = new QWidget;
 
@@ -13,6 +16,11 @@ AuthWidget::AuthWidget(QMainWindow *parent)
 
     central_widget_->setStyleSheet("background-color: lightblue;");
     layout_->setAlignment(Qt::AlignCenter);
+}
+
+void AuthWidget::test() {
+    test_ = new QLabel("Test", this);
+    layout_->addWidget(test_);
 }
 
 void AuthWidget::SetupWidgets() {
@@ -41,18 +49,20 @@ void AuthWidget::SetupWidgets() {
     error_label_ = new QLabel("Authentication Failed!", this);
     layout_->addWidget(error_label_);
     error_label_->setVisible(0);
-    
+
     connect(button_, &QPushButton::clicked, this, &AuthWidget::HandleButtonClick);
 }
 
 void AuthWidget::setClicked() {
     clicked_ = 0;
-    error_label_->setVisible(1);
 }
+
 
 void AuthWidget::HandleButtonClick() {
     clicked_ = 1;
     std::cout<<username_input_->text().toStdString().c_str()<<" "<<password_input_->text().toStdString().c_str()<<std::endl;
+    error_label_->setVisible(1);
+    AuthWidget::createTable();
 }
 
 void AuthWidget::clear() {
@@ -63,6 +73,16 @@ void AuthWidget::clear() {
     delete password_input_;
     delete button_;
     delete error_label_;
-    delete layout_;
-    
+    auth = 1;
+}
+
+void AuthWidget::createTable() {
+    std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(1));
+    if(auth){
+        table_ = new QTableWidget;
+        layout_->addWidget(table_); 
+        table_->setColumnCount(5);
+
+        table_->setHorizontalHeaderLabels(QStringList() << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked");
+    }
 }

@@ -1,7 +1,4 @@
 #include <QApplication>
-#include "include/client_impl.h"
-#include "include/main_window.h"
-#include "include/auth_client_impl.h"
 #include "include/client_view.h"
 #include <grpc++/grpc++.h>
 #include <vector>

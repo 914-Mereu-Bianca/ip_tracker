@@ -5,8 +5,8 @@
 #include <QWidget>
 #include <QTableWidget>
 #include "auth_client_impl.h"
-#include "main_window.h"
-#include "view/auth_widget.h"
+#include "interface/main_window.h"
+#include "interface/main_widget.h"
 #include <memory>
 #include <thread>
 
@@ -20,13 +20,17 @@ public:
     ClientView& operator=(ClientView &&other) = default;
     // This function allows the client to authenticate to the server
     void authenticate();
+    void startApplication();
     void runClient();
     ~ClientView();
 private:
     MainWindow* main_window_;
     std::shared_ptr<AuthClientImpl> auth_client_;
     std::unique_ptr<AuthWidget> auth_widget_;
+    // thread on which the authentication process runs
     std::thread auth_thread_;
+    std::thread main_thread_;
+    std::mutex auth_mutex_;
     bool authenticated = 0;
 };
 

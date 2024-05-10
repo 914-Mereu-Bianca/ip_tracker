@@ -20,7 +20,8 @@ void ClientImpl::StreamData()
     stream->Write(request);
     
     stream->Read(&response);
-    std::cout<<response.response()<<std::endl;
+    
+    //std::cout<<response.response()<<std::endl;
 
     /*while (stream->Read(&response)) {  // true => it can continue reading, false => the message stream has ended
     

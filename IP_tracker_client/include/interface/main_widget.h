@@ -9,6 +9,7 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QLayoutItem>
+#include <QTableWidget>
 
 class AuthWidget: public QWidget {
 public:
@@ -20,6 +21,8 @@ public:
     inline const int clicked() { return clicked_; }
     void setClicked(); // This function gets called when an authentification failed
     void clear();
+    void createTable();
+    void test();
 
 private slots:
     void HandleButtonClick();
@@ -34,6 +37,9 @@ private:
     QLineEdit *password_input_;
     QPushButton *button_;
     QLabel *error_label_;
+    QLabel *test_;
+    QTableWidget *table_;
     int clicked_ = -1;   // -1 - never clicked, 1 - clicked, 0 - back to not clicked
+    bool auth = 0;
 };
 #endif  // _AUTH_WIDGET_H_  
