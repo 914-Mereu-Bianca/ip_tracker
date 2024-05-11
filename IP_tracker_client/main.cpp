@@ -10,13 +10,13 @@ int main(int argc, char* argv[]) {
 
     //client.StreamData();
     
-    QApplication app(argc, argv); 
+    /*QApplication app(argc, argv); 
 
     ClientView client_;
 
     client_.runClient();
 
-    return app.exec();
+    return app.exec();*/
 
 
     /*std::shared_ptr<grpc::Channel> channel = grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials());
@@ -25,6 +25,10 @@ int main(int argc, char* argv[]) {
     // Example authentication
     client.Authenticate("usr", "password");*/
 
+    std::shared_ptr<grpc::Channel> channel_client = grpc::CreateChannel("localhost:50052", grpc::InsecureChannelCredentials());
+    ClientImpl client(channel_client);
+
+    client.StreamData();
 
     return 0;
 }

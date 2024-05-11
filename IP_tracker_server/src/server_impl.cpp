@@ -1,5 +1,6 @@
 #include <grpc++/grpc++.h>
 #include "../include/server_impl.h"
+#include "../include/data_parser.h"
 #include <chrono>
 #include <thread>
 #include <iostream>
@@ -11,15 +12,26 @@ ServiceImpl::ServiceImpl(const std::string &ip, uint16_t port)
 grpc::Status ServiceImpl::StreamData(grpc::ServerContext *context, grpc::ServerReaderWriter<data::Response, data::Request>* stream)
 {
     data::Request request;
-
     data::Response response;
-    /*response.set_response("b");
+
+    std::ifstream file("../data/data.txt");
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    std::string content = buffer.str();
+    Parser parser;
+    parser.parseData(content);
+
+    std::vector<data::Device> devices = parser.getDevices();
+    
+    for(const auto &d: devices) {
+        response.add_devices()->CopyFrom(d);
+    }
+
     do {
         stream->Read(&request);
-        
         std::cout<<request.request()<<std::endl;
 
-    } while (stream->Write(response));*/
+    } while (stream->Write(response));
 
     return grpc::Status();
 }

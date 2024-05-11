@@ -9,26 +9,26 @@
 int main() {
     std::string ip = "0.0.0.0";
     int32_t port = 50051;
-    Parser parser;
-    //ServiceImpl server(ip, port);
-    
+
+    /*ServiceImpl server("0.0.0.0", 50052);
+    server.RunServer();*/
+
     /*AuthServiceImpl server(ip, port);
     server.RunServer();*/
     
     std::ifstream file("../data/data.txt");
-    
     std::stringstream buffer;
     buffer << file.rdbuf();
     std::string content = buffer.str();
 
     file.close();
-
-    parser.parseData2(content);
+    Parser parser;
+    parser.parseData(content);
     
     auto dev = parser.getDevices();
 
     for(auto &d: dev) 
-        std::cout<< d.id() << " " <<d.ip_address() << " " << d.mac_address() << " " << d.is_online() << " " << d.is_blocked() << std::endl;
+        std::cout<< d.id() << " " <<d.name() << " " <<d.ip_address() << " " << d.mac_address() << " " << d.is_online() << " " << d.is_blocked() << std::endl;
 
     return 0;
 }

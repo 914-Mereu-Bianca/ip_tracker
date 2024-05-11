@@ -9,7 +9,8 @@
 class MainWindow: public QMainWindow {
 // This class defines a window with adjustable width and height
 public:
-    MainWindow(int width, int height, std::shared_ptr<AuthClientImpl> auth_client, std::shared_ptr<ClientImpl> client, QWidget *parent = nullptr);
+    MainWindow(int width, int height, std::shared_ptr<AuthClientImpl> auth_client, QWidget *parent = nullptr);
+    void ClientInitiation(std::shared_ptr<ClientImpl> client);
     ~MainWindow()=default;
 private:
     Q_OBJECT

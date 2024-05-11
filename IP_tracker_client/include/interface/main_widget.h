@@ -10,6 +10,8 @@
 #include <QLineEdit>
 #include <QLayoutItem>
 #include <QTableWidget>
+#include <../build/proto_generated/data.grpc.pb.h>
+#include <../build/proto_generated/data.pb.h>
 
 class AuthWidget: public QWidget {
 public:
@@ -23,6 +25,7 @@ public:
     void clear();
     void createTable();
     void test();
+    void populate(data::Response devices);
 
 private slots:
     void HandleButtonClick();

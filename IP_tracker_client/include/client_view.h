@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QTableWidget>
 #include "auth_client_impl.h"
+#include "client_impl.h"
 #include "interface/main_window.h"
 #include "interface/main_widget.h"
 #include <memory>
@@ -26,6 +27,7 @@ public:
 private:
     MainWindow* main_window_;
     std::shared_ptr<AuthClientImpl> auth_client_;
+    std::shared_ptr<ClientImpl> client_;
     std::unique_ptr<AuthWidget> auth_widget_;
     // thread on which the authentication process runs
     std::thread auth_thread_;

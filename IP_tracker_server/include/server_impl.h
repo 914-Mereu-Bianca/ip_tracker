@@ -1,6 +1,7 @@
 #ifndef _SERVER_IMPL_H_
 #define _SERVER_IMPL_H_
 
+#include "../build/proto_generated/data.pb.h"
 #include "../build/proto_generated/data.grpc.pb.h"
 
 class ServiceImpl : public data::IPService::Service {

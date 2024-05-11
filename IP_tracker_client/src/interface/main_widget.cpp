@@ -4,6 +4,8 @@
 #include <memory>
 #include <thread>
 #include <chrono>
+#include <QStringList>
+#include "main_widget.h"
 
 AuthWidget::AuthWidget(QMainWindow *parent)
         :QWidget(parent) {
@@ -23,8 +25,30 @@ void AuthWidget::test() {
     layout_->addWidget(test_);
 }
 
-void AuthWidget::SetupWidgets() {
-    
+void AuthWidget::populate(data::Response data)
+{
+
+    table_->ClearContents();
+    table_->setRowCount(data.devices_size());
+
+    int row = -1;
+
+    for(const auto &device: data.devices()) {
+        row++;
+        table_->setItem(row, 0, new QTableWidgetItem(QString::number(device.id())));
+        table_->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(device.name())));
+        table_->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(device.ip_address())));
+        table_->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(device.mac_address())));
+        table_->setItem(row, 4, new QTableWidgetItem(QString::number(device.is_online())));
+        table_->setItem(row, 5, new QTableWidgetItem(QString::number(device.is_blocked())));
+        table_->setItem(row, 6, new QTableWidgetItem(QString::number(device.is_suspect())));
+    }
+
+}
+
+
+void AuthWidget::SetupWidgets()
+{
 
     username_label_ = new QLabel("Username:", this);
     layout_->addWidget(username_label_);
@@ -81,8 +105,8 @@ void AuthWidget::createTable() {
     if(auth){
         table_ = new QTableWidget;
         layout_->addWidget(table_); 
-        table_->setColumnCount(6);
+        table_->setColumnCount(7);
 
-        table_->setHorizontalHeaderLabels(QStringList() << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked" << "Suspect");
+        table_->setHorizontalHeaderLabels(QStringList() << "ID" << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked" << "Suspect");
     }
 }

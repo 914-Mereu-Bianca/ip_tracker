@@ -21,7 +21,10 @@ void ClientImpl::StreamData()
     
     stream->Read(&response);
     
-    //std::cout<<response.response()<<std::endl;
+    for(auto &d: response.devices()) {
+        std::cout<<d.id() << " " << d.name() << " " << d.ip_address() << " " << d.mac_address() << " " << d.is_online() << " " << d.is_blocked() <<" " << d.is_suspect() <<std::endl;
+    }
+    
 
     /*while (stream->Read(&response)) {  // true => it can continue reading, false => the message stream has ended
     
