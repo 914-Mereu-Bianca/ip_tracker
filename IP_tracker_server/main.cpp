@@ -4,11 +4,12 @@
 #include "include/device.h"
 
 #include <fstream>
+#include <sstream>
 
 int main() {
     std::string ip = "0.0.0.0";
     int32_t port = 50051;
-
+    Parser parser;
     //ServiceImpl server(ip, port);
     
     /*AuthServiceImpl server(ip, port);
@@ -16,38 +17,18 @@ int main() {
     
     std::ifstream file("../data/data.txt");
     
-    std::vector<data::Device> devices;
-
-    std::string line;
-    
-    std::getline(file, line);
-    std::getline(file, line);
-
-    int n = 96, nr_devices = 0;
-    
-    data::Device d;
-    data::Response resp;
-
-    while (std::getline(file, line) && n) {
-        std::cout << line << std::endl;
-        if(line[6] != '0' && line[6] != '.') {
-            if (nr_devices < 10) {
-                std::cout<<line.substr(5)<<std::endl;
-                d.set_ip_address(line.substr(5));
-                std::cout<<d.ip_address()<<std::endl;
-                //devices[nr_devices].set_ip_address(); 
-            }
-            //resp.add_device()->CopyFrom(d);
-            nr_devices++;
-        }
-        n--;
-    }
-
-    std::cout<<nr_devices<<std::endl;// << devices[0].ip_address() << " " << devices[1].ip_address() << devices[2].ip_address() << std::endl;
-    
-
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    std::string content = buffer.str();
 
     file.close();
+
+    parser.parseData2(content);
     
+    auto dev = parser.getDevices();
+
+    for(auto &d: dev) 
+        std::cout<< d.id() << " " <<d.ip_address() << " " << d.mac_address() << " " << d.is_online() << " " << d.is_blocked() << std::endl;
+
     return 0;
 }

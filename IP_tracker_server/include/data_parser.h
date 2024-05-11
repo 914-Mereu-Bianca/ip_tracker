@@ -2,16 +2,26 @@
 #define _PARSER_H_
 
 #include "../build/proto_generated/data.grpc.pb.h"
+#include <string>
+#include <fstream>
 
 class Parser {
 public:
 
-    std::vector<data::Device> parseData(const std::string &file);
+    void parseData(const std::string &input_file);
+    void parseData2(const std::string &string);
+    inline std::vector<data::Device> getDevices() { return devices_; }
 
 private:
 
-    // this function will parse each 95 values from each field
-    std::vector<std::string> parseUniqueField(const std::string &data);
+    void jumpOver(std::ifstream &file, int lines_to_be_skipped);
+
+    void parseIP(const std::string &string);
+    void parseMAC(const std::string &string);
+    void parseOnline(const std::string &string);
+    void parseBlocked(const std::string &string);
+
+    std::vector<data::Device> devices_;
 
 };
 

@@ -81,8 +81,8 @@ void AuthWidget::createTable() {
     if(auth){
         table_ = new QTableWidget;
         layout_->addWidget(table_); 
-        table_->setColumnCount(5);
+        table_->setColumnCount(6);
 
-        table_->setHorizontalHeaderLabels(QStringList() << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked");
+        table_->setHorizontalHeaderLabels(QStringList() << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked" << "Suspect");
     }
 }
