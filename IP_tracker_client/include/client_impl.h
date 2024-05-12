@@ -8,7 +8,7 @@
 #include <thread>
 #include <mutex>
 #include <future>
-#include "../build/proto_generated/data.grpc.pb.h"
+#include "../build/proto_generated/ip_tracker.grpc.pb.h"
 
 class ClientImpl {
 
@@ -24,4 +24,4 @@ private:
 
 };
 
-#endif  // _CLIENT_SYNC_IMPL_H_
+#endif  // _CLIENT_IMPL_H_

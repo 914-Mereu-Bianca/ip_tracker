@@ -5,8 +5,8 @@
 
 class AuthServiceImpl : public AuthService::Service {
 public:
-    AuthServiceImpl(const std::string& ip, uint16_t port);
-        
+
+    AuthServiceImpl(const std::string& ip, uint16_t port);        
     void RunServer();
 
 private:
@@ -16,6 +16,7 @@ private:
     
     std::string ip_;
     uint16_t port_;
+    bool auth = 0;
 };
 
 #endif // _AUTH_SERVER_IMPL_H_

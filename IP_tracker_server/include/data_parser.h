@@ -1,8 +1,8 @@
 #ifndef _PARSER_H_
 #define _PARSER_H_
 
-#include "../build/proto_generated/data.grpc.pb.h"
-#include "../build/proto_generated/data.pb.h"
+#include "../build/proto_generated/ip_tracker.grpc.pb.h"
+#include "../build/proto_generated/ip_tracker.pb.h"
 #include <string>
 #include <fstream>
 
@@ -23,5 +23,10 @@ private:
     std::vector<data::Device> devices_; // a list of devices of type proto
 
 };
+
+
+
+// classes for each
+
 
 #endif // _PARSER_H_

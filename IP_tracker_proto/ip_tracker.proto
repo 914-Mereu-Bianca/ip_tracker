@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package data;
+
+service IPService {
+    rpc StreamData (stream Request) returns (stream Response) {}
+    rpc Authenticate(AuthRequest) returns (AuthResponse) {}
+}
+
+message Request {
+    string request = 1;
+}
+
+message Response {
+    repeated Device devices = 1;
+}
+
+message Device {
+    int32 id = 1;
+    string name = 2;
+    string ip_address = 3;
+    string mac_address = 4;
+    bool is_blocked = 5;
+    bool is_online = 6;
+    bool is_suspect = 7;
+}
+
+message AuthRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message AuthResponse {
+  bool success = 1;
+  string message = 2;
+}
+

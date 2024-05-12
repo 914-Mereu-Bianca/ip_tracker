@@ -4,18 +4,16 @@
 #include <QMainWindow>
 #include <QWidget>
 #include "auth_client_impl.h"
-#include "client_impl.h"
+#include "client.h"
 
 class MainWindow: public QMainWindow {
 // This class defines a window with adjustable width and height
 public:
-    MainWindow(int width, int height, std::shared_ptr<AuthClientImpl> auth_client, QWidget *parent = nullptr);
-    void ClientInitiation(std::shared_ptr<ClientImpl> client);
+    MainWindow(int width, int height, std::shared_ptr<AuthClientImpl> client, QWidget *parent = nullptr);
     ~MainWindow()=default;
 private:
     Q_OBJECT
-    std::shared_ptr<AuthClientImpl> auth_client_;
-    std::shared_ptr<ClientImpl> client_;
+    std::shared_ptr<AuthClientImpl> client_;
 
 protected:
     // This function shuts down the client when the application is closed

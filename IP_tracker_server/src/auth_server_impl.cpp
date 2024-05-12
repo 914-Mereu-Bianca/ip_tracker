@@ -14,6 +14,7 @@ grpc::Status AuthServiceImpl::Authenticate(grpc::ServerContext *context, const A
     if (request->username() == "user" && request->password() == "password") {
       response->set_success(true);
       response->set_message("Authentication successful");
+      auth = 1;
     } else {
       response->set_success(false);
       response->set_message("Authentication failed");
@@ -37,6 +38,7 @@ void AuthServiceImpl::RunServer()
 
     std::cout << "Server listening on " << server_address << std::endl;
     server->Wait();
+    server->Shutdown();
 
 }
 

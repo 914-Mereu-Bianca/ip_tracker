@@ -43,48 +43,68 @@ else()
 endif()
 
 # Gets the protos file path
-get_filename_component(PROTO_FILE "./../IP_tracker_proto/data.proto" ABSOLUTE)
-get_filename_component(PROTO_FILE_PATH "${PROTO_FILE}" PATH)
+#get_filename_component(PROTO_FILE "./../IP_tracker_proto/data.proto" ABSOLUTE)
+#get_filename_component(PROTO_FILE_PATH "${PROTO_FILE}" PATH)
 
-get_filename_component(PROTO_FILE_AUTH "./../IP_tracker_proto/auth.proto" ABSOLUTE)
-get_filename_component(PROTO_FILE_AUTH_PATH "${PROTO_FILE_AUTH}" PATH)
+#get_filename_component(PROTO_FILE_AUTH "./../IP_tracker_proto/auth.proto" ABSOLUTE)
+#get_filename_component(PROTO_FILE_AUTH_PATH "${PROTO_FILE_AUTH}" PATH)
+
+get_filename_component(PROTO_FILE_IP "./../IP_tracker_proto/ip_tracker.proto" ABSOLUTE)
+get_filename_component(PROTO_FILE_IP_PATH "${PROTO_FILE_IP}" PATH)
 
 # Sets the location for generated files
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/proto_generated/)
 
-set(PROTO_SOURCES "${CMAKE_BINARY_DIR}/proto_generated/data.pb.cc")
-set(PROTO_HEADERS "${CMAKE_BINARY_DIR}/proto_generated/data.pb.h")
-set(GRPC_SOURCES "${CMAKE_BINARY_DIR}/proto_generated/data.grpc.pb.cc")
-set(GRPC_HEADERS "${CMAKE_BINARY_DIR}/proto_generated/data.grpc.pb.h")
-set_property(SOURCE ${GRPC_SOURCES} ${PROTO_SOURCES} ${GRPC_HEADERS} ${PROTO_HEADERS} PROPERTY SKIP_AUTOMOC ON)
+#set(PROTO_SOURCES "${CMAKE_BINARY_DIR}/proto_generated/data.pb.cc")
+#set(PROTO_HEADERS "${CMAKE_BINARY_DIR}/proto_generated/data.pb.h")
+#set(GRPC_SOURCES "${CMAKE_BINARY_DIR}/proto_generated/data.grpc.pb.cc")
+#set(GRPC_HEADERS "${CMAKE_BINARY_DIR}/proto_generated/data.grpc.pb.h")
+#set_property(SOURCE ${GRPC_SOURCES} ${PROTO_SOURCES} ${GRPC_HEADERS} ${PROTO_HEADERS} PROPERTY SKIP_AUTOMOC ON)
 
 # Generate *.pb.* and *.qrpc.* files from .proto file
+#add_custom_command (
+#  OUTPUT "${PROTO_SOURCES}" "${PROTO_HEADERS}" "${GRPC_SOURCES}" "${GRPC_HEADERS}"
+#  COMMAND ${_PROTOBUF_PROTOC}
+#  ARGS --grpc_out "${CMAKE_BINARY_DIR}/proto_generated/"
+#       --cpp_out "${CMAKE_BINARY_DIR}/proto_generated/"
+#       -I "${PROTO_FILE_PATH}"
+#       --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
+#       "${PROTO_FILE}"
+#  DEPENDS "${PROTO_FILE}"
+#)
+
+#set(PROTO_SOURCES_AUTH "${CMAKE_BINARY_DIR}/proto_generated/auth.pb.cc")
+#set(PROTO_HEADERS_AUTH "${CMAKE_BINARY_DIR}/proto_generated/auth.pb.h")
+#set(GRPC_SOURCES_AUTH "${CMAKE_BINARY_DIR}/proto_generated/auth.grpc.pb.cc")
+#set(GRPC_HEADERS_AUTH "${CMAKE_BINARY_DIR}/proto_generated/auth.grpc.pb.h")
+#set_property(SOURCE ${GRPC_SOURCES_AUTH} ${PROTO_SOURCES_AUTH} ${GRPC_HEADERS_AUTH} ${PROTO_HEADERS_AUTH} PROPERTY SKIP_AUTOMOC ON)
+
+#add_custom_command (
+#  OUTPUT "${PROTO_SOURCES_AUTH}" "${PROTO_HEADERS_AUTH}" "${GRPC_SOURCES_AUTH}" "${GRPC_HEADERS_AUTH}"
+#  COMMAND ${_PROTOBUF_PROTOC}
+#  ARGS --grpc_out "${CMAKE_BINARY_DIR}/proto_generated/"
+#       --cpp_out "${CMAKE_BINARY_DIR}/proto_generated/"
+#       -I "${PROTO_FILE_AUTH_PATH}"
+#       --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
+#       "${PROTO_FILE_AUTH}"
+#  DEPENDS "${PROTO_FILE_AUTH}"
+#)
+
+set(PROTO_SOURCES_IP "${CMAKE_BINARY_DIR}/proto_generated/ip_tracker.pb.cc")
+set(PROTO_HEADERS_IP "${CMAKE_BINARY_DIR}/proto_generated/ip_tracker.pb.h")
+set(GRPC_SOURCES_IP "${CMAKE_BINARY_DIR}/proto_generated/ip_tracker.grpc.pb.cc")
+set(GRPC_HEADERS_IP "${CMAKE_BINARY_DIR}/proto_generated/ip_tracker.grpc.pb.h")
+set_property(SOURCE ${GRPC_SOURCES_IP} ${PROTO_SOURCES_IP} ${GRPC_HEADERS_IP} ${PROTO_HEADERS_IP} PROPERTY SKIP_AUTOMOC ON)
+
 add_custom_command (
-  OUTPUT "${PROTO_SOURCES}" "${PROTO_HEADERS}" "${GRPC_SOURCES}" "${GRPC_HEADERS}"
+  OUTPUT "${PROTO_SOURCES_IP}" "${PROTO_HEADERS_IP}" "${GRPC_SOURCES_IP}" "${GRPC_HEADERS_IP}"
   COMMAND ${_PROTOBUF_PROTOC}
   ARGS --grpc_out "${CMAKE_BINARY_DIR}/proto_generated/"
        --cpp_out "${CMAKE_BINARY_DIR}/proto_generated/"
-       -I "${PROTO_FILE_PATH}"
+       -I "${PROTO_FILE_IP_PATH}"
        --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
-       "${PROTO_FILE}"
-  DEPENDS "${PROTO_FILE}"
-)
-
-set(PROTO_SOURCES_AUTH "${CMAKE_BINARY_DIR}/proto_generated/auth.pb.cc")
-set(PROTO_HEADERS_AUTH "${CMAKE_BINARY_DIR}/proto_generated/auth.pb.h")
-set(GRPC_SOURCES_AUTH "${CMAKE_BINARY_DIR}/proto_generated/auth.grpc.pb.cc")
-set(GRPC_HEADERS_AUTH "${CMAKE_BINARY_DIR}/proto_generated/auth.grpc.pb.h")
-set_property(SOURCE ${GRPC_SOURCES_AUTH} ${PROTO_SOURCES_AUTH} ${GRPC_HEADERS_AUTH} ${PROTO_HEADERS_AUTH} PROPERTY SKIP_AUTOMOC ON)
-
-add_custom_command (
-  OUTPUT "${PROTO_SOURCES_AUTH}" "${PROTO_HEADERS_AUTH}" "${GRPC_SOURCES_AUTH}" "${GRPC_HEADERS_AUTH}"
-  COMMAND ${_PROTOBUF_PROTOC}
-  ARGS --grpc_out "${CMAKE_BINARY_DIR}/proto_generated/"
-       --cpp_out "${CMAKE_BINARY_DIR}/proto_generated/"
-       -I "${PROTO_FILE_AUTH_PATH}"
-       --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
-       "${PROTO_FILE_AUTH}"
-  DEPENDS "${PROTO_FILE_AUTH}"
+       "${PROTO_FILE_IP}"
+  DEPENDS "${PROTO_FILE_IP}"
 )
 
 # Sets a library with generated files
@@ -97,6 +117,10 @@ add_library(GrpcProtoLib
   ${PROTO_HEADERS_AUTH}
   ${GRPC_SOURCES_AUTH}
   ${GRPC_HEADERS_AUTH}
+  ${PROTO_SOURCES_IP}
+  ${PROTO_HEADERS_IP}
+  ${GRPC_SOURCES_IP}
+  ${GRPC_HEADERS_IP}
 )
 
 # Links the library against the necessary dependencies

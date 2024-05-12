@@ -33,10 +33,11 @@ void ClientView::authenticate()
 void ClientView::startApplication() {
 
     auth_mutex_.lock();
-    std::shared_ptr<grpc::Channel> channel_client = grpc::CreateChannel("localhost:50052", grpc::InsecureChannelCredentials());
-    client_ = std::make_shared<ClientImpl>(channel_client);
+    /*std::shared_ptr<grpc::Channel> channel_client = grpc::CreateChannel("localhost:50052", grpc::InsecureChannelCredentials());
+    client_ = std::make_shared<ClientImpl>(channel_client);*/
     //auth_widget_->createTable();
     //ip_info_widget_ = std::make_unique<IPInfoWidget>(main_window_);
+
 }
 
 void ClientView::runClient() 

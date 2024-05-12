@@ -10,8 +10,8 @@
 #include <QLineEdit>
 #include <QLayoutItem>
 #include <QTableWidget>
-#include <../build/proto_generated/data.grpc.pb.h>
-#include <../build/proto_generated/data.pb.h>
+#include <../build/proto_generated/ip_tracker.grpc.pb.h>
+#include <../build/proto_generated/ip_tracker.pb.h>
 
 class AuthWidget: public QWidget {
 public:

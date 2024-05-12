@@ -3,18 +3,18 @@
 
 
 AuthClientImpl::AuthClientImpl(std::shared_ptr<grpc::Channel> channel)
-: _stub(AuthService::NewStub(channel))
+: _stub(data::IPService::NewStub(channel))
 {
 }
 
 bool AuthClientImpl::Authenticate(const std::string& username, const std::string& password)
 {
 
-    AuthRequest request;
+    data::AuthRequest request;
     request.set_username(username);
     request.set_password(password);
 
-    AuthResponse response;
+    data::AuthResponse response;
     grpc::ClientContext context;
 
     grpc::Status status = _stub->Authenticate(&context, request, &response);

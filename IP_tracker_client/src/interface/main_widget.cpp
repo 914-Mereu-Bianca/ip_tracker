@@ -5,7 +5,6 @@
 #include <thread>
 #include <chrono>
 #include <QStringList>
-#include "main_widget.h"
 
 AuthWidget::AuthWidget(QMainWindow *parent)
         :QWidget(parent) {
@@ -28,7 +27,7 @@ void AuthWidget::test() {
 void AuthWidget::populate(data::Response data)
 {
 
-    table_->ClearContents();
+    table_->clearContents();
     table_->setRowCount(data.devices_size());
 
     int row = -1;
