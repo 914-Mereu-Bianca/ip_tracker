@@ -39,6 +39,7 @@ private:
     MainWidget* main_widget_;
     // thread on which the authentication process runs
     std::thread main_thread_;
+    std::thread read_data_thread_;
     std::mutex auth_mutex_;
     bool authenticated = 0;
 };

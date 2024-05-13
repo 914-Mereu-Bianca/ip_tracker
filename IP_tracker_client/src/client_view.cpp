@@ -33,14 +33,18 @@ void ClientView::startApplication() {
 
     auth_mutex_.lock();
     
-    client_->StreamData(); 
-    std::cout<<client_->getDevices().devices_size();
-    //while(client_->isRunning()) {
+    read_data_thread_ = std::thread(&MainClient::StreamData, client_);
+    //client_->StreamData(); 
+    //std::cout<<client_->getDevices().devices_size();
+
+    /*while(client_->isRunning()) {
 
         data::Response r = client_->getDevices();
         emit populateTable(r);
+        std::cout<<"ok"<<std::endl;
+        std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(1));
         
-    //}
+    }*/
 
 }
 
@@ -54,4 +58,6 @@ ClientView::~ClientView()
 {
     if(main_thread_.joinable())
         main_thread_.join();
+    if(read_data_thread_.joinable())
+        read_data_thread_.join();
 }

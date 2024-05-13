@@ -46,7 +46,6 @@ private:
 
     QTableWidget *table_;
 
-    int clicked_ = -1;   // -1 - never clicked, 1 - clicked, 0 - back to not clicked
     bool auth = 0;
 };
 #endif  // _MAIN_WIDGET_H_  

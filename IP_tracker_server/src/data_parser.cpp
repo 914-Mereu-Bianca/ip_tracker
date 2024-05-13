@@ -1,7 +1,8 @@
 #include "../include/data_parser.h"
 
 void Parser::parseData(const std::string &string) {
-    
+
+    devices_.clear();
     parseIP(string);
     parseName(string);
     parseMAC(string);

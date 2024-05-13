@@ -23,21 +23,26 @@ grpc::Status MainService::StreamData(grpc::ServerContext *context, grpc::ServerR
 
     std::ifstream file("../data/data.txt");
     std::stringstream buffer;
-    buffer << file.rdbuf();
-    std::string content = buffer.str();
     Parser parser;
-    parser.parseData(content);
-
-    std::vector<data::Device> devices = parser.getDevices();
     
-    for(const auto &d: devices) {
-        response.add_devices()->CopyFrom(d);
-    }
-
     do {
+        
         stream->Read(&request);
         std::cout<<request.request()<<std::endl;
+        buffer << file.rdbuf();
+        std::string content = buffer.str();
+        std::cout<<content.substr(content.find("name 0"), 30)<<std::endl;
+        parser.parseData(content);
+        std::vector<data::Device> devices = parser.getDevices();
 
+        for(const auto &d: devices) {
+            response.add_devices()->CopyFrom(d);
+        }
+        
+        for(auto &d: response.devices()) {
+            std::cout<<d.id() << " " << d.name() << " " << d.ip_address() << " " << d.mac_address() << " " << d.is_online() << " " << d.is_blocked() <<" " << d.is_suspect() <<std::endl;
+        }
+        
     } while (stream->Write(response));
 
     return grpc::Status();
@@ -49,14 +54,12 @@ void MainService::RunServer()
     std::string server_address = ip_ + ":" + std::to_string(port_);
     
     grpc::ServerBuilder builder;
-    
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
-    
     builder.RegisterService(this);
 
     std::unique_ptr<grpc::Server> server{builder.BuildAndStart()};
-
     std::cout << "Server listening on " << server_address << std::endl;
+
     server->Wait();
 
 }

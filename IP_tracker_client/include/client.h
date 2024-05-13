@@ -30,8 +30,10 @@ private:
 
     std::unique_ptr<data::IPService::Stub> _stub;
     data::Response devices_;
+    std::mutex data_mutex_;
     bool is_auth_ = 0;
     bool is_running_ = 1;
+
 };
 
 #endif  // _CLIENT_H_

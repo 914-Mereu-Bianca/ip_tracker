@@ -30,7 +30,7 @@ bool MainClient::Authenticate(const std::string& username, const std::string& pa
 
 void MainClient::StreamData()
 {
-
+    
     data::Request request;
     request.set_request("a");
 
@@ -38,29 +38,28 @@ void MainClient::StreamData()
     data::Response response;
     grpc::ClientContext context;
     std::unique_ptr<grpc::ClientReaderWriter<data::Request, data::Response>> stream = _stub->StreamData(&context);
-    
+    std::cout<<"cl"<< std::endl;
     stream->Write(request);
-    
-    stream->Read(&response);
-    
-    devices_ = response;
+    std::cout<<"cll"<< std::endl;
+    while (stream->Read(&response)) {  // true => it can continue reading, false => the message stream has ended
+        std::cout<<response.devices_size()<< std::endl;
+        
+        for(auto &d: response.devices()) {
+            std::cout<<d.id() << " " << d.name() << " " << d.ip_address() << " " << d.mac_address() << " " << d.is_online() << " " << d.is_blocked() <<" " << d.is_suspect() <<std::endl;
+        }
+        //data_mutex_.lock();
+        devices_ = response;
 
-    for(auto &d: response.devices()) {
-        std::cout<<d.id() << " " << d.name() << " " << d.ip_address() << " " << d.mac_address() << " " << d.is_online() << " " << d.is_blocked() <<" " << d.is_suspect() <<std::endl;
+        //data_mutex_.unlock();
+        std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(5));
+        stream->Write(request);
     }
 
-    /*while (stream->Read(&response)) {  // true => it can continue reading, false => the message stream has ended
-    
-        std::cout<<response.response()<<std::endl;
-
-        stream->Write(request);
-    }*/
-
-    //grpc::Status status = stream->Finish();
+    grpc::Status status = stream->Finish();
     // Handle response
-    /*if (!status.ok()) {
+    if (!status.ok()) {
         std::cerr << status.error_code() << ": " << status.error_message() << std::endl;
-    }*/
+    }
 }
 
 void MainClient::runClient() {
@@ -68,5 +67,7 @@ void MainClient::runClient() {
 }
 
 data::Response MainClient::getDevices() {
+    data_mutex_.lock();
     return devices_;
+    data_mutex_.unlock();
 }
