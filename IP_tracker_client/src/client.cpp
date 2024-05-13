@@ -63,11 +63,16 @@ void MainClient::StreamData()
 }
 
 void MainClient::runClient() {
-    
+    read_data_thread_ = std::thread(&MainClient::StreamData, this);
 }
 
 data::Response MainClient::getDevices() {
-    data_mutex_.lock();
+    //data_mutex_.lock();
     return devices_;
-    data_mutex_.unlock();
+    //data_mutex_.unlock();
+}
+
+MainClient::~MainClient() {
+    if(read_data_thread_.joinable())
+        read_data_thread_.join();
 }

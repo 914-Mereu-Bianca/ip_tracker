@@ -17,6 +17,7 @@ class MainClient {
 public:
 
     MainClient(std::shared_ptr<grpc::Channel> channel);
+    ~MainClient();
     void runClient();
     void StreamData();
     bool Authenticate(const std::string& username, const std::string& password);
@@ -30,6 +31,7 @@ private:
 
     std::unique_ptr<data::IPService::Stub> _stub;
     data::Response devices_;
+    std::thread read_data_thread_;
     std::mutex data_mutex_;
     bool is_auth_ = 0;
     bool is_running_ = 1;

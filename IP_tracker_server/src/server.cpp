@@ -24,17 +24,17 @@ grpc::Status MainService::StreamData(grpc::ServerContext *context, grpc::ServerR
     std::ifstream file("../data/data.txt");
     std::stringstream buffer;
     Parser parser;
-    
+    std::vector<data::Device> devices;
+    std::string content;
     do {
         
         stream->Read(&request);
         std::cout<<request.request()<<std::endl;
         buffer << file.rdbuf();
-        std::string content = buffer.str();
-        std::cout<<content.substr(content.find("name 0"), 30)<<std::endl;
+        content = buffer.str();
         parser.parseData(content);
-        std::vector<data::Device> devices = parser.getDevices();
-
+        devices = parser.getDevices();
+        response.clear_devices();
         for(const auto &d: devices) {
             response.add_devices()->CopyFrom(d);
         }
