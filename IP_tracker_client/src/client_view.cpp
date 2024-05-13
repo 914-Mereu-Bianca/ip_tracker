@@ -1,56 +1,57 @@
 #include "client_view.h"
 
-ClientView::ClientView()
+ClientView::ClientView(QWidget *parent) : QObject(parent)
 {
     std::shared_ptr<grpc::Channel> channel = grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials());
-    auth_client_ = std::make_shared<AuthClientImpl>(channel);
-    main_window_ = new MainWindow(900, 600, auth_client_);
-    auth_widget_ = std::make_unique<AuthWidget>(main_window_);
-    auth_widget_->SetupWidgets();
+    client_ = std::make_shared<MainClient>(channel);
+    main_window_ = new MainWindow(900, 600, client_);
+    main_widget_ = new MainWidget(main_window_);
+    main_widget_->SetupWidgets();
     
+    connect(this, &ClientView::populateTable, main_widget_, &MainWidget::populate);
+    connect(this, &ClientView::createTableAndClear, main_widget_, &MainWidget::createTable);
+    connect(main_widget_, &MainWidget::authenticate, this, &ClientView::authenticate);
+    connect(this, &ClientView::displayErrorMessage, main_widget_, &MainWidget::displayErrorMessage);
+
     main_window_->show();
 }
 
 
-void ClientView::authenticate()
-{
-    while(auth_client_->isRunning()){
-        if (auth_widget_->clicked() == 1) {
-            authenticated = auth_client_->Authenticate(auth_widget_->getUsername(), auth_widget_->getPassword());
-            
-            if (authenticated) {
-                auth_widget_->clear();
-                auth_client_->Stop();
-                auth_mutex_.unlock();
-            }else {
-                auth_widget_->setClicked();
-            }
-            
-        }
+void ClientView::authenticate(const std::string &username, const std::string &password)
+{   
+    authenticated = client_->Authenticate(username, password);
+    if (authenticated) {
+        emit createTableAndClear();
+        auth_mutex_.unlock();
+    }else {
+        emit displayErrorMessage();
     }
+    
 }
 
 void ClientView::startApplication() {
 
     auth_mutex_.lock();
-    /*std::shared_ptr<grpc::Channel> channel_client = grpc::CreateChannel("localhost:50052", grpc::InsecureChannelCredentials());
-    client_ = std::make_shared<ClientImpl>(channel_client);*/
-    //auth_widget_->createTable();
-    //ip_info_widget_ = std::make_unique<IPInfoWidget>(main_window_);
+    
+    client_->StreamData(); 
+    std::cout<<client_->getDevices().devices_size();
+    //while(client_->isRunning()) {
+
+        data::Response r = client_->getDevices();
+        emit populateTable(r);
+        
+    //}
 
 }
 
 void ClientView::runClient() 
 {
     auth_mutex_.lock();
-    auth_thread_ = std::thread(&ClientView::authenticate, this);
     main_thread_ = std::thread(&ClientView::startApplication, this);
-    //auth_mutex_.lock();
-    //ip_info_widget_ = std::make_unique<IPInfoWidget>(main_window_);
 }
 
 ClientView::~ClientView()
 {
-    if(auth_thread_.joinable())
-        auth_thread_.join();
+    if(main_thread_.joinable())
+        main_thread_.join();
 }

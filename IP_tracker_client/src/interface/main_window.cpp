@@ -1,6 +1,6 @@
 #include "interface/main_window.h"
 
-MainWindow::MainWindow(int width, int height, std::shared_ptr<AuthClientImpl> client, QWidget * parent): QMainWindow(parent) {
+MainWindow::MainWindow(int width, int height, std::shared_ptr<MainClient> client, QWidget * parent): QMainWindow(parent) {
     setWindowTitle("IP Tracker");
     resize(width, height);
     client_ = client;
@@ -8,6 +8,6 @@ MainWindow::MainWindow(int width, int height, std::shared_ptr<AuthClientImpl> cl
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    //client_->Stop();
+    client_->Stop();
     QMainWindow::closeEvent(event);
 }

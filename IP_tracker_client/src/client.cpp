@@ -43,10 +43,11 @@ void MainClient::StreamData()
     
     stream->Read(&response);
     
+    devices_ = response;
+
     for(auto &d: response.devices()) {
         std::cout<<d.id() << " " << d.name() << " " << d.ip_address() << " " << d.mac_address() << " " << d.is_online() << " " << d.is_blocked() <<" " << d.is_suspect() <<std::endl;
     }
-    
 
     /*while (stream->Read(&response)) {  // true => it can continue reading, false => the message stream has ended
     
@@ -55,14 +56,17 @@ void MainClient::StreamData()
         stream->Write(request);
     }*/
 
-    grpc::Status status = stream->Finish();
+    //grpc::Status status = stream->Finish();
     // Handle response
-    if (!status.ok()) {
+    /*if (!status.ok()) {
         std::cerr << status.error_code() << ": " << status.error_message() << std::endl;
-    }
-    
+    }*/
 }
 
 void MainClient::runClient() {
     
+}
+
+data::Response MainClient::getDevices() {
+    return devices_;
 }

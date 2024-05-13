@@ -1,7 +1,6 @@
 #include <QApplication>
 #include "include/client_view.h"
 #include "include/client.h"
-#include "include/client_impl.h"
 #include <grpc++/grpc++.h>
 #include <vector>
 #include <string>
@@ -28,7 +27,7 @@ int main(int argc, char* argv[]) {
     client.Authenticate("usr", "password");*/
 
     /*std::shared_ptr<grpc::Channel> channel_client = grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials());
-    ClientImpl client(channel_client);
+    MainClient client(channel_client); 
 
     client.StreamData();*/
 

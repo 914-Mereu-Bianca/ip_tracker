@@ -7,7 +7,7 @@ set(CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
 # Find Qt6 components
-set(CMAKE_PREFIX_PATH "~/Qt/6.7.0/gcc_64" ${CMAKE_PREFIX_PATH}) 
+set(CMAKE_PREFIX_PATH "~/Qt/6.8.0/gcc_64" ${CMAKE_PREFIX_PATH}) 
 find_package(Qt6 COMPONENTS Widgets Core REQUIRED)
 
 # Includes headers directory
@@ -43,52 +43,12 @@ else()
 endif()
 
 # Gets the protos file path
-#get_filename_component(PROTO_FILE "./../IP_tracker_proto/data.proto" ABSOLUTE)
-#get_filename_component(PROTO_FILE_PATH "${PROTO_FILE}" PATH)
-
-#get_filename_component(PROTO_FILE_AUTH "./../IP_tracker_proto/auth.proto" ABSOLUTE)
-#get_filename_component(PROTO_FILE_AUTH_PATH "${PROTO_FILE_AUTH}" PATH)
 
 get_filename_component(PROTO_FILE_IP "./../IP_tracker_proto/ip_tracker.proto" ABSOLUTE)
 get_filename_component(PROTO_FILE_IP_PATH "${PROTO_FILE_IP}" PATH)
 
 # Sets the location for generated files
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/proto_generated/)
-
-#set(PROTO_SOURCES "${CMAKE_BINARY_DIR}/proto_generated/data.pb.cc")
-#set(PROTO_HEADERS "${CMAKE_BINARY_DIR}/proto_generated/data.pb.h")
-#set(GRPC_SOURCES "${CMAKE_BINARY_DIR}/proto_generated/data.grpc.pb.cc")
-#set(GRPC_HEADERS "${CMAKE_BINARY_DIR}/proto_generated/data.grpc.pb.h")
-#set_property(SOURCE ${GRPC_SOURCES} ${PROTO_SOURCES} ${GRPC_HEADERS} ${PROTO_HEADERS} PROPERTY SKIP_AUTOMOC ON)
-
-# Generate *.pb.* and *.qrpc.* files from .proto file
-#add_custom_command (
-#  OUTPUT "${PROTO_SOURCES}" "${PROTO_HEADERS}" "${GRPC_SOURCES}" "${GRPC_HEADERS}"
-#  COMMAND ${_PROTOBUF_PROTOC}
-#  ARGS --grpc_out "${CMAKE_BINARY_DIR}/proto_generated/"
-#       --cpp_out "${CMAKE_BINARY_DIR}/proto_generated/"
-#       -I "${PROTO_FILE_PATH}"
-#       --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
-#       "${PROTO_FILE}"
-#  DEPENDS "${PROTO_FILE}"
-#)
-
-#set(PROTO_SOURCES_AUTH "${CMAKE_BINARY_DIR}/proto_generated/auth.pb.cc")
-#set(PROTO_HEADERS_AUTH "${CMAKE_BINARY_DIR}/proto_generated/auth.pb.h")
-#set(GRPC_SOURCES_AUTH "${CMAKE_BINARY_DIR}/proto_generated/auth.grpc.pb.cc")
-#set(GRPC_HEADERS_AUTH "${CMAKE_BINARY_DIR}/proto_generated/auth.grpc.pb.h")
-#set_property(SOURCE ${GRPC_SOURCES_AUTH} ${PROTO_SOURCES_AUTH} ${GRPC_HEADERS_AUTH} ${PROTO_HEADERS_AUTH} PROPERTY SKIP_AUTOMOC ON)
-
-#add_custom_command (
-#  OUTPUT "${PROTO_SOURCES_AUTH}" "${PROTO_HEADERS_AUTH}" "${GRPC_SOURCES_AUTH}" "${GRPC_HEADERS_AUTH}"
-#  COMMAND ${_PROTOBUF_PROTOC}
-#  ARGS --grpc_out "${CMAKE_BINARY_DIR}/proto_generated/"
-#       --cpp_out "${CMAKE_BINARY_DIR}/proto_generated/"
-#       -I "${PROTO_FILE_AUTH_PATH}"
-#       --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
-#       "${PROTO_FILE_AUTH}"
-#  DEPENDS "${PROTO_FILE_AUTH}"
-#)
 
 set(PROTO_SOURCES_IP "${CMAKE_BINARY_DIR}/proto_generated/ip_tracker.pb.cc")
 set(PROTO_HEADERS_IP "${CMAKE_BINARY_DIR}/proto_generated/ip_tracker.pb.h")
@@ -133,8 +93,7 @@ target_link_libraries(GrpcProtoLib
 # Sets the project sources file
 set(PROJECT_SOURCES
   main.cpp
-  src/client_impl.cpp
-  src/auth_client_impl.cpp
+  src/client.cpp
   src/interface/main_window.cpp
   src/client_view.cpp
   src/interface/main_widget.cpp
@@ -142,8 +101,7 @@ set(PROJECT_SOURCES
 
 # Sets the project headers file
 set(PROJECT_HEADERS
-  include/client_impl.h
-  include/auth_client_impl.h
+  include/client.h
   include/interface/main_window.h
   include/client_view.h
   include/interface/main_widget.h

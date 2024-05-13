@@ -1,5 +1,5 @@
-#ifndef _AUTH_WIDGET_H_
-#define _AUTH_WIDGET_H_
+#ifndef _MAIN_WIDGET_H_
+#define _MAIN_WIDGET_H_
 
 #include <QObject>
 #include <QMainWindow>
@@ -10,39 +10,43 @@
 #include <QLineEdit>
 #include <QLayoutItem>
 #include <QTableWidget>
+#include <QTableWidgetItem>
 #include <../build/proto_generated/ip_tracker.grpc.pb.h>
 #include <../build/proto_generated/ip_tracker.pb.h>
 
-class AuthWidget: public QWidget {
+class MainWidget: public QWidget {
 public:
-    AuthWidget(QMainWindow* parent=nullptr);
-    ~AuthWidget()=default;
+    MainWidget(QMainWindow* parent=nullptr);
+    ~MainWidget()=default;
     void SetupWidgets();
-    inline const std::string getUsername() { return username_input_->text().toStdString().c_str(); }
-    inline const std::string getPassword() { return password_input_->text().toStdString().c_str(); }
-    inline const int clicked() { return clicked_; }
-    void setClicked(); // This function gets called when an authentification failed
-    void clear();
-    void createTable();
-    void test();
-    void populate(data::Response devices);
+    
+signals:
+    void authenticate(const std::string &username, const std::string &password);
 
-private slots:
+public slots:
     void HandleButtonClick();
+    void populate(data::Response devices);
+    void createTable();
+    void displayErrorMessage(); 
     
 private:
     Q_OBJECT
     QVBoxLayout *layout_;
     QWidget* central_widget_;
+
     QLabel *username_label_;
     QLineEdit *username_input_;
     QLabel *password_label_;
     QLineEdit *password_input_;
     QPushButton *button_;
     QLabel *error_label_;
-    QLabel *test_;
+
+    QLabel *router_ip_;
+    QLabel *router_mac_;
+
     QTableWidget *table_;
+
     int clicked_ = -1;   // -1 - never clicked, 1 - clicked, 0 - back to not clicked
     bool auth = 0;
 };
-#endif  // _AUTH_WIDGET_H_  
+#endif  // _MAIN_WIDGET_H_  

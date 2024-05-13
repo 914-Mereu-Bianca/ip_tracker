@@ -1,6 +1,4 @@
-
 #include "../include/data_parser.h"
-
 
 void Parser::parseData(const std::string &string) {
     
@@ -52,10 +50,10 @@ void Parser::parseName(const std::string &string)
     for(auto &d: devices_) {
         // save mac address in certain device
         if(n < 10){
-            d.set_name(line.substr(5, line.size() - 6));
+            d.set_name(line.substr(7, line.size() - 8));
         }
         else {
-            d.set_name(line.substr(6, line.size() - 7));
+            d.set_name(line.substr(8, line.size() - 9));
         }
 
         // go to the next mac address

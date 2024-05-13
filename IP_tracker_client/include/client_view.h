@@ -4,34 +4,40 @@
 #include <QMainWindow>
 #include <QWidget>
 #include <QTableWidget>
-#include "auth_client_impl.h"
-//#include "client_impl.h"
+#include <QTableWidgetItem>
 #include "client.h"
 #include "interface/main_window.h"
 #include "interface/main_widget.h"
 #include <memory>
 #include <thread>
 
-class ClientView {
+class ClientView : public QObject {
+    Q_OBJECT
 //This class controls the way the data from the client is displayed
 public:
-    ClientView();
+    ClientView( QWidget *parent = nullptr);
     ClientView(ClientView &other) = delete;
     ClientView& operator=(ClientView &other) = delete;
     ClientView(ClientView &&other) = default;
     ClientView& operator=(ClientView &&other) = default;
     // This function allows the client to authenticate to the server
-    void authenticate();
     void startApplication();
     void runClient();
     ~ClientView();
+
+signals:
+    void populateTable(data::Response data);
+    void createTableAndClear();
+    void displayErrorMessage();
+
+public slots:
+    void authenticate(const std::string &username, const std::string &password);
+
 private:
     MainWindow* main_window_;
-    std::shared_ptr<AuthClientImpl> auth_client_;
-    //std::shared_ptr<ClientImpl> client_;
-    std::unique_ptr<AuthWidget> auth_widget_;
+    std::shared_ptr<MainClient> client_;
+    MainWidget* main_widget_;
     // thread on which the authentication process runs
-    std::thread auth_thread_;
     std::thread main_thread_;
     std::mutex auth_mutex_;
     bool authenticated = 0;

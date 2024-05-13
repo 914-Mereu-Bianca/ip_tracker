@@ -1,23 +1,10 @@
-//#include "include/server_impl.h"
-//#include "include/auth_server_impl.h"
 #include "include/data_parser.h"
-#include "include/device.h"
 #include "include/server.h"
 
 #include <fstream>
 #include <sstream>
 #include <memory>
 #include <thread>
-
-/*void authServer() {
-    AuthServiceImpl auth_server("0.0.0.0", 50051);
-    auth_server.RunServer();
-}
-
-void mainServer() {
-    ServiceImpl server("0.0.0.0", 50052);
-    server.RunServer();
-}*/
 
 int main() {
 

@@ -20,14 +20,18 @@ public:
     void runClient();
     void StreamData();
     bool Authenticate(const std::string& username, const std::string& password);
-    inline bool isRunning() { return is_running_; }
+    inline bool isAuth() { return is_auth_; }
+    inline void setAuth(bool auth) { is_auth_ = auth; }
     inline void Stop() { is_running_ = 0; }
+    inline bool isRunning() { return is_running_; }
+    data::Response getDevices();
        
 private:
 
     std::unique_ptr<data::IPService::Stub> _stub;
+    data::Response devices_;
+    bool is_auth_ = 0;
     bool is_running_ = 1;
-
 };
 
 #endif  // _CLIENT_H_
