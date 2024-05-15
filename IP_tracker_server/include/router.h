@@ -12,12 +12,14 @@ public:
     ~Router();
     static size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *output);
     std::string getAllDevices();
-    inline void setToken(const std::string &token) { token_ = token; }
+    void setToken(const std::string &token);
 
 private:
 
     std::string token_;
-    
+    CURL *curl;
+    CURLcode res;
+    std::string url;
 
 };
 

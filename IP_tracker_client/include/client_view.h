@@ -32,6 +32,7 @@ signals:
 
 public slots:
     void authenticate(const std::string &username, const std::string &password);
+    void setRequest(const std::string &request, int device_id);
 
 private:
     MainWindow* main_window_;

@@ -10,8 +10,9 @@ ClientView::ClientView(QWidget *parent) : QObject(parent)
     
     connect(this, &ClientView::populateTable, main_widget_, &MainWidget::populate);
     connect(this, &ClientView::createTableAndClear, main_widget_, &MainWidget::createTable);
-    connect(main_widget_, &MainWidget::authenticate, this, &ClientView::authenticate);
     connect(this, &ClientView::displayErrorMessage, main_widget_, &MainWidget::displayErrorMessage);
+    connect(main_widget_, &MainWidget::authenticate, this, &ClientView::authenticate);
+    connect(main_widget_, &MainWidget::setRequest, this, &ClientView::setRequest);
 
     main_window_->show();
 }
@@ -27,6 +28,11 @@ void ClientView::authenticate(const std::string &username, const std::string &pa
         emit displayErrorMessage();
     }
     
+}
+
+void ClientView::setRequest(const std::string &request, int device_id) {
+    std::cout<<device_id<<std::endl;
+    client_->setRequest(request, device_id);
 }
 
 void ClientView::startApplication() {

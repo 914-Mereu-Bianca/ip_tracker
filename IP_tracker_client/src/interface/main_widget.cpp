@@ -20,6 +20,8 @@ MainWidget::MainWidget(QMainWindow *parent)
     central_widget_->setStyleSheet("background-color: lightblue;");
     layout_->setAlignment(Qt::AlignCenter);
 
+    connect(table_, &QTableWidget::cellClicked, this, &MainWidget::onCellClicked);
+
 }
 
 
@@ -49,12 +51,19 @@ void MainWidget::SetupWidgets() {
     layout_->addWidget(error_label_);
     error_label_->setVisible(0);
 
-    connect(button_, &QPushButton::clicked, this, &MainWidget::HandleButtonClick);
+    connect(button_, &QPushButton::clicked, this, &MainWidget::HandleLogin);
 }
 
-void MainWidget::HandleButtonClick() {
+void MainWidget::HandleLogin() {
     std::cout<<username_input_->text().toStdString().c_str()<<" "<<password_input_->text().toStdString().c_str()<<std::endl;
     emit authenticate(username_input_->text().toStdString().c_str(), password_input_->text().toStdString().c_str());
+}
+
+void MainWidget::onCellClicked(int row, int column) {
+    std::cout<<row<<" "<<column<<" "<<table_->item(row, column)->text().toStdString().c_str()<<" "<<table_->item(row, 0)->text().toInt()<<std::endl;
+    if(column == 7) {
+        emit setRequest(table_->item(row, column)->text().toStdString().c_str(), table_->item(row, 0)->text().toInt());
+    }
 }
 
 void MainWidget::displayErrorMessage() {
@@ -131,7 +140,6 @@ void MainWidget::populate(data::Response data) {
                 item_b = new QTableWidgetItem(QString::fromStdString("Unblock"));
                 item_b->setBackground(Qt::green);
             }
-            //item_b->setBackground(QColor(211, 211, 211));
             table_->setItem(row, 7, item_b);
         }
     }

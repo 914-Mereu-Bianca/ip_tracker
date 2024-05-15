@@ -1,6 +1,19 @@
 #include "../include/server.h"
 #include <grpc++/grpc++.h>
 #include <curl/curl.h>
+#include <thread>
+#include <mutex>
+
+MainService::MainService(const std::string& ip, uint16_t port) : ip_(ip), port_(port) { 
+    router_.setToken("z%3E%3Eh64h%7C%2B%5Bo%2B%7BlWP9X0pA3PtuDAKFkG!"); 
+    router_thread_ = std::thread(&MainService::runBackgroundRouter, this);
+}
+
+MainService::~MainService() {
+    if (router_thread_.joinable()) {
+        router_thread_.join();
+    }
+}
 
 grpc::Status MainService::Authenticate(grpc::ServerContext *context, const data::AuthRequest* request, data::AuthResponse* response)
 {
@@ -21,31 +34,17 @@ grpc::Status MainService::StreamData(grpc::ServerContext *context, grpc::ServerR
     data::Request request;
     data::Response response;
 
-    std::ifstream file("../data/data.txt");
-    std::stringstream buffer;
-
-    std::vector<data::Device> devices;
-    std::string content;
-
     int i = 0;
     do {
         std::cout<<++i<<std::endl;
         stream->Read(&request);
-        std::cout<<request.request()<<std::endl;
-
-        /*buffer << file.rdbuf();
-        content = buffer.str();*/
+        std::cout<<request.request()<<" "<<request.device_id()<<std::endl;
         
-        do {
-            content = router.getAllDevices();
-            if(content == "failed") std::cout<<"FAILED!!!!"<<std::endl;
-        } while (content == "failed");
-        
-        parser.parseData(content);
-        devices = parser.getDevices();
+        parser_.parseData(getRouterResponse());
+        devices_ = parser_.getDevices();
         response.clear_devices();
 
-        for(const auto &d: devices) {
+        for(const auto &d: devices_) {
             response.add_devices()->CopyFrom(d);
         }
         
@@ -59,7 +58,7 @@ grpc::Status MainService::StreamData(grpc::ServerContext *context, grpc::ServerR
     return grpc::Status();
 }
 
-void MainService::RunServer()
+void MainService::runServer()
 {
 
     std::string server_address = ip_ + ":" + std::to_string(port_);
@@ -73,4 +72,26 @@ void MainService::RunServer()
 
     server->Wait();
 
+}
+
+void MainService::runBackgroundRouter() {
+    int i = 0;
+    std::string response = "";
+    while(is_running_) {
+
+        std::cout<<++i<<std::endl;
+
+        response = router_.getAllDevices();
+
+        if(response != "failed") {
+            std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(3));
+            std::lock_guard lock(data_mutex_);
+            router_response_ = response;
+        }   
+    }
+}
+
+std::string MainService::getRouterResponse() {
+    std::lock_guard lock(data_mutex_);
+    return router_response_;
 }

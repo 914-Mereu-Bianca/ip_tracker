@@ -5,11 +5,16 @@
 #include "../build/proto_generated/ip_tracker.pb.h"
 #include "../include/data_parser.h"
 #include "../include/router.h"
+#include <thread>
+#include <mutex>
 
 class MainService : public data::IPService::Service {
 public:
-    MainService(const std::string& ip, uint16_t port) : ip_(ip), port_(port) { router.setToken("bkp3W)D.wuo67u)0wX%3EeO%2CpKyW%2BTwfKy"); }
-    void RunServer();
+    MainService(const std::string& ip, uint16_t port);
+    ~MainService();
+    void runServer();
+    void runBackgroundRouter();
+    std::string getRouterResponse();
 
 private:
 
@@ -19,8 +24,13 @@ private:
     std::string ip_;
     uint16_t port_;
     bool auth = 0;
-    Parser parser;
-    Router router;
+    bool is_running_ = 1;
+    Parser parser_;
+    Router router_;
+    std::string router_response_;
+    std::thread router_thread_;
+    std::mutex data_mutex_;
+    std::vector<data::Device> devices_;
 
 };
 

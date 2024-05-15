@@ -37,7 +37,7 @@ void MainClient::StreamData()
     grpc::ClientContext context;
     std::unique_ptr<grpc::ClientReaderWriter<data::Request, data::Response>> stream = _stub->StreamData(&context);
     
-    request.set_request("a");
+    request.set_request("");
     stream->Write(request);
     
     while (stream->Read(&response)) {  // true => it can continue reading, false => the message stream has ended
@@ -47,11 +47,15 @@ void MainClient::StreamData()
         }
         
         std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(1));
-        std::lock_guard<std::mutex> lock(data_mutex_);
-        
+
+        std::lock_guard<std::mutex> lock_1(data_mutex_);
+        std::lock_guard<std::mutex> lock_2(request_mutex_);
+
         devices_ = response;
-        request.set_request("a");
+        request.set_request(request_);
+        request.set_device_id(device_id_);
         stream->Write(request);
+        request_ = "";
     }
 
     grpc::Status status = stream->Finish();
@@ -67,6 +71,12 @@ void MainClient::runClient() {
 data::Response MainClient::getDevices() {
     std::lock_guard<std::mutex> lock(data_mutex_);
     return devices_;
+}
+
+void MainClient::setRequest(const std::string &request, int device_id) {
+    std::lock_guard<std::mutex> lock(request_mutex_);
+    request_ = request;
+    device_id = device_id;
 }
 
 MainClient::~MainClient() {

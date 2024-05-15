@@ -22,9 +22,11 @@ public:
     
 signals:
     void authenticate(const std::string &username, const std::string &password);
+    void setRequest(const std::string &request, int device_id);
 
 public slots:
-    void HandleButtonClick();
+    void HandleLogin();
+    void onCellClicked(int row, int column);
     void populate(data::Response devices);
     void createTable();
     void displayErrorMessage(); 
