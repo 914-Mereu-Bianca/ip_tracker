@@ -32,31 +32,29 @@ void MainClient::StreamData()
 {
     
     data::Request request;
-    request.set_request("a");
-
-    // send request
     data::Response response;
+
     grpc::ClientContext context;
     std::unique_ptr<grpc::ClientReaderWriter<data::Request, data::Response>> stream = _stub->StreamData(&context);
-    std::cout<<"cl"<< std::endl;
+    
+    request.set_request("a");
     stream->Write(request);
-    std::cout<<"cll"<< std::endl;
+    
     while (stream->Read(&response)) {  // true => it can continue reading, false => the message stream has ended
-        std::cout<<response.devices_size()<< std::endl;
         
         for(auto &d: response.devices()) {
-            std::cout<<d.id() << " " << d.name() << " " << d.ip_address() << " " << d.mac_address() << " " << d.is_online() << " " << d.is_blocked() <<" " << d.is_suspect() <<std::endl;
+            std::cout<< d.mac_address() << " " << d.is_online() << " " << d.is_blocked() <<" " << d.is_suspect() << d.id() << " " << d.name() << " " << d.ip_address() <<std::endl;
         }
-        //data_mutex_.lock();
+        
+        std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(1));
+        std::lock_guard<std::mutex> lock(data_mutex_);
+        
         devices_ = response;
-
-        //data_mutex_.unlock();
-        std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(5));
+        request.set_request("a");
         stream->Write(request);
     }
 
     grpc::Status status = stream->Finish();
-    // Handle response
     if (!status.ok()) {
         std::cerr << status.error_code() << ": " << status.error_message() << std::endl;
     }
@@ -67,9 +65,8 @@ void MainClient::runClient() {
 }
 
 data::Response MainClient::getDevices() {
-    //data_mutex_.lock();
+    std::lock_guard<std::mutex> lock(data_mutex_);
     return devices_;
-    //data_mutex_.unlock();
 }
 
 MainClient::~MainClient() {

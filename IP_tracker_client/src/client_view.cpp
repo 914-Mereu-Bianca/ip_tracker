@@ -35,13 +35,10 @@ void ClientView::startApplication() {
     
     client_->runClient();
 
-    std::cout<<client_->getDevices().devices_size();
-
     while(client_->isRunning()) {
 
-        data::Response r = client_->getDevices();
-        emit populateTable(r);
-        std::cout<<"ok"<<std::endl;
+        data::Response devices = client_->getDevices();
+        emit populateTable(devices);
         std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(1));
         
     }

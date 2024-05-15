@@ -1,6 +1,6 @@
 #include "../include/server.h"
-#include "../include/data_parser.h"
 #include <grpc++/grpc++.h>
+#include <curl/curl.h>
 
 grpc::Status MainService::Authenticate(grpc::ServerContext *context, const data::AuthRequest* request, data::AuthResponse* response)
 {
@@ -23,24 +23,35 @@ grpc::Status MainService::StreamData(grpc::ServerContext *context, grpc::ServerR
 
     std::ifstream file("../data/data.txt");
     std::stringstream buffer;
-    Parser parser;
+
     std::vector<data::Device> devices;
     std::string content;
+
+    int i = 0;
     do {
-        
+        std::cout<<++i<<std::endl;
         stream->Read(&request);
         std::cout<<request.request()<<std::endl;
-        buffer << file.rdbuf();
-        content = buffer.str();
+
+        /*buffer << file.rdbuf();
+        content = buffer.str();*/
+        
+        do {
+            content = router.getAllDevices();
+            if(content == "failed") std::cout<<"FAILED!!!!"<<std::endl;
+        } while (content == "failed");
+        
         parser.parseData(content);
         devices = parser.getDevices();
         response.clear_devices();
+
         for(const auto &d: devices) {
             response.add_devices()->CopyFrom(d);
         }
         
         for(auto &d: response.devices()) {
-            std::cout<<d.id() << " " << d.name() << " " << d.ip_address() << " " << d.mac_address() << " " << d.is_online() << " " << d.is_blocked() <<" " << d.is_suspect() <<std::endl;
+            std::cout<<d.id() << " " << d.name() << " " << d.ip_address() << std::endl;
+            std::cout << d.mac_address() << " " << d.is_online() << " " << d.is_blocked() <<" " << d.is_suspect() <<std::endl;
         }
         
     } while (stream->Write(response));

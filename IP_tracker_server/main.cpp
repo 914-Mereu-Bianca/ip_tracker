@@ -1,18 +1,27 @@
 #include "include/data_parser.h"
 #include "include/server.h"
+#include "include/router.h"
 
 #include <fstream>
 #include <sstream>
 #include <memory>
 #include <thread>
 
-int main() {
+void background() {
+    
+}
 
-    /*std::thread auth_thread_ = std::thread(&authServer, this);
-    std::thread main_thread_ = std::thread(&mainServer, this);*/
+int main() {
 
     MainService server("0.0.0.0", 50051);
     server.RunServer();
+    
+    /*while(1){
+        Router r("55%2Bcg.i!%5EtxqFrc*C.6c.55H.*l90nK!");
+        std::string response = r.getAllDevices();
+        std::cout << "Response: " << response.substr(response.find("online 0"), 100) << std::endl;
+        std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(5));
+    }*/
     
     /*std::ifstream file("../data/data.txt");
     std::stringstream buffer;

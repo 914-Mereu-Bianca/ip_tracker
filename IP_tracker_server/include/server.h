@@ -3,10 +3,12 @@
 
 #include "../build/proto_generated/ip_tracker.grpc.pb.h"
 #include "../build/proto_generated/ip_tracker.pb.h"
+#include "../include/data_parser.h"
+#include "../include/router.h"
 
 class MainService : public data::IPService::Service {
 public:
-    MainService(const std::string& ip, uint16_t port) : ip_(ip), port_(port) {}
+    MainService(const std::string& ip, uint16_t port) : ip_(ip), port_(port) { router.setToken("bkp3W)D.wuo67u)0wX%3EeO%2CpKyW%2BTwfKy"); }
     void RunServer();
 
 private:
@@ -17,6 +19,8 @@ private:
     std::string ip_;
     uint16_t port_;
     bool auth = 0;
+    Parser parser;
+    Router router;
 
 };
 

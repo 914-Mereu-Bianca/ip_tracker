@@ -9,6 +9,8 @@ list(APPEND CMAKE_PREFIX_PATH "/root/.local")
 
 find_package(Threads REQUIRED)
 
+find_package(CURL REQUIRED)
+
 # Find Protobuf installation
 # Looks for protobuf-config.cmake file installed by Protobuf's cmake installation.
 option(protobuf_MODULE_COMPATIBLE TRUE)
@@ -39,6 +41,7 @@ endif()
 
 # include protobuf
 include_directories(${Protobuf_INCLUDE_DIRS})
+include_directories(${CURL_INCLUDE_DIRS})
  
 # Gets the protos file path
 
@@ -93,12 +96,14 @@ set(
   main.cpp
   src/data_parser.cpp
   src/server.cpp
+  src/router.cpp
 )
 
 # Sets the project headers file
 set(PROJECT_HEADERS
   include/data_parser.h
   include/server.h
+  include/router.h
 ) 
 
 add_executable(
@@ -115,5 +120,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
   ${_REFLECTION}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF}
+  ${CURL_LIBRARIES}
 )
 

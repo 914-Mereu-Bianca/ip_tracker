@@ -75,9 +75,9 @@ void MainWidget::createTable() {
     layout_->addWidget(router_ip_); 
     layout_->addWidget(router_mac_); 
     layout_->addWidget(table_); 
-    table_->setColumnCount(7);
+    table_->setColumnCount(8);
 
-    table_->setHorizontalHeaderLabels(QStringList() << "ID" << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked" << "Suspect");
+    table_->setHorizontalHeaderLabels(QStringList() << "ID" << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked" << "Suspect" << "Manage device");
     
 }
 
@@ -99,9 +99,40 @@ void MainWidget::populate(data::Response data) {
             table_->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(device.name())));
             table_->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(device.ip_address())));
             table_->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(device.mac_address())));
-            table_->setItem(row, 4, new QTableWidgetItem(QString::number(device.is_online())));
-            table_->setItem(row, 5, new QTableWidgetItem(QString::number(device.is_blocked())));
-            table_->setItem(row, 6, new QTableWidgetItem(QString::number(device.is_suspect())));
+
+            QTableWidgetItem *item_is_o = new QTableWidgetItem(QString::fromStdString("off"));
+            item_is_o->setForeground(Qt::red);
+            if(device.is_online()){
+                item_is_o = new QTableWidgetItem(QString::fromStdString("on"));
+                item_is_o->setForeground(QColor(0, 100, 0));
+            }
+            table_->setItem(row, 4, item_is_o);
+            
+
+            QTableWidgetItem *item_is_b = new QTableWidgetItem(QString::fromStdString("no"));
+            item_is_b->setForeground(QColor(0, 100, 0));
+            if(device.is_blocked()){
+                item_is_b = new QTableWidgetItem(QString::fromStdString("yes"));
+                item_is_b->setForeground(Qt::red);
+            }
+            table_->setItem(row, 5, item_is_b);
+
+            QTableWidgetItem *item_is_s = new QTableWidgetItem(QString::fromStdString("no"));
+            item_is_s->setForeground(QColor(0, 100, 0));
+            if(device.is_suspect()){
+                item_is_s = new QTableWidgetItem(QString::fromStdString("yes"));
+                item_is_s->setForeground(Qt::red);
+            }
+            table_->setItem(row, 6, item_is_s);
+
+            QTableWidgetItem *item_b = new QTableWidgetItem(QString::fromStdString("Block"));
+            item_b->setBackground(Qt::red);
+            if(device.is_blocked()){
+                item_b = new QTableWidgetItem(QString::fromStdString("Unblock"));
+                item_b->setBackground(Qt::green);
+            }
+            //item_b->setBackground(QColor(211, 211, 211));
+            table_->setItem(row, 7, item_b);
         }
     }
 

@@ -2,9 +2,9 @@
 id 13|1,0,0
 ip 0 192.168.0.1
 ip 1 192.168.0.107
-ip 2 192.168.0.106
-ip 3 0.0.0.0
-ip 4 0.0.0.0
+ip 2 192.168.0.109
+ip 3 192.168.0.108
+ip 4 192.168.0.106
 ip 5 0.0.0.0
 ip 6 0.0.0.0
 ip 7 0.0.0.0
@@ -98,9 +98,9 @@ ip 94 0.0.0.0
 ip 95 0.0.0.0
 mac 0 98-de-d0-9c-6e-54
 mac 1 ce-0a-dd-02-0c-19
-mac 2 54-8c-a0-3a-8c-ba
-mac 3 00-00-00-00-00-00
-mac 4 00-00-00-00-00-00
+mac 2 48-35-2b-09-e2-0c
+mac 3 f8-94-c2-04-34-c2
+mac 4 54-8c-a0-3a-8c-ba
 mac 5 00-00-00-00-00-00
 mac 6 00-00-00-00-00-00
 mac 7 00-00-00-00-00-00
@@ -192,102 +192,102 @@ mac 92 00-00-00-00-00-00
 mac 93 00-00-00-00-00-00
 mac 94 00-00-00-00-00-00
 mac 95 00-00-00-00-00-00
-reserved 0 
-reserved 1 
-reserved 2 
-reserved 3 
-reserved 4 
-reserved 5 
-reserved 6 
-reserved 7 
-reserved 8 
-reserved 9 
-reserved 10 
-reserved 11 
-reserved 12 
-reserved 13 
-reserved 14 
-reserved 15 
-reserved 16 
-reserved 17 
-reserved 18 
-reserved 19 
-reserved 20 
-reserved 21 
-reserved 22 
-reserved 23 
-reserved 24 
-reserved 25 
-reserved 26 
-reserved 27 
-reserved 28 
-reserved 29 
-reserved 30 
-reserved 31 
-reserved 32 
-reserved 33 
-reserved 34 
-reserved 35 
-reserved 36 
-reserved 37 
-reserved 38 
-reserved 39 
-reserved 40 
-reserved 41 
-reserved 42 
-reserved 43 
-reserved 44 
-reserved 45 
-reserved 46 
-reserved 47 
-reserved 48 
-reserved 49 
-reserved 50 
-reserved 51 
-reserved 52 
-reserved 53 
-reserved 54 
-reserved 55 
-reserved 56 
-reserved 57 
-reserved 58 
-reserved 59 
-reserved 60 
-reserved 61 
-reserved 62 
-reserved 63 
-reserved 64 
-reserved 65 
-reserved 66 
-reserved 67 
-reserved 68 
-reserved 69 
-reserved 70 
-reserved 71 
-reserved 72 
-reserved 73 
-reserved 74 
-reserved 75 
-reserved 76 
-reserved 77 
-reserved 78 
-reserved 79 
-reserved 80 
-reserved 81 
-reserved 82 
-reserved 83 
-reserved 84 
-reserved 85 
-reserved 86 
-reserved 87 
-reserved 88 
-reserved 89 
-reserved 90 
-reserved 91 
-reserved 92 
-reserved 93 
-reserved 94 
-reserved 95 
+reserved 0
+reserved 1
+reserved 2
+reserved 3
+reserved 4
+reserved 5
+reserved 6
+reserved 7
+reserved 8
+reserved 9
+reserved 10
+reserved 11
+reserved 12
+reserved 13
+reserved 14
+reserved 15
+reserved 16
+reserved 17
+reserved 18
+reserved 19
+reserved 20
+reserved 21
+reserved 22
+reserved 23
+reserved 24
+reserved 25
+reserved 26
+reserved 27
+reserved 28
+reserved 29
+reserved 30
+reserved 31
+reserved 32
+reserved 33
+reserved 34
+reserved 35
+reserved 36
+reserved 37
+reserved 38
+reserved 39
+reserved 40
+reserved 41
+reserved 42
+reserved 43
+reserved 44
+reserved 45
+reserved 46
+reserved 47
+reserved 48
+reserved 49
+reserved 50
+reserved 51
+reserved 52
+reserved 53
+reserved 54
+reserved 55
+reserved 56
+reserved 57
+reserved 58
+reserved 59
+reserved 60
+reserved 61
+reserved 62
+reserved 63
+reserved 64
+reserved 65
+reserved 66
+reserved 67
+reserved 68
+reserved 69
+reserved 70
+reserved 71
+reserved 72
+reserved 73
+reserved 74
+reserved 75
+reserved 76
+reserved 77
+reserved 78
+reserved 79
+reserved 80
+reserved 81
+reserved 82
+reserved 83
+reserved 84
+reserved 85
+reserved 86
+reserved 87
+reserved 88
+reserved 89
+reserved 90
+reserved 91
+reserved 92
+reserved 93
+reserved 94
+reserved 95
 bindEntry 0 0
 bindEntry 1 0
 bindEntry 2 0
@@ -483,8 +483,8 @@ staMgtEntry 95 0
 type 0 1
 type 1 1
 type 2 1
-type 3 0
-type 4 0
+type 3 1
+type 4 1
 type 5 0
 type 6 0
 type 7 0
@@ -578,9 +578,9 @@ type 94 0
 type 95 0
 online 0 0
 online 1 0
-online 2 1
-online 3 0
-online 4 0
+online 2 0
+online 3 1
+online 4 1
 online 5 0
 online 6 0
 online 7 0
@@ -1152,198 +1152,198 @@ downLimit 92 0
 downLimit 93 0
 downLimit 94 0
 downLimit 95 0
-name 0 
-name 1 dddswwwAAMM
-name 2 DESKTOP-MUQL63C
-name 3 
-name 4 
-name 5 
-name 6 
-name 7 
-name 8 
-name 9 
-name 10 
-name 11 
-name 12 
-name 13 
-name 14 
-name 15 
-name 16 
-name 17 
-name 18 
-name 19 
-name 20 
-name 21 
-name 22 
-name 23 
-name 24 
-name 25 
-name 26 
-name 27 
-name 28 
-name 29 
-name 30 
-name 31 
-name 32 
-name 33 
-name 34 
-name 35 
-name 36 
-name 37 
-name 38 
-name 39 
-name 40 
-name 41 
-name 42 
-name 43 
-name 44 
-name 45 
-name 46 
-name 47 
-name 48 
-name 49 
-name 50 
-name 51 
-name 52 
-name 53 
-name 54 
-name 55 
-name 56 
-name 57 
-name 58 
-name 59 
-name 60 
-name 61 
-name 62 
-name 63 
-name 64 
-name 65 
-name 66 
-name 67 
-name 68 
-name 69 
-name 70 
-name 71 
-name 72 
-name 73 
-name 74 
-name 75 
-name 76 
-name 77 
-name 78 
-name 79 
-name 80 
-name 81 
-name 82 
-name 83 
-name 84 
-name 85 
-name 86 
-name 87 
-name 88 
-name 89 
-name 90 
-name 91 
-name 92 
-name 93 
-name 94 
-name 95 
-reserved_name 0 
-reserved_name 1 
-reserved_name 2 
-reserved_name 3 
-reserved_name 4 
-reserved_name 5 
-reserved_name 6 
-reserved_name 7 
-reserved_name 8 
-reserved_name 9 
-reserved_name 10 
-reserved_name 11 
-reserved_name 12 
-reserved_name 13 
-reserved_name 14 
-reserved_name 15 
-reserved_name 16 
-reserved_name 17 
-reserved_name 18 
-reserved_name 19 
-reserved_name 20 
-reserved_name 21 
-reserved_name 22 
-reserved_name 23 
-reserved_name 24 
-reserved_name 25 
-reserved_name 26 
-reserved_name 27 
-reserved_name 28 
-reserved_name 29 
-reserved_name 30 
-reserved_name 31 
-reserved_name 32 
-reserved_name 33 
-reserved_name 34 
-reserved_name 35 
-reserved_name 36 
-reserved_name 37 
-reserved_name 38 
-reserved_name 39 
-reserved_name 40 
-reserved_name 41 
-reserved_name 42 
-reserved_name 43 
-reserved_name 44 
-reserved_name 45 
-reserved_name 46 
-reserved_name 47 
-reserved_name 48 
-reserved_name 49 
-reserved_name 50 
-reserved_name 51 
-reserved_name 52 
-reserved_name 53 
-reserved_name 54 
-reserved_name 55 
-reserved_name 56 
-reserved_name 57 
-reserved_name 58 
-reserved_name 59 
-reserved_name 60 
-reserved_name 61 
-reserved_name 62 
-reserved_name 63 
-reserved_name 64 
-reserved_name 65 
-reserved_name 66 
-reserved_name 67 
-reserved_name 68 
-reserved_name 69 
-reserved_name 70 
-reserved_name 71 
-reserved_name 72 
-reserved_name 73 
-reserved_name 74 
-reserved_name 75 
-reserved_name 76 
-reserved_name 77 
-reserved_name 78 
-reserved_name 79 
-reserved_name 80 
-reserved_name 81 
-reserved_name 82 
-reserved_name 83 
-reserved_name 84 
-reserved_name 85 
-reserved_name 86 
-reserved_name 87 
-reserved_name 88 
-reserved_name 89 
-reserved_name 90 
-reserved_name 91 
-reserved_name 92 
-reserved_name 93 
-reserved_name 94 
-reserved_name 95 
+name 0
+name 1
+name 2
+name 3
+name 4 DESKTOP-MUQL63C
+name 5
+name 6
+name 7
+name 8
+name 9
+name 10
+name 11
+name 12
+name 13
+name 14
+name 15
+name 16
+name 17
+name 18
+name 19
+name 20
+name 21
+name 22
+name 23
+name 24
+name 25
+name 26
+name 27
+name 28
+name 29
+name 30
+name 31
+name 32
+name 33
+name 34
+name 35
+name 36
+name 37
+name 38
+name 39
+name 40
+name 41
+name 42
+name 43
+name 44
+name 45
+name 46
+name 47
+name 48
+name 49
+name 50
+name 51
+name 52
+name 53
+name 54
+name 55
+name 56
+name 57
+name 58
+name 59
+name 60
+name 61
+name 62
+name 63
+name 64
+name 65
+name 66
+name 67
+name 68
+name 69
+name 70
+name 71
+name 72
+name 73
+name 74
+name 75
+name 76
+name 77
+name 78
+name 79
+name 80
+name 81
+name 82
+name 83
+name 84
+name 85
+name 86
+name 87
+name 88
+name 89
+name 90
+name 91
+name 92
+name 93
+name 94
+name 95
+reserved_name 0
+reserved_name 1
+reserved_name 2
+reserved_name 3
+reserved_name 4
+reserved_name 5
+reserved_name 6
+reserved_name 7
+reserved_name 8
+reserved_name 9
+reserved_name 10
+reserved_name 11
+reserved_name 12
+reserved_name 13
+reserved_name 14
+reserved_name 15
+reserved_name 16
+reserved_name 17
+reserved_name 18
+reserved_name 19
+reserved_name 20
+reserved_name 21
+reserved_name 22
+reserved_name 23
+reserved_name 24
+reserved_name 25
+reserved_name 26
+reserved_name 27
+reserved_name 28
+reserved_name 29
+reserved_name 30
+reserved_name 31
+reserved_name 32
+reserved_name 33
+reserved_name 34
+reserved_name 35
+reserved_name 36
+reserved_name 37
+reserved_name 38
+reserved_name 39
+reserved_name 40
+reserved_name 41
+reserved_name 42
+reserved_name 43
+reserved_name 44
+reserved_name 45
+reserved_name 46
+reserved_name 47
+reserved_name 48
+reserved_name 49
+reserved_name 50
+reserved_name 51
+reserved_name 52
+reserved_name 53
+reserved_name 54
+reserved_name 55
+reserved_name 56
+reserved_name 57
+reserved_name 58
+reserved_name 59
+reserved_name 60
+reserved_name 61
+reserved_name 62
+reserved_name 63
+reserved_name 64
+reserved_name 65
+reserved_name 66
+reserved_name 67
+reserved_name 68
+reserved_name 69
+reserved_name 70
+reserved_name 71
+reserved_name 72
+reserved_name 73
+reserved_name 74
+reserved_name 75
+reserved_name 76
+reserved_name 77
+reserved_name 78
+reserved_name 79
+reserved_name 80
+reserved_name 81
+reserved_name 82
+reserved_name 83
+reserved_name 84
+reserved_name 85
+reserved_name 86
+reserved_name 87
+reserved_name 88
+reserved_name 89
+reserved_name 90
+reserved_name 91
+reserved_name 92
+reserved_name 93
+reserved_name 94
+reserved_name 95
 qosPrior 0 0
 qosPrior 1 0
 qosPrior 2 0
