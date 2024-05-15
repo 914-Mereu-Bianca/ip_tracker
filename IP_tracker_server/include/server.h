@@ -13,9 +13,11 @@ public:
     MainService(const std::string& ip, uint16_t port);
     ~MainService();
     void runServer();
-    void runBackgroundRouter();
+    void runBackgroundGetDevices();
+    void runBackgroundGetBlockedDevices();
     std::string handleRequest(data::Request request);
-    std::string getRouterResponse();
+    std::string getAllDevicesResponse();
+    std::string getAllBlockedDevicesResponse();
 
 private:
 
@@ -28,9 +30,12 @@ private:
     bool is_running_ = 1;
     Parser parser_;
     Router router_;
-    std::string router_response_;
-    std::thread router_thread_;
-    std::mutex data_mutex_;
+    std::string router_response_get_all_;
+    std::string router_response_get_all_blocked_;
+    std::thread get_devices_thread_;
+    std::thread get_blocked_devices_thread_;
+    std::mutex get_devices_mutex_;
+    std::mutex get_blocked_devices_mutex_;
     std::mutex request_mutex_;
     std::vector<data::Device> devices_;
 

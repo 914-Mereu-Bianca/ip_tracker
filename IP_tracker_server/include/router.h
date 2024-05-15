@@ -12,7 +12,9 @@ public:
     ~Router();
     static size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *output);
     std::string getAllDevices();
+    std::string getAllBlockedDevices();
     std::string blockDevice(std::string &name, std::string &mac);
+    std::string unblockDevice(std::string &mac);
     void setToken(const std::string &token);
 
 private:

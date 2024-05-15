@@ -10,6 +10,7 @@ class Parser {
 public:
 
     void parseData(const std::string &string);
+    void parseBlockedDevices(const std::string &string);
     inline std::vector<data::Device> getDevices() { return devices_; }
 
 private:
@@ -18,7 +19,7 @@ private:
     void parseName(const std::string &string);
     void parseMAC(const std::string &string);
     void parseOnline(const std::string &string);
-    void parseBlocked(const std::string &string);
+    void parseMacBlocked(const std::string &string);
 
     std::vector<data::Device> devices_; // a list of devices of type proto
 

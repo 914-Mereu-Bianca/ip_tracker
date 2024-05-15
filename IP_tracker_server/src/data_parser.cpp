@@ -7,7 +7,6 @@ void Parser::parseData(const std::string &string) {
     parseName(string);
     parseMAC(string);
     parseOnline(string);
-    parseBlocked(string);
 
 }
 
@@ -117,23 +116,31 @@ void Parser::parseOnline(const std::string &string) {
     }
 }
 
-void Parser::parseBlocked(const std::string &string) {
-    
-    int pos = string.find("blocked 0");
+void Parser::parseBlockedDevices(const std::string &string) {
+    parseMacBlocked(string);
+}
+
+void Parser::parseMacBlocked(const std::string &string) {
+    int pos = string.find("mac 0");
     std::string line = string.substr(pos);
     line = line.substr(0, line.find('\n') + 1);
 
     int n = 0;
 
-    for(auto &d: devices_) {
-        // save mac address in certain device
+    while(line.substr(6, 17) != "00-00-00-00-00-00" && line.substr(7, 17) != "00-00-00-00-00-00" && n < 96) {
         if(n < 10){
-            d.set_is_blocked(line[10] != '0');
+            for(auto &d: devices_){
+                if(d.mac_address() == line.substr(6, 17))
+                    d.set_is_blocked(1);
+            }
         }
         else {
-            d.set_is_blocked(line[11] != '0');
+            for(auto &d: devices_){
+                if(d.mac_address() == line.substr(7, 17))
+                    d.set_is_blocked(1);
+            }
         }
-
+        
         // go to the next mac address
         pos += line.find('\n') + 1;
         line = string.substr(pos);
