@@ -9,7 +9,8 @@ service IPService {
 
 message Request {
     string request = 1;
-    int32 device_id = 2;
+    string name = 2;
+    string mac = 3;
 }
 
 message Response {

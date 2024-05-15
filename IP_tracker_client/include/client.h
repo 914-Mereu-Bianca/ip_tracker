@@ -25,7 +25,7 @@ public:
     inline void Stop() { is_running_ = 0; }
     inline bool isRunning() { return is_running_; }
     data::Response getDevices();
-    void setRequest(const std::string &request, int device_id);
+    void setRequest(const std::string &request, const std::string &name, const std::string &mac);
        
 private:
 
@@ -37,7 +37,8 @@ private:
     bool is_auth_ = 0;
     bool is_running_ = 1;
     std::string request_ = "";
-    int device_id_ = 0;
+    std::string name_ = "";
+    std::string mac_ = "";
 
 };
 

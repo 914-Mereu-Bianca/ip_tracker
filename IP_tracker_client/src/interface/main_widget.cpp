@@ -60,9 +60,9 @@ void MainWidget::HandleLogin() {
 }
 
 void MainWidget::onCellClicked(int row, int column) {
-    std::cout<<row<<" "<<column<<" "<<table_->item(row, column)->text().toStdString().c_str()<<" "<<table_->item(row, 0)->text().toInt()<<std::endl;
+    std::cout<<row<<" "<<column<<" "<<table_->item(row, column)->text().toStdString().c_str()<<std::endl<<table_->item(row, 1)->text().toStdString().c_str()<<std::endl<< table_->item(row, 3)->text().toStdString().c_str()<<std::endl;
     if(column == 7) {
-        emit setRequest(table_->item(row, column)->text().toStdString().c_str(), table_->item(row, 0)->text().toInt());
+        emit setRequest(table_->item(row, column)->text().toStdString().c_str(), table_->item(row, 1)->text().toStdString().c_str(), table_->item(row, 3)->text().toStdString().c_str());
     }
 }
 

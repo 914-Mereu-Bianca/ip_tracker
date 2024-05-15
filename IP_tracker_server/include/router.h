@@ -12,6 +12,7 @@ public:
     ~Router();
     static size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *output);
     std::string getAllDevices();
+    std::string blockDevice(std::string &name, std::string &mac);
     void setToken(const std::string &token);
 
 private:
@@ -19,7 +20,8 @@ private:
     std::string token_;
     CURL *curl;
     CURLcode res;
-    std::string url;
+    std::string url_get_;
+    std::string url_block_;
 
 };
 

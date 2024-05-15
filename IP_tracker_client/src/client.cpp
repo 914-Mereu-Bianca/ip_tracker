@@ -42,9 +42,9 @@ void MainClient::StreamData()
     
     while (stream->Read(&response)) {  // true => it can continue reading, false => the message stream has ended
         
-        for(auto &d: response.devices()) {
+        /*for(auto &d: response.devices()) {
             std::cout<< d.mac_address() << " " << d.is_online() << " " << d.is_blocked() <<" " << d.is_suspect() << d.id() << " " << d.name() << " " << d.ip_address() <<std::endl;
-        }
+        }*/
         
         std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(1));
 
@@ -53,7 +53,8 @@ void MainClient::StreamData()
 
         devices_ = response;
         request.set_request(request_);
-        request.set_device_id(device_id_);
+        request.set_name(name_);
+        request.set_mac(mac_);
         stream->Write(request);
         request_ = "";
     }
@@ -73,10 +74,11 @@ data::Response MainClient::getDevices() {
     return devices_;
 }
 
-void MainClient::setRequest(const std::string &request, int device_id) {
+void MainClient::setRequest(const std::string &request, const std::string &name, const std::string &mac) {
     std::lock_guard<std::mutex> lock(request_mutex_);
     request_ = request;
-    device_id = device_id;
+    name_ = name;
+    mac_ = mac;
 }
 
 MainClient::~MainClient() {

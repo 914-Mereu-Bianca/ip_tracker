@@ -14,6 +14,7 @@ public:
     ~MainService();
     void runServer();
     void runBackgroundRouter();
+    std::string handleRequest(data::Request request);
     std::string getRouterResponse();
 
 private:
@@ -30,6 +31,7 @@ private:
     std::string router_response_;
     std::thread router_thread_;
     std::mutex data_mutex_;
+    std::mutex request_mutex_;
     std::vector<data::Device> devices_;
 
 };

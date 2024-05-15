@@ -30,9 +30,8 @@ void ClientView::authenticate(const std::string &username, const std::string &pa
     
 }
 
-void ClientView::setRequest(const std::string &request, int device_id) {
-    std::cout<<device_id<<std::endl;
-    client_->setRequest(request, device_id);
+void ClientView::setRequest(const std::string &request, const std::string &name, const std::string &mac) {
+    client_->setRequest(request, name, mac);
 }
 
 void ClientView::startApplication() {

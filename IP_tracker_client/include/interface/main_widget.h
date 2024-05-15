@@ -22,7 +22,7 @@ public:
     
 signals:
     void authenticate(const std::string &username, const std::string &password);
-    void setRequest(const std::string &request, int device_id);
+    void setRequest(const std::string &request, const std::string &name, const std::string &mac);
 
 public slots:
     void HandleLogin();

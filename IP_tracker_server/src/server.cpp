@@ -5,7 +5,7 @@
 #include <mutex>
 
 MainService::MainService(const std::string& ip, uint16_t port) : ip_(ip), port_(port) { 
-    router_.setToken("z%3E%3Eh64h%7C%2B%5Bo%2B%7BlWP9X0pA3PtuDAKFkG!"); 
+    router_.setToken("7R%7Bv7a66B%2C673qGG%5Efs8xf%2B.t%7CKoEGB3"); 
     router_thread_ = std::thread(&MainService::runBackgroundRouter, this);
 }
 
@@ -29,6 +29,25 @@ grpc::Status MainService::Authenticate(grpc::ServerContext *context, const data:
     return grpc::Status::OK;
 }
 
+std::string MainService::handleRequest(data::Request request) {
+    if(request.request()!="")
+        std::cout<<request.request()<<std::endl<<request.name()<<std::endl<<request.mac()<<std::endl;
+    
+    std::string response = "";
+
+    if(request.request() == "Block") {
+        std::unique_lock u_lock(request_mutex_);
+        std::string name = request.name();
+        std::string mac = request.mac();
+        response = router_.blockDevice(name, mac);
+        std::cout<<response<<std::endl;
+    }
+
+    return response;
+        
+}
+
+
 grpc::Status MainService::StreamData(grpc::ServerContext *context, grpc::ServerReaderWriter<data::Response, data::Request>* stream)
 {
     data::Request request;
@@ -36,21 +55,17 @@ grpc::Status MainService::StreamData(grpc::ServerContext *context, grpc::ServerR
 
     int i = 0;
     do {
-        std::cout<<++i<<std::endl;
-        stream->Read(&request);
-        std::cout<<request.request()<<" "<<request.device_id()<<std::endl;
         
+        stream->Read(&request);
+        
+        handleRequest(request);
+
         parser_.parseData(getRouterResponse());
         devices_ = parser_.getDevices();
         response.clear_devices();
 
         for(const auto &d: devices_) {
             response.add_devices()->CopyFrom(d);
-        }
-        
-        for(auto &d: response.devices()) {
-            std::cout<<d.id() << " " << d.name() << " " << d.ip_address() << std::endl;
-            std::cout << d.mac_address() << " " << d.is_online() << " " << d.is_blocked() <<" " << d.is_suspect() <<std::endl;
         }
         
     } while (stream->Write(response));
@@ -79,9 +94,9 @@ void MainService::runBackgroundRouter() {
     std::string response = "";
     while(is_running_) {
 
-        std::cout<<++i<<std::endl;
-
+        std::unique_lock u_lock(request_mutex_);
         response = router_.getAllDevices();
+        u_lock.unlock();
 
         if(response != "failed") {
             std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(3));
