@@ -18,7 +18,7 @@ find_package(Protobuf CONFIG REQUIRED)
 
 message(STATUS "Using protobuf ${Protobuf_VERSION}")
 set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
-set(_REFLECTION gRPC::grpc++_reflection)
+set(_REFLECTION gRPC::grpc++_reflection)  
 
 if(CMAKE_CROSSCOMPILING)
   find_program(_PROTOBUF_PROTOC protoc)
@@ -70,14 +70,6 @@ add_custom_command (
 
 # Sets a library with generated files
 add_library(GrpcProtoLib
-  ${PROTO_SOURCES}
-  ${PROTO_HEADERS}
-  ${GRPC_SOURCES}
-  ${GRPC_HEADERS}
-  ${PROTO_SOURCES_AUTH}
-  ${PROTO_HEADERS_AUTH}
-  ${GRPC_SOURCES_AUTH}
-  ${GRPC_HEADERS_AUTH}
   ${PROTO_SOURCES_IP}
   ${PROTO_HEADERS_IP}
   ${GRPC_SOURCES_IP}
@@ -85,10 +77,10 @@ add_library(GrpcProtoLib
 )
 
 target_link_libraries(GrpcProtoLib
-
   ${_REFLECTION}
   ${_GRPC_GRPCPP}
-  ${_PROTOBUF_LIBPROTOBUF})
+  ${_PROTOBUF_LIBPROTOBUF}
+)
 
 # add executable
 set(
@@ -97,6 +89,7 @@ set(
   src/data_parser.cpp
   src/server.cpp
   src/router.cpp
+  src/send_mail.cpp
 )
 
 # Sets the project headers file
@@ -104,6 +97,7 @@ set(PROJECT_HEADERS
   include/data_parser.h
   include/server.h
   include/router.h
+  include/send_mail.h
 ) 
 
 add_executable(
@@ -123,3 +117,4 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
   ${CURL_LIBRARIES}
 )
 
+add_subdirectory(tests)

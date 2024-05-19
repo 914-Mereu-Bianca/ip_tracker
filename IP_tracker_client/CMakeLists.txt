@@ -69,14 +69,6 @@ add_custom_command (
 
 # Sets a library with generated files
 add_library(GrpcProtoLib
-  ${PROTO_SOURCES}
-  ${PROTO_HEADERS}
-  ${GRPC_SOURCES}
-  ${GRPC_HEADERS}
-  ${PROTO_SOURCES_AUTH}
-  ${PROTO_HEADERS_AUTH}
-  ${GRPC_SOURCES_AUTH}
-  ${GRPC_HEADERS_AUTH}
   ${PROTO_SOURCES_IP}
   ${PROTO_HEADERS_IP}
   ${GRPC_SOURCES_IP}
@@ -94,17 +86,17 @@ target_link_libraries(GrpcProtoLib
 set(PROJECT_SOURCES
   main.cpp
   src/client.cpp
-  src/interface/main_window.cpp
-  src/client_view.cpp
-  src/interface/main_widget.cpp
+  src/client_modelview.cpp
+  src/view/main_window.cpp
+  src/view/main_widget.cpp
 )
 
 # Sets the project headers file
 set(PROJECT_HEADERS
   include/client.h
-  include/interface/main_window.h
-  include/client_view.h
-  include/interface/main_widget.h
+  include/client_modelview.h
+  include/view/main_window.h
+  include/view/main_widget.h
 )
 
 # Sets the executable

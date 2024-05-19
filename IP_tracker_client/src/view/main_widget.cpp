@@ -1,11 +1,13 @@
-#include "interface/main_widget.h"
-#include "interface/main_window.h"
-#include "client_view.h"
+#include "view/main_widget.h"
+#include "view/main_window.h"
+#include "client_modelview.h"
 #include <iostream>
 #include <memory>
 #include <thread>
 #include <chrono>
 #include <QStringList>
+#include <QMessageBox>
+#include <QTimer>
 
 MainWidget::MainWidget(QMainWindow *parent)
         :QWidget(parent) {
@@ -13,12 +15,19 @@ MainWidget::MainWidget(QMainWindow *parent)
     layout_ = new QVBoxLayout;
     central_widget_ = new QWidget;
     table_ = new QTableWidget;
-
+    
     central_widget_->setLayout(layout_); 
     parent->setCentralWidget(central_widget_);
 
-    central_widget_->setStyleSheet("background-color: lightblue;");
+    central_widget_->setStyleSheet("background-color: rgb(182, 197, 219);");
     layout_->setAlignment(Qt::AlignCenter);
+
+    QPixmap pixmap("/home/bianca/ip_tracker/IP_tracker_client/utils/iptrackerlogo.png");
+    image_label_ = new QLabel(this);
+    image_label_->setFixedSize(400, 100);
+    image_label_->setAlignment(Qt::AlignCenter);
+    image_label_->setPixmap(pixmap);
+    layout_->addWidget(image_label_);
 
     connect(table_, &QTableWidget::cellClicked, this, &MainWidget::onCellClicked);
 
@@ -27,30 +36,41 @@ MainWidget::MainWidget(QMainWindow *parent)
 
 void MainWidget::SetupWidgets() {
 
-    username_label_ = new QLabel("Username:", this);
-    layout_->addWidget(username_label_);
-
     username_input_ = new QLineEdit(this);
-    layout_->addWidget(username_input_);
-    username_input_->setFixedWidth(200);
-
-    password_label_ = new QLabel("Password:", this);
-    layout_->addWidget(password_label_);
+    username_input_->setStyleSheet(
+        "QLineEdit { height: 30px; border: 1px solid rgb(37, 39, 48); border-radius: 15px; padding-left: 10px;}"
+        "QLineEdit:hover { border-color: rgb(129, 140, 140);}"
+        "QLineEdit:focus { border-color: rgb(0, 120, 215);}"
+    );
+    username_input_->setPlaceholderText("Username");
+    layout_->addWidget(username_input_, 0, Qt::AlignCenter);
+    username_input_->setFixedWidth(240);
 
     password_input_ = new QLineEdit(this);
-    password_input_->setFixedWidth(200);
+    password_input_->setStyleSheet(
+        "QLineEdit { height: 30px; border: 1px solid rgb(37, 39, 48); border-radius: 15px; padding-left: 10px;}"
+        "QLineEdit:hover { border-color: rgb(129, 140, 140);}"
+        "QLineEdit:focus { border-color: rgb(0, 120, 215);}"
+    );
+    password_input_->setFixedWidth(240);
     password_input_->setEchoMode(QLineEdit::Password);
-    layout_->addWidget(password_input_);
+    password_input_->setPlaceholderText("Password");
+    layout_->addWidget(password_input_, 0, Qt::AlignCenter);
 
     // Setup the Login button
     button_ = new QPushButton("Login", this);  
     button_->setFixedSize(100, 35);
-    layout_->addWidget(button_);
+    button_->setStyleSheet(
+        "QPushButton { height: 30px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 15px; }"
+        "QPushButton:hover { background-color: rgb(129, 140, 140);}"
+        "QPushButton:focus { background-color: rgb(0, 120, 215);}"
+    );
+    layout_->addWidget(button_, 0, Qt::AlignCenter);
     
     error_label_ = new QLabel("Authentication Failed!", this);
+    error_label_->setAlignment(Qt::AlignCenter);
     layout_->addWidget(error_label_);
-    error_label_->setVisible(0);
-
+    error_label_->setStyleSheet("QLabel { color: rgb(182, 197, 219); }");
     connect(button_, &QPushButton::clicked, this, &MainWidget::HandleLogin);
 }
 
@@ -67,17 +87,19 @@ void MainWidget::onCellClicked(int row, int column) {
 }
 
 void MainWidget::displayErrorMessage() {
-    error_label_->setVisible(1);
+    error_label_->setStyleSheet("QLabel { color: red; }");
+    QTimer::singleShot(1500, [=]() {
+        error_label_->setStyleSheet("QLabel { color: rgb(182, 197, 219); }");
+    });
 }
 
 void MainWidget::createTable() {
     
-    username_label_->setVisible(0);
     username_input_->setVisible(0);
-    password_label_->setVisible(0);
     password_input_->setVisible(0);
     button_->setVisible(0);
     error_label_->setVisible(0);
+    image_label_->setVisible(0);
     
     router_ip_ = new QLabel("Router's IP address:", this);
     router_mac_ = new QLabel("Router's MAC address:", this);

@@ -12,7 +12,7 @@ public:
     ~MainWindow()=default;
 private:
     Q_OBJECT
-    std::shared_ptr<MainClient> client_;
+    std::shared_ptr<MainClient> client_; //TODO: eraise client and add signal and slot to mv client
 
 protected:
     // This function shuts down the client when the application is closed

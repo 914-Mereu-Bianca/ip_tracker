@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <string>
 #include <cstring>
+#include <curl/curl.h>
 
 Router::Router() {
 

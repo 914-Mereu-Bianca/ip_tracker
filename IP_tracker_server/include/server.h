@@ -7,6 +7,7 @@
 #include "../include/router.h"
 #include <thread>
 #include <mutex>
+#include <grpc++/grpc++.h>
 
 class MainService : public data::IPService::Service {
 public:
@@ -18,6 +19,7 @@ public:
     std::string handleRequest(data::Request request);
     std::string getAllDevicesResponse();
     std::string getAllBlockedDevicesResponse();
+    inline void shutdown() { server->Shutdown(); }
 
 private:
 
@@ -38,6 +40,7 @@ private:
     std::mutex get_blocked_devices_mutex_;
     std::mutex request_mutex_;
     std::vector<data::Device> devices_;
+    std::unique_ptr<grpc::Server> server;
 
 };
 

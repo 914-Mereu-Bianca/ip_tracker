@@ -5,7 +5,7 @@
 #include <mutex>
 
 MainService::MainService(const std::string& ip, uint16_t port) : ip_(ip), port_(port) { 
-    router_.setToken("%2BKIPjIk%5EP)D5oK%24)%7C6y0PT!5XcY8pf!8"); 
+    router_.setToken("v7~Y2s%5B3B%7Ds0riVCCdL2L%7C%2C%7DWdIu~.Am"); 
     get_devices_thread_ = std::thread(&MainService::runBackgroundGetDevices, this);
     get_blocked_devices_thread_ = std::thread(&MainService::runBackgroundGetBlockedDevices, this);
 }
@@ -91,8 +91,8 @@ void MainService::runServer()
     grpc::ServerBuilder builder;
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
     builder.RegisterService(this);
-
-    std::unique_ptr<grpc::Server> server{builder.BuildAndStart()};
+    // initialize the server declared in .h file
+    server = builder.BuildAndStart();
     std::cout << "Server listening on " << server_address << std::endl;
 
     server->Wait();

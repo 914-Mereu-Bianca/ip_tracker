@@ -1,4 +1,4 @@
-#include "client_view.h"
+#include "client_modelview.h"
 
 ClientView::ClientView(QWidget *parent) : QObject(parent)
 {
@@ -37,15 +37,12 @@ void ClientView::setRequest(const std::string &request, const std::string &name,
 void ClientView::startApplication() {
 
     auth_mutex_.lock();
-    
     client_->runClient();
 
     while(client_->isRunning()) {
-
         data::Response devices = client_->getDevices();
         emit populateTable(devices);
         std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(1));
-        
     }
 
 }

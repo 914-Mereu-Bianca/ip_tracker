@@ -1,5 +1,5 @@
 #include <QApplication>
-#include "include/client_view.h"
+#include "include/client_modelview.h"
 #include "include/client.h"
 #include <grpc++/grpc++.h>
 #include <vector>

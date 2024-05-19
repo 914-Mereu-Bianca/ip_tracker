@@ -36,12 +36,12 @@ private:
     QVBoxLayout *layout_;
     QWidget* central_widget_;
 
-    QLabel *username_label_;
+    QLabel *error_label_;
+
     QLineEdit *username_input_;
-    QLabel *password_label_;
     QLineEdit *password_input_;
     QPushButton *button_;
-    QLabel *error_label_;
+    QLabel *image_label_;
 
     QLabel *router_ip_;
     QLabel *router_mac_;

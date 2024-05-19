@@ -1,4 +1,4 @@
-#include "interface/main_window.h"
+#include "view/main_window.h"
 
 MainWindow::MainWindow(int width, int height, std::shared_ptr<MainClient> client, QWidget * parent): QMainWindow(parent) {
     setWindowTitle("IP Tracker");

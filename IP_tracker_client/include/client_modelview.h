@@ -6,8 +6,8 @@
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include "client.h"
-#include "interface/main_window.h"
-#include "interface/main_widget.h"
+#include "view/main_window.h"
+#include "view/main_widget.h"
 #include <memory>
 #include <thread>
 
