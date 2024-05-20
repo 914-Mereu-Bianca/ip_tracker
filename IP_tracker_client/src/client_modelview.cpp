@@ -6,7 +6,6 @@ ClientView::ClientView(QWidget *parent) : QObject(parent)
     client_ = std::make_shared<MainClient>(channel);
     main_window_ = new MainWindow(900, 600, client_);
     main_widget_ = new MainWidget(main_window_);
-    main_widget_->SetupWidgets();
     
     connect(this, &ClientView::populateTable, main_widget_, &MainWidget::populate);
     connect(this, &ClientView::createTableAndClear, main_widget_, &MainWidget::createTable);

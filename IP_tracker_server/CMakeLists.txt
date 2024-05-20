@@ -88,6 +88,7 @@ set(
   main.cpp
   src/data_parser.cpp
   src/server.cpp
+  src/admin.cpp
   src/router_communication/router.cpp
   src/router_communication/request_handler.cpp
   src/mail_communication/send_mail.cpp
@@ -97,6 +98,7 @@ set(
 set(PROJECT_HEADERS
   include/data_parser.h
   include/server.h
+  include/admin.h
   include/router_communication/router.h
   include/router_communication/request_handler.h
   include/mail_communication/send_mail.h

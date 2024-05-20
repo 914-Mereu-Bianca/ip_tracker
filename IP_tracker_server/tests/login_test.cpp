@@ -4,17 +4,18 @@
 #include "../src/router_communication/request_handler.cpp"
 #include "../src/mail_communication/send_mail.cpp"
 #include "../src/data_parser.cpp"
+#include "../src/admin.cpp"
 
 class FakeClient {
 public:
     FakeClient(std::shared_ptr<grpc::Channel> channel) : _stub(data::IPService::NewStub(channel)) {}
 
     bool Authenticate(const std::string& username, const std::string& password) {
-        data::AuthRequest request;
+        data::Credentials request;
         request.set_username(username);
         request.set_password(password);
 
-        data::AuthResponse response;
+        data::OperationResponse response;
         grpc::ClientContext context;
         grpc::Status status = _stub->Authenticate(&context, request, &response);
 
@@ -38,7 +39,7 @@ TEST(ServerAuthenticationTest, Test) {
 
     FakeClient fake_client(grpc::CreateChannel("localhost:50052", grpc::InsecureChannelCredentials()));
     EXPECT_FALSE(fake_client.Authenticate("us", "password"));
-    EXPECT_TRUE(fake_client.Authenticate("user", "password"));
+    EXPECT_TRUE(fake_client.Authenticate("admin", "admin"));
     
     test_server.shutdown();
     

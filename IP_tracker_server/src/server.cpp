@@ -16,16 +16,17 @@ MainService::~MainService() {
     request_handler_.stop();
 }
 
-grpc::Status MainService::Authenticate(grpc::ServerContext *context, const data::AuthRequest* request, data::AuthResponse* response) {
+grpc::Status MainService::Authenticate(grpc::ServerContext *context, const data::Credentials* request, data::OperationResponse* response) {
     std::cout<<request->username()<< " "<<request->password()<<std::endl;
-    if (request->username() == "user" && request->password() == "password") {
-      response->set_success(true);
-      response->set_message("Authentication successful");
-      auth = 1;
+
+    if (admin_.computeHash(request->username()) == admin_.getUsernameHashed() && admin_.computeHash(request->password()) == admin_.getPasswordHashed()) {
+        response->set_success(true);
+        response->set_message("Authentication successful");
     } else {
-      response->set_success(false);
-      response->set_message("Authentication failed");
+        response->set_success(false);
+        response->set_message("Authentication failed");
     }
+    
     return grpc::Status::OK;
 }
 

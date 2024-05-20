@@ -15,12 +15,7 @@ MainWidget::MainWidget(QMainWindow *parent)
 
     layout_ = new QVBoxLayout;
     central_widget_ = new QWidget;
-    table_ = new QTableWidget;
-    button_layout_ = new QHBoxLayout;
-    button_filter_all_ = new QPushButton("All devices", this);
-    button_filter_online_ = new QPushButton("Online Devices", this);  
-    button_filter_blocked_ = new QPushButton("Blocked Devices", this);  
-    admin_button_ = new QPushButton("Admin", this);
+    
     central_widget_->setLayout(layout_); 
     parent->setCentralWidget(central_widget_);
 
@@ -33,13 +28,12 @@ MainWidget::MainWidget(QMainWindow *parent)
     image_label_->setAlignment(Qt::AlignCenter);
     image_label_->setPixmap(pixmap);
     layout_->addWidget(image_label_);
-
-    connect(table_, &QTableWidget::cellClicked, this, &MainWidget::onCellClicked);
-
+    
+    SetupLoginPage();
 }
 
 
-void MainWidget::SetupWidgets() {
+void MainWidget::SetupLoginPage() {
 
     username_input_ = new QLineEdit(this);
     username_input_->setStyleSheet(
@@ -79,6 +73,71 @@ void MainWidget::SetupWidgets() {
     connect(button_, &QPushButton::clicked, this, &MainWidget::HandleLogin);
 }
 
+void MainWidget::SetupDialogBox() {
+    dialog_box_ = new QDialog;
+    dialog_box_->setStyleSheet("background-color: rgb(37, 39, 48);");
+    dialog_box_->setWindowTitle("New Credentials");
+    dialog_box_layout_ = new QVBoxLayout(dialog_box_);
+    new_username_ = new QLineEdit;
+    new_username_->setStyleSheet(
+        "QLineEdit { height: 30px; border: 1px solid rgb(37, 39, 48); background-color: white; border-radius: 15px; padding-left: 10px;}"
+        "QLineEdit:hover { border-color: rgb(129, 140, 140);}"
+        "QLineEdit:focus { border-color: rgb(0, 120, 215);}"
+    );
+    new_username_->setPlaceholderText("New Username");
+    new_username_->setFixedWidth(240);
+    dialog_box_layout_->addWidget(new_username_);
+
+    new_password_ = new QLineEdit;
+    new_password_->setStyleSheet(
+        "QLineEdit { height: 30px; border: 1px solid rgb(37, 39, 48); background-color: white; border-radius: 15px; padding-left: 10px;}"
+        "QLineEdit:hover { border-color: rgb(129, 140, 140);}"
+        "QLineEdit:focus { border-color: rgb(0, 120, 215);}"
+    );
+    new_password_->setFixedWidth(240);
+    new_password_->setEchoMode(QLineEdit::Password);
+    new_password_->setPlaceholderText("New Password");
+    dialog_box_layout_->addWidget(new_password_);
+
+    button_save_credentials_ = new QPushButton("Save");
+    button_save_credentials_->setFixedWidth(100);
+    button_save_credentials_->setStyleSheet(
+        "QPushButton { height: 30px; background-color: white; border-radius: 15px; }"
+        "QPushButton:hover { background-color: rgb(129, 140, 140);}"
+        "QPushButton:focus { background-color: rgb(0, 120, 215);}"
+    );
+    dialog_box_layout_->addWidget(button_save_credentials_, 0, Qt::AlignCenter);
+
+    connect(admin_button_, &QPushButton::clicked, [&]() {
+        dialog_box_->exec();
+    });
+}
+
+void MainWidget::SetupButtonsMainPage() {
+    // Setup and design the buttons on the main page
+    button_layout_ = new QHBoxLayout;
+    button_filter_all_ = new QPushButton("All devices", this);
+    button_filter_online_ = new QPushButton("Online Devices", this);  
+    button_filter_blocked_ = new QPushButton("Blocked Devices", this);  
+    admin_button_ = new QPushButton("Admin", this);
+    admin_button_->setStyleSheet(
+        "QPushButton { height: 40px; width: 100px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 20px; }"
+        "QPushButton:hover { background-color: rgb(129, 140, 140);}"
+    );
+    button_filter_all_->setStyleSheet(
+        "QPushButton { height: 30px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 15px; }"
+        "QPushButton:hover { background-color: rgb(129, 140, 140);}"
+    );
+    button_filter_online_->setStyleSheet(
+        "QPushButton { height: 30px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 15px; }"
+        "QPushButton:hover { background-color: rgb(129, 140, 140);}"
+    );
+    button_filter_blocked_->setStyleSheet(
+        "QPushButton { height: 30px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 15px; }"
+        "QPushButton:hover { background-color: rgb(129, 140, 140);}"
+    );
+}
+
 void MainWidget::HandleLogin() {
     std::cout<<username_input_->text().toStdString().c_str()<<" "<<password_input_->text().toStdString().c_str()<<std::endl;
     emit authenticate(username_input_->text().toStdString().c_str(), password_input_->text().toStdString().c_str());
@@ -106,11 +165,8 @@ void MainWidget::createTable() {
     error_label_->setVisible(0);
     image_label_->setVisible(0);
     
+    SetupButtonsMainPage();
     // Design and add the admin button
-    admin_button_->setStyleSheet(
-        "QPushButton { height: 40px; width: 100px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 20px; }"
-        "QPushButton:hover { background-color: rgb(129, 140, 140);}"
-    );
     layout_->addWidget(admin_button_, 0, Qt::AlignRight);
 
     // Add the labels for the router's information
@@ -120,28 +176,19 @@ void MainWidget::createTable() {
     layout_->addWidget(router_mac_); 
 
     // Design and add the buttons 
-    button_filter_all_->setStyleSheet(
-        "QPushButton { height: 30px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 15px; }"
-        "QPushButton:hover { background-color: rgb(129, 140, 140);}"
-    );
-    button_filter_online_->setStyleSheet(
-        "QPushButton { height: 30px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 15px; }"
-        "QPushButton:hover { background-color: rgb(129, 140, 140);}"
-    );
-    button_filter_blocked_->setStyleSheet(
-        "QPushButton { height: 30px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 15px; }"
-        "QPushButton:hover { background-color: rgb(129, 140, 140);}"
-    );
     button_layout_->addWidget(button_filter_all_);
     button_layout_->addWidget(button_filter_online_);
     button_layout_->addWidget(button_filter_blocked_);
     layout_->addLayout(button_layout_);
 
+    SetupDialogBox();
     // Desgin and add the table
+    table_ = new QTableWidget;
     layout_->addWidget(table_); 
     table_->setColumnCount(8);
     table_->setHorizontalHeaderLabels(QStringList() << "ID" << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked" << "Trusted" << "Manage device");
     table_->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    connect(table_, &QTableWidget::cellClicked, this, &MainWidget::onCellClicked);
 }
 
 void MainWidget::populate(data::Response data) {

@@ -6,16 +6,18 @@
 class Admin {
 
 public:
-    inline std::string getName() { return username_; }
-    inline std::string getPassword() { return password_; }
-    
-    void saveCredentials();
+    Admin();
+    inline std::string getUsernameHashed() { return username_hashed_; }
+    inline std::string getPasswordHashed() { return password_hashed_; }
+
+    void saveCredentials(const std::string &username_hashed, const std::string &password_hashed);
+
+    std::string computeHash(const std::string &credential);
 
 private:
-    Admin() {}
 
-    std::string username_;
-    std::string password_;
+    std::string username_hashed_;
+    std::string password_hashed_;
 
 };
 

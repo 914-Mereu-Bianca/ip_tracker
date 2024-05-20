@@ -9,11 +9,11 @@ MainClient::MainClient(std::shared_ptr<grpc::Channel> channel)
 bool MainClient::Authenticate(const std::string& username, const std::string& password)
 {
 
-    data::AuthRequest request;
+    data::Credentials request;
     request.set_username(username);
     request.set_password(password);
 
-    data::AuthResponse response;
+    data::OperationResponse response;
     grpc::ClientContext context;
 
     grpc::Status status = _stub->Authenticate(&context, request, &response);
@@ -41,10 +41,6 @@ void MainClient::StreamData()
     stream->Write(request);
     
     while (stream->Read(&response)) {  // true => it can continue reading, false => the message stream has ended
-        
-        /*for(auto &d: response.devices()) {
-            std::cout<< d.mac_address() << " " << d.is_online() << " " << d.is_blocked() <<" " << d.is_suspect() << d.id() << " " << d.name() << " " << d.ip_address() <<std::endl;
-        }*/
         
         std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(1));
 

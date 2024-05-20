@@ -11,6 +11,8 @@
 #include <QLayoutItem>
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QMessageBox>
+#include <QDialog>
 #include <../build/proto_generated/ip_tracker.grpc.pb.h>
 #include <../build/proto_generated/ip_tracker.pb.h>
 
@@ -18,8 +20,10 @@ class MainWidget: public QWidget {
 public:
     MainWidget(QMainWindow* parent=nullptr);
     ~MainWidget()=default;
-    void SetupWidgets();
-    
+    void SetupLoginPage();
+    void SetupDialogBox();
+    void SetupButtonsMainPage();
+
 signals:
     void authenticate(const std::string &username, const std::string &password);
     void setRequest(const std::string &request, const std::string &name, const std::string &mac);
@@ -36,13 +40,20 @@ private:
     QVBoxLayout *layout_;
     QWidget* central_widget_;
 
-    QLabel *error_label_;
-
+    QLabel *image_label_;
     QLineEdit *username_input_;
     QLineEdit *password_input_;
     QPushButton *button_;
-    QLabel *image_label_;
-
+    QLabel *error_label_;
+    
+    QPushButton *admin_button_;
+    QPushButton *button_save_credentials_;
+    QDialog *dialog_box_;
+    QVBoxLayout *dialog_box_layout_;
+    QWidget *msg_box_widget_;
+    QLineEdit *new_username_;
+    QLineEdit *new_password_;
+    
     QLabel *router_ip_;
     QLabel *router_mac_;
 
@@ -51,8 +62,6 @@ private:
     QPushButton *button_filter_all_;
     QHBoxLayout *button_layout_;
     QTableWidget *table_;
-
-    QPushButton *admin_button_;
 
     bool auth = 0;
 };

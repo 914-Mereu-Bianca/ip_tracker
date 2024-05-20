@@ -20,7 +20,7 @@ public:
 
 private: 
 
-    grpc::Status Authenticate(grpc::ServerContext *context, const data::AuthRequest* request, data::AuthResponse* response) {
+    grpc::Status Authenticate(grpc::ServerContext *context, const data::Credentials* request, data::OperationResponse* response) {
         std::cout<<request->username()<< " "<<request->password()<<std::endl;
         if (request->username() == "user" && request->password() == "password") {
             response->set_success(true);

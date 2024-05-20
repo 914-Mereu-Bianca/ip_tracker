@@ -4,7 +4,8 @@ package data;
 
 service IPService {
     rpc StreamData (stream Request) returns (stream Response) {}
-    rpc Authenticate(AuthRequest) returns (AuthResponse) {}
+    rpc Authenticate(Credentials) returns (OperationResponse) {}
+    rpc ChangeCredentials(Credentials) returns (OperationResponse) {}
 }
 
 message Request {
@@ -27,12 +28,12 @@ message Device {
     bool is_trusted = 7;
 }
 
-message AuthRequest {
+message Credentials {
   string username = 1;
   string password = 2;
 }
 
-message AuthResponse {
+message OperationResponse {
   bool success = 1;
   string message = 2;
 }
