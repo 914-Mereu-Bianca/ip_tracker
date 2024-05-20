@@ -8,6 +8,7 @@
 #include <QStringList>
 #include <QMessageBox>
 #include <QTimer>
+#include <QHeaderView>
 
 MainWidget::MainWidget(QMainWindow *parent)
         :QWidget(parent) {
@@ -15,7 +16,11 @@ MainWidget::MainWidget(QMainWindow *parent)
     layout_ = new QVBoxLayout;
     central_widget_ = new QWidget;
     table_ = new QTableWidget;
-    
+    button_layout_ = new QHBoxLayout;
+    button_filter_all_ = new QPushButton("All devices", this);
+    button_filter_online_ = new QPushButton("Online Devices", this);  
+    button_filter_blocked_ = new QPushButton("Blocked Devices", this);  
+    admin_button_ = new QPushButton("Admin", this);
     central_widget_->setLayout(layout_); 
     parent->setCentralWidget(central_widget_);
 
@@ -94,22 +99,49 @@ void MainWidget::displayErrorMessage() {
 }
 
 void MainWidget::createTable() {
-    
+    // Set the visibility to false for the widgets from the login page
     username_input_->setVisible(0);
     password_input_->setVisible(0);
     button_->setVisible(0);
     error_label_->setVisible(0);
     image_label_->setVisible(0);
     
+    // Design and add the admin button
+    admin_button_->setStyleSheet(
+        "QPushButton { height: 40px; width: 100px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 20px; }"
+        "QPushButton:hover { background-color: rgb(129, 140, 140);}"
+    );
+    layout_->addWidget(admin_button_, 0, Qt::AlignRight);
+
+    // Add the labels for the router's information
     router_ip_ = new QLabel("Router's IP address:", this);
-    router_mac_ = new QLabel("Router's MAC address:", this);
+    router_mac_ = new QLabel("Router's MAC address:", this);  
     layout_->addWidget(router_ip_); 
     layout_->addWidget(router_mac_); 
+
+    // Design and add the buttons 
+    button_filter_all_->setStyleSheet(
+        "QPushButton { height: 30px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 15px; }"
+        "QPushButton:hover { background-color: rgb(129, 140, 140);}"
+    );
+    button_filter_online_->setStyleSheet(
+        "QPushButton { height: 30px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 15px; }"
+        "QPushButton:hover { background-color: rgb(129, 140, 140);}"
+    );
+    button_filter_blocked_->setStyleSheet(
+        "QPushButton { height: 30px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 15px; }"
+        "QPushButton:hover { background-color: rgb(129, 140, 140);}"
+    );
+    button_layout_->addWidget(button_filter_all_);
+    button_layout_->addWidget(button_filter_online_);
+    button_layout_->addWidget(button_filter_blocked_);
+    layout_->addLayout(button_layout_);
+
+    // Desgin and add the table
     layout_->addWidget(table_); 
     table_->setColumnCount(8);
-
     table_->setHorizontalHeaderLabels(QStringList() << "ID" << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked" << "Trusted" << "Manage device");
-    
+    table_->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 void MainWidget::populate(data::Response data) {

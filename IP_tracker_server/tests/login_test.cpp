@@ -30,15 +30,18 @@ private:
 };
 
 
-TEST(MemoryUsageTests, Test) {
-    std::shared_ptr<MainService> test_server = std::make_shared<MainService>("0.0.0.0", 50052); 
+TEST(ServerAuthenticationTest, Test) {
+    MainService test_server("0.0.0.0", 50052); 
     std::thread thread = std::thread([&test_server]() {
-        test_server->runServer();
+        test_server.runServer();
     });
 
     FakeClient fake_client(grpc::CreateChannel("localhost:50052", grpc::InsecureChannelCredentials()));
+    EXPECT_FALSE(fake_client.Authenticate("us", "password"));
     EXPECT_TRUE(fake_client.Authenticate("user", "password"));
-
-    test_server->shutdown();
+    
+    test_server.shutdown();
+    
     thread.join();
+    
 }

@@ -46,7 +46,13 @@ private:
     QLabel *router_ip_;
     QLabel *router_mac_;
 
+    QPushButton *button_filter_online_;
+    QPushButton *button_filter_blocked_;
+    QPushButton *button_filter_all_;
+    QHBoxLayout *button_layout_;
     QTableWidget *table_;
+
+    QPushButton *admin_button_;
 
     bool auth = 0;
 };

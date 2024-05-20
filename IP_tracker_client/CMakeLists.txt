@@ -124,3 +124,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME}_lib
   Qt6::Widgets
   Qt6::Core
 )
+
+add_subdirectory(tests)

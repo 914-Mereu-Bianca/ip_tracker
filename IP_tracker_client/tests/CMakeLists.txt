@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 
-project(ServerTests)
+project(ClientTests)
 
 set(CXX_STANDARD 17)
 
@@ -17,20 +17,19 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-# Sets test for ServerTests
-set(ServerTests_SOURCES
+# Sets test for ClientTests
+set(ClientTests_SOURCES
   main.cpp
   login_test.cpp
 )
 
-add_executable(ServerTests
-  ${ServerTests_SOURCES}
+add_executable(ClientTests
+  ${ClientTests_SOURCES}
 )
 
-target_link_libraries(ServerTests
+target_link_libraries(ClientTests
   GrpcProtoLib
   GTest::gtest_main
-  ${CURL_LIBRARIES}
 )
 
 include(GoogleTest)

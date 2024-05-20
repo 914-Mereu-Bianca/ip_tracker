@@ -9,6 +9,7 @@ MainService::MainService(const std::string& ip, uint16_t port) : ip_(ip), port_(
 }
 
 MainService::~MainService() {
+    is_running_ = false;
     if(update_devices_.joinable()) {
         update_devices_.join();
     }
@@ -35,9 +36,8 @@ grpc::Status MainService::StreamData(grpc::ServerContext *context, grpc::ServerR
     data::Response response;
 
     do {
-        
+        // Read the request from the client and send it to be handled
         stream->Read(&request);
-        
         request_handler_.handleRequest(request);
 
         response.clear_devices();
@@ -69,9 +69,9 @@ void MainService::runServer() {
 void MainService::updateDevices() {
     // The parser gets the data from the handler 
     // to get the devices together with information about each of them
-    std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(6));
     std::string response;
     while (is_running_) {
+        std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(4));
         response = request_handler_.getAllDevicesResponse();
         if(response != "")
             parser_.parseData(response);
@@ -82,7 +82,6 @@ void MainService::updateDevices() {
         old_devices_ = devices_;
         devices_ = parser_.getDevices();
         checkNewDevices();
-        std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(4));
     }
 }
 
