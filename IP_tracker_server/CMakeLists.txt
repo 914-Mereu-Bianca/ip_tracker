@@ -88,16 +88,18 @@ set(
   main.cpp
   src/data_parser.cpp
   src/server.cpp
-  src/router.cpp
-  src/send_mail.cpp
+  src/router_communication/router.cpp
+  src/router_communication/request_handler.cpp
+  src/mail_communication/send_mail.cpp
 )
 
 # Sets the project headers file
 set(PROJECT_HEADERS
   include/data_parser.h
   include/server.h
-  include/router.h
-  include/send_mail.h
+  include/router_communication/router.h
+  include/router_communication/request_handler.h
+  include/mail_communication/send_mail.h
 ) 
 
 add_executable(

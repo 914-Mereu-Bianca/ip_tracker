@@ -24,7 +24,7 @@ message Device {
     string mac_address = 4;
     bool is_blocked = 5;
     bool is_online = 6;
-    bool is_suspect = 7;
+    bool is_trusted = 7;
 }
 
 message AuthRequest {

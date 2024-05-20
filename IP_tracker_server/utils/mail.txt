@@ -2,6 +2,5 @@ From: "Router Admin" <routera575@gmail.com>
 To: "Bia Mereu" <biamereu2002@gmail.com>
 Subject: This is a test
 
-Hi Bia,
-I’m sending this mail with curl thru my gmail account.
-Bye!
+Hi Admin,
+A new device has connected.

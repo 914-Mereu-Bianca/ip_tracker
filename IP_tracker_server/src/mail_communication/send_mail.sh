@@ -5,7 +5,7 @@ USERNAME="routera575@gmail.com"
 PASSWORD="njya umcc pzyz wgab"
 MAIL_FROM="routera575@gmail.com"
 MAIL_RCPT="biamereu2002@gmail.com"
-MAIL_FILE="../utils/mail.txt"
+MAIL_FILE="/home/bianca/ip_tracker/IP_tracker_server/utils/mail.txt"
 
 curl --ssl-reqd \
      --url "$SMTP_SERVER" \

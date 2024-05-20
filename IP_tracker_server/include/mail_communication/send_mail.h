@@ -8,7 +8,6 @@ class SendMail {
 
 public:
     SendMail();
-    static size_t write_callback(void *ptr, size_t size, size_t nmemb, std::string *data);
     void send();
 
 private:

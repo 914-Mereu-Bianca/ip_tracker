@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "../src/server.cpp"
-#include "../src/router.cpp"
+#include "../src/router_communication/router.cpp"
+#include "../src/router_communication/request_handler.cpp"
+#include "../src/mail_communication/send_mail.cpp"
 #include "../src/data_parser.cpp"
 
 class FakeClient {

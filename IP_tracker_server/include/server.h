@@ -4,7 +4,8 @@
 #include "../build/proto_generated/ip_tracker.grpc.pb.h"
 #include "../build/proto_generated/ip_tracker.pb.h"
 #include "../include/data_parser.h"
-#include "../include/router.h"
+#include "../include/router_communication/request_handler.h"
+#include "../include/mail_communication/send_mail.h"
 #include <thread>
 #include <mutex>
 #include <grpc++/grpc++.h>
@@ -14,11 +15,8 @@ public:
     MainService(const std::string& ip, uint16_t port);
     ~MainService();
     void runServer();
-    void runBackgroundGetDevices();
-    void runBackgroundGetBlockedDevices();
-    std::string handleRequest(data::Request request);
-    std::string getAllDevicesResponse();
-    std::string getAllBlockedDevicesResponse();
+    void checkNewDevices();
+    void updateDevices();
     inline void shutdown() { server->Shutdown(); }
 
 private:
@@ -30,16 +28,16 @@ private:
     uint16_t port_;
     bool auth = 0;
     bool is_running_ = 1;
+    
     Parser parser_;
-    Router router_;
-    std::string router_response_get_all_;
-    std::string router_response_get_all_blocked_;
-    std::thread get_devices_thread_;
-    std::thread get_blocked_devices_thread_;
-    std::mutex get_devices_mutex_;
-    std::mutex get_blocked_devices_mutex_;
-    std::mutex request_mutex_;
+    RequestHandler request_handler_;
+    SendMail mail_;
+
+    std::thread update_devices_;
+    std::mutex devices_mutex_;
     std::vector<data::Device> devices_;
+    std::vector<data::Device> old_devices_;
+    std::vector<data::Device> new_devices_;
     std::unique_ptr<grpc::Server> server;
 
 };

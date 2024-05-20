@@ -108,7 +108,7 @@ void MainWidget::createTable() {
     layout_->addWidget(table_); 
     table_->setColumnCount(8);
 
-    table_->setHorizontalHeaderLabels(QStringList() << "ID" << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked" << "Suspect" << "Manage device");
+    table_->setHorizontalHeaderLabels(QStringList() << "ID" << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked" << "Trusted" << "Manage device");
     
 }
 
@@ -148,13 +148,13 @@ void MainWidget::populate(data::Response data) {
             }
             table_->setItem(row, 5, item_is_b);
 
-            QTableWidgetItem *item_is_s = new QTableWidgetItem(QString::fromStdString("no"));
-            item_is_s->setForeground(QColor(0, 100, 0));
-            if(device.is_suspect()){
-                item_is_s = new QTableWidgetItem(QString::fromStdString("yes"));
-                item_is_s->setForeground(Qt::red);
+            QTableWidgetItem *item_is_t = new QTableWidgetItem(QString::fromStdString("no"));
+            item_is_t->setForeground(QColor(0, 100, 0));
+            if(device.is_trusted()){
+                item_is_t = new QTableWidgetItem(QString::fromStdString("yes"));
+                item_is_t->setForeground(Qt::red);
             }
-            table_->setItem(row, 6, item_is_s);
+            table_->setItem(row, 6, item_is_t);
 
             QTableWidgetItem *item_b = new QTableWidgetItem(QString::fromStdString("Block"));
             item_b->setBackground(Qt::red);

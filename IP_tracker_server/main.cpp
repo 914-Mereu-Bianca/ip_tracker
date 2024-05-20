@@ -1,7 +1,6 @@
 #include "include/data_parser.h"
 #include "include/server.h"
-#include "include/router.h"
-#include "include/send_mail.h"
+#include "include/mail_communication/send_mail.h"
 
 #include <fstream>
 #include <sstream>

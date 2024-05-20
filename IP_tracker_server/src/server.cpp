@@ -4,23 +4,18 @@
 #include <thread>
 #include <mutex>
 
-MainService::MainService(const std::string& ip, uint16_t port) : ip_(ip), port_(port) { 
-    router_.setToken("v7~Y2s%5B3B%7Ds0riVCCdL2L%7C%2C%7DWdIu~.Am"); 
-    get_devices_thread_ = std::thread(&MainService::runBackgroundGetDevices, this);
-    get_blocked_devices_thread_ = std::thread(&MainService::runBackgroundGetBlockedDevices, this);
+MainService::MainService(const std::string& ip, uint16_t port) : ip_(ip), port_(port) {
+    update_devices_ = std::thread(&MainService::updateDevices, this);
 }
 
 MainService::~MainService() {
-    if (get_devices_thread_.joinable()) {
-        get_devices_thread_.join();
+    if(update_devices_.joinable()) {
+        update_devices_.join();
     }
-    if (get_blocked_devices_thread_.joinable()) {
-        get_blocked_devices_thread_.join();
-    }
+    request_handler_.stop();
 }
 
-grpc::Status MainService::Authenticate(grpc::ServerContext *context, const data::AuthRequest* request, data::AuthResponse* response)
-{
+grpc::Status MainService::Authenticate(grpc::ServerContext *context, const data::AuthRequest* request, data::AuthResponse* response) {
     std::cout<<request->username()<< " "<<request->password()<<std::endl;
     if (request->username() == "user" && request->password() == "password") {
       response->set_success(true);
@@ -33,65 +28,37 @@ grpc::Status MainService::Authenticate(grpc::ServerContext *context, const data:
     return grpc::Status::OK;
 }
 
-std::string MainService::handleRequest(data::Request request) {
-    if(request.request()!="")
-        std::cout<<request.request()<<std::endl<<request.name()<<std::endl<<request.mac()<<std::endl;
-    
-    std::string response = "";
 
-    if(request.request() == "Block") {
-        std::unique_lock u_lock(request_mutex_);
-        std::string name = request.name();
-        std::string mac = request.mac();
-        response = router_.blockDevice(name, mac);
-        std::cout<<response<<std::endl;
-    } else if (request.request() == "Unblock") {
-        std::unique_lock u_lock(request_mutex_);
-        std::string mac = request.mac();
-        response = router_.unblockDevice(mac);
-        std::cout<<response<<std::endl;
-    }
+grpc::Status MainService::StreamData(grpc::ServerContext *context, grpc::ServerReaderWriter<data::Response, data::Request>* stream) {
 
-    return response;
-        
-}
-
-
-grpc::Status MainService::StreamData(grpc::ServerContext *context, grpc::ServerReaderWriter<data::Response, data::Request>* stream)
-{
     data::Request request;
     data::Response response;
 
-    int i = 0;
     do {
         
         stream->Read(&request);
         
-        handleRequest(request);
+        request_handler_.handleRequest(request);
 
-        parser_.parseData(getAllDevicesResponse());
-        parser_.parseBlockedDevices(getAllBlockedDevicesResponse());
-        devices_ = parser_.getDevices();
         response.clear_devices();
 
         for(const auto &d: devices_) {
             response.add_devices()->CopyFrom(d);
         }
-        
+        // The devices are send to the client
     } while (stream->Write(response));
 
     return grpc::Status();
 }
 
-void MainService::runServer()
-{
+void MainService::runServer() {
 
     std::string server_address = ip_ + ":" + std::to_string(port_);
     
     grpc::ServerBuilder builder;
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
     builder.RegisterService(this);
-    // initialize the server declared in .h file
+    // initialize the server declared in header file
     server = builder.BuildAndStart();
     std::cout << "Server listening on " << server_address << std::endl;
 
@@ -99,44 +66,47 @@ void MainService::runServer()
 
 }
 
-void MainService::runBackgroundGetDevices() {
-    std::string response = "";
-    while(is_running_) {
+void MainService::updateDevices() {
+    // The parser gets the data from the handler 
+    // to get the devices together with information about each of them
+    std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(6));
+    std::string response;
+    while (is_running_) {
+        response = request_handler_.getAllDevicesResponse();
+        if(response != "")
+            parser_.parseData(response);
+        response = request_handler_.getAllBlockedDevicesResponse();
+        if(response != "") 
+            parser_.parseBlockedDevices(response);
 
-        std::unique_lock u_lock(request_mutex_);
-        response = router_.getAllDevices();
-        u_lock.unlock();
-
-        if(response != "failed") {
-            std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(3));
-            std::lock_guard lock(get_devices_mutex_);
-            router_response_get_all_ = response;
-        }   
+        old_devices_ = devices_;
+        devices_ = parser_.getDevices();
+        checkNewDevices();
+        std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(4));
     }
 }
 
-std::string MainService::getAllDevicesResponse() {
-    std::lock_guard lock(get_devices_mutex_);
-    return router_response_get_all_;
-}
+void MainService::checkNewDevices() {
 
-void MainService::runBackgroundGetBlockedDevices() {
-    std::string response = "";
-    while(is_running_) {
-
-        std::unique_lock u_lock(request_mutex_);
-        response = router_.getAllBlockedDevices();
-        u_lock.unlock();
-
-        if(response != "failed") {
-            std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(3));
-            std::lock_guard lock(get_blocked_devices_mutex_);
-            router_response_get_all_blocked_ = response;
-        }   
+    if(old_devices_.size() && old_devices_.size() != devices_.size()) {
+        for (const auto& newDevice : devices_) {
+            // Check if newDevice's MAC address is not in old_devices_
+            if (std::find_if(old_devices_.begin(), old_devices_.end(), 
+                            [&newDevice](const auto& oldDevice) {
+                                return oldDevice.mac_address() == newDevice.mac_address();
+                            }) == old_devices_.end()) {
+                new_devices_.push_back(newDevice);
+                std::cout<<newDevice.mac_address()<<std::endl;
+            }
+        }
+        for (const auto& device : new_devices_) {
+            data::Request request;
+            request.set_request("Block");
+            request.set_mac(device.mac_address());
+            request_handler_.handleRequest(request);
+            mail_.send();
+        }
+        new_devices_.clear();
     }
-}
 
-std::string MainService::getAllBlockedDevicesResponse() {
-    std::lock_guard lock(get_blocked_devices_mutex_);
-    return router_response_get_all_blocked_;
 }
