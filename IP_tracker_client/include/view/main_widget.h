@@ -20,20 +20,24 @@ class MainWidget: public QWidget {
 public:
     MainWidget(QMainWindow* parent=nullptr);
     ~MainWidget()=default;
+    void LoadStylesheet();
     void SetupLoginPage();
     void SetupDialogBox();
     void SetupButtonsMainPage();
 
 signals:
     void authenticate(const std::string &username, const std::string &password);
+    void saveCredentials(const std::string &username, const std::string &password, const std::string &current_password);
     void setRequest(const std::string &request, const std::string &name, const std::string &mac);
+    void setFilter(int filter_number);
 
 public slots:
     void HandleLogin();
     void onCellClicked(int row, int column);
     void populate(data::Response devices);
-    void createTable();
+    void setupMainPage();
     void displayErrorMessage(); 
+    void displayMessageDialog(const std::string &message);
     
 private:
     Q_OBJECT
@@ -50,9 +54,10 @@ private:
     QPushButton *button_save_credentials_;
     QDialog *dialog_box_;
     QVBoxLayout *dialog_box_layout_;
-    QWidget *msg_box_widget_;
     QLineEdit *new_username_;
     QLineEdit *new_password_;
+    QLineEdit *current_password_;
+    QLabel *error_label_box_;
     
     QLabel *router_ip_;
     QLabel *router_mac_;
@@ -62,6 +67,8 @@ private:
     QPushButton *button_filter_all_;
     QHBoxLayout *button_layout_;
     QTableWidget *table_;
+
+    QLatin1String *styleSheet_;
 
     bool auth = 0;
 };

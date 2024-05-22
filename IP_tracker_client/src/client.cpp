@@ -30,7 +30,6 @@ bool MainClient::Authenticate(const std::string& username, const std::string& pa
 
 void MainClient::StreamData()
 {
-    
     data::Request request;
     data::Response response;
 
@@ -58,6 +57,26 @@ void MainClient::StreamData()
     grpc::Status status = stream->Finish();
     if (!status.ok()) {
         std::cerr << status.error_code() << ": " << status.error_message() << std::endl;
+    }
+}
+
+data::OperationResponse MainClient::ChangeCredentials(const std::string& username, const std::string& password, const std::string& current_password) {
+    data::NewCredentials request;
+    request.set_username(username);
+    request.set_password(password);
+    request.set_old_password(current_password);
+
+    data::OperationResponse response;
+    grpc::ClientContext context;
+
+    grpc::Status status = _stub->ChangeCredentials(&context, request, &response);
+
+    if (status.ok()) {
+      std::cout << "RPC send successfully: " << response.message() << std::endl;
+      return response;
+    } else {
+      std::cout << "RPC failed: " << status.error_message() << std::endl;
+      return response;
     }
 }
 

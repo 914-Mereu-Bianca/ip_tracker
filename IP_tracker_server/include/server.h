@@ -13,7 +13,7 @@
 
 class MainService : public data::IPService::Service {
 public:
-    MainService(const std::string& ip, uint16_t port);
+    MainService(const std::string& ip, uint16_t port, Admin admin);
     ~MainService();
     void runServer();
     void checkNewDevices();
@@ -24,6 +24,7 @@ private:
 
     grpc::Status StreamData(grpc::ServerContext* context, grpc::ServerReaderWriter<data::Response, data::Request>* stream) override;
     grpc::Status Authenticate(grpc::ServerContext* context, const data::Credentials* request, data::OperationResponse* response) override;
+    grpc::Status ChangeCredentials(grpc::ServerContext* context, const data::NewCredentials* request, data::OperationResponse* response) override;
 
     std::string ip_;
     uint16_t port_;

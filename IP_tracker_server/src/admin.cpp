@@ -4,8 +4,9 @@
 #include <fstream>
 #include <iostream>
 
-Admin::Admin() {
-    std::ifstream file("../utils/credentials.txt");
+Admin::Admin(const std::string &file_name) {
+    file_name_ = file_name;
+    std::ifstream file(file_name_);
     if (file.is_open()) {
         std::getline(file, username_hashed_);
         std::getline(file, password_hashed_);
@@ -16,7 +17,6 @@ Admin::Admin() {
     }
 }
 
-
 std::string Admin::computeHash(const std::string &credential) {
     EVP_MD_CTX *mdctx;
     const EVP_MD *md;
@@ -25,7 +25,6 @@ std::string Admin::computeHash(const std::string &credential) {
 
     OpenSSL_add_all_digests();
 
-    // Using SHA-256 hash function
     md = EVP_get_digestbyname("sha256");
 
     mdctx = EVP_MD_CTX_new();
@@ -34,9 +33,8 @@ std::string Admin::computeHash(const std::string &credential) {
     EVP_DigestFinal_ex(mdctx, hash, &hashLen);
     EVP_MD_CTX_free(mdctx);
 
-    // Convert hash to hexadecimal representation
     std::string hashedCredential;
-    char hexBuffer[3]; // Two characters for each byte plus null terminator
+    char hexBuffer[3]; 
     for(int i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
         sprintf(hexBuffer, "%02x", hash[i]);
         hashedCredential.append(hexBuffer);
@@ -46,7 +44,7 @@ std::string Admin::computeHash(const std::string &credential) {
 
 void Admin::saveCredentials(const std::string &username, const std::string &password)
 {
-    std::ofstream file("../utils/credentials.txt");
+    std::ofstream file(file_name_);
     username_hashed_ = computeHash(username);
     password_hashed_ = computeHash(password);
     if (file.is_open()) {

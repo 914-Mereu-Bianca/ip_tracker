@@ -4,7 +4,7 @@
 #include <thread>
 #include <mutex>
 
-MainService::MainService(const std::string& ip, uint16_t port) : ip_(ip), port_(port) {
+MainService::MainService(const std::string& ip, uint16_t port, Admin admin) : ip_(ip), port_(port), admin_(admin) {
     update_devices_ = std::thread(&MainService::updateDevices, this);
 }
 
@@ -30,6 +30,25 @@ grpc::Status MainService::Authenticate(grpc::ServerContext *context, const data:
     return grpc::Status::OK;
 }
 
+grpc::Status MainService::ChangeCredentials(grpc::ServerContext *context, const data::NewCredentials* request, data::OperationResponse* response) {
+    std::cout<<request->username()<< " "<<request->password()<<" " <<request->old_password()<<std::endl;
+
+    if (request->password() != "") {
+        if(admin_.computeHash(request->old_password()) == admin_.getPasswordHashed()) {
+            admin_.saveCredentials(request->username(), request->password());
+            response->set_success(true);
+            response->set_message("Success");
+        } else {
+            response->set_success(false);
+            response->set_message("Wrong current password");
+        }
+    } else {
+        response->set_success(false);
+        response->set_message("New password cannot be empty!");
+    }
+    
+    return grpc::Status::OK;
+}
 
 grpc::Status MainService::StreamData(grpc::ServerContext *context, grpc::ServerReaderWriter<data::Response, data::Request>* stream) {
 

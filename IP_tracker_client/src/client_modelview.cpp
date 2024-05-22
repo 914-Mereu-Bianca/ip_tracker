@@ -8,10 +8,13 @@ ClientView::ClientView(QWidget *parent) : QObject(parent)
     main_widget_ = new MainWidget(main_window_);
     
     connect(this, &ClientView::populateTable, main_widget_, &MainWidget::populate);
-    connect(this, &ClientView::createTableAndClear, main_widget_, &MainWidget::createTable);
+    connect(this, &ClientView::setupMainPage, main_widget_, &MainWidget::setupMainPage);
     connect(this, &ClientView::displayErrorMessage, main_widget_, &MainWidget::displayErrorMessage);
+    connect(this, &ClientView::displayMessageDialog, main_widget_, &MainWidget::displayMessageDialog);
     connect(main_widget_, &MainWidget::authenticate, this, &ClientView::authenticate);
     connect(main_widget_, &MainWidget::setRequest, this, &ClientView::setRequest);
+    connect(main_widget_, &MainWidget::setFilter, this, &ClientView::setFilter);
+    connect(main_widget_, &MainWidget::saveCredentials, this, &ClientView::saveCredentials);
 
     main_window_->show();
 }
@@ -21,7 +24,7 @@ void ClientView::authenticate(const std::string &username, const std::string &pa
 {   
     authenticated = client_->Authenticate(username, password);
     if (authenticated) {
-        emit createTableAndClear();
+        emit setupMainPage();
         auth_mutex_.unlock();
     }else {
         emit displayErrorMessage();
@@ -29,8 +32,42 @@ void ClientView::authenticate(const std::string &username, const std::string &pa
     
 }
 
+void ClientView::saveCredentials(const std::string &username, const std::string &password, const std::string &current_password) {
+    std::cout<<username<<" "<<password<<" " <<current_password<<std::endl;
+    auto response = client_->ChangeCredentials(username, password, current_password);
+    emit displayMessageDialog(response.message());
+}
+
 void ClientView::setRequest(const std::string &request, const std::string &name, const std::string &mac) {
     client_->setRequest(request, name, mac);
+}
+
+void ClientView::setFilter(int filter_number) {
+    filter_number_ = filter_number;
+}
+
+data::Response ClientView::filterDevices(data::Response devices) {
+    if(filter_number_ == 0)  return devices;
+
+    data::Response filteredDevices;
+    // copy the first device which contains the router's info and filter the rest
+    filteredDevices.add_devices()->CopyFrom(devices.devices()[0]);
+    
+    if (filter_number_ == 1) {
+        for (auto it = devices.devices().begin() + 1; it != devices.devices().end(); ++it) {
+            if ((*it).is_online()) {
+                filteredDevices.add_devices()->CopyFrom(*it);
+            }
+        }
+    }
+    else if (filter_number_ == 2 ) {
+        for (auto it = devices.devices().begin() + 1; it != devices.devices().end(); ++it) {
+            if ((*it).is_blocked()) {
+                filteredDevices.add_devices()->CopyFrom(*it);
+            }
+        }
+    }
+    return filteredDevices;
 }
 
 void ClientView::startApplication() {
@@ -40,7 +77,7 @@ void ClientView::startApplication() {
 
     while(client_->isRunning()) {
         data::Response devices = client_->getDevices();
-        emit populateTable(devices);
+        emit populateTable(filterDevices(devices));
         std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(1));
     }
 

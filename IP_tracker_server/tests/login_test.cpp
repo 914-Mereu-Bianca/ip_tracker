@@ -32,7 +32,8 @@ private:
 
 
 TEST(ServerAuthenticationTest, Test) {
-    MainService test_server("0.0.0.0", 50052); 
+    Admin admin("../../utils/credentials.txt");
+    MainService test_server("0.0.0.0", 50052, admin); 
     std::thread thread = std::thread([&test_server]() {
         test_server.runServer();
     });

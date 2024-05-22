@@ -5,7 +5,8 @@ package data;
 service IPService {
     rpc StreamData (stream Request) returns (stream Response) {}
     rpc Authenticate(Credentials) returns (OperationResponse) {}
-    rpc ChangeCredentials(Credentials) returns (OperationResponse) {}
+    rpc ChangeCredentials(NewCredentials) returns (OperationResponse) {}
+    rpc ChangeEmail(Email) returns (OperationResponse) {}
 }
 
 message Request {
@@ -30,6 +31,17 @@ message Device {
 
 message Credentials {
   string username = 1;
+  string password = 2;
+}
+
+message NewCredentials {
+  string username = 1;
+  string password = 2;
+  string old_password = 3;
+}
+
+message Email {
+  string email = 1;
   string password = 2;
 }
 

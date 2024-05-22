@@ -1,0 +1,33 @@
+QWidget {
+    background-color: rgb(182, 197, 219);
+}
+
+QLineEdit { 
+    height: 30px; 
+    border: 1px solid rgb(37, 39, 48); 
+    border-radius: 15px; 
+    padding-left: 10px;
+}
+
+QLineEdit:hover { 
+    border-color: rgb(129, 140, 140);
+}
+
+QLineEdit:focus { 
+    border-color: rgb(0, 120, 215);
+}
+
+QPushButton { 
+    height: 30px; 
+    background-color: rgb(37, 39, 48); 
+    color: rgb(255, 255, 255); 
+    border-radius: 15px; 
+}
+    
+QPushButton:hover { 
+    background-color: rgb(129, 140, 140);
+}
+
+QPushButton:focus { 
+    background-color: rgb(0, 120, 215);
+}

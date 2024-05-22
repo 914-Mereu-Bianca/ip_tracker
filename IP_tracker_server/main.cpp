@@ -8,8 +8,8 @@
 #include <memory>
 
 int main() {
-
-    MainService server("0.0.0.0", 50051); 
+    Admin admin("../utils/credentials.txt");
+    MainService server("0.0.0.0", 50051, admin); 
     server.runServer();
 
     return 0;

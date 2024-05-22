@@ -23,16 +23,20 @@ public:
     // This function allows the client to authenticate to the server
     void startApplication();
     void runClient();
+    data::Response filterDevices(data::Response devices);
     ~ClientView();
 
 signals:
     void populateTable(data::Response data);
-    void createTableAndClear();
+    void setupMainPage();
     void displayErrorMessage();
+    void displayMessageDialog(const std::string &message);
 
 public slots:
     void authenticate(const std::string &username, const std::string &password);
+    void saveCredentials(const std::string &username, const std::string &password, const std::string &current_password);
     void setRequest(const std::string &request, const std::string &name, const std::string &mac);
+    void setFilter(int filter_number);
 
 private:
     MainWindow* main_window_;
@@ -42,6 +46,7 @@ private:
     std::thread main_thread_;
     std::mutex auth_mutex_;
     bool authenticated = 0;
+    int filter_number_ = 0;
 };
 
 #endif
