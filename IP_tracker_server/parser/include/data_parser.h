@@ -1,8 +1,8 @@
 #ifndef _PARSER_H_
 #define _PARSER_H_
 
-#include "../build/proto_generated/ip_tracker.grpc.pb.h"
-#include "../build/proto_generated/ip_tracker.pb.h"
+#include "../../build/proto_generated/ip_tracker.grpc.pb.h"
+#include "../../build/proto_generated/ip_tracker.pb.h"
 #include <string>
 #include <fstream>
 

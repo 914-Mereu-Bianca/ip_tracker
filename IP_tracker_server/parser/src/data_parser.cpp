@@ -126,20 +126,38 @@ void Parser::parseMacBlocked(const std::string &string) {
     line = line.substr(0, line.find('\n') + 1);
 
     int n = 0;
-
+    data::Device blocked_device;
     while(line.substr(6, 17) != "00-00-00-00-00-00" && line.substr(7, 17) != "00-00-00-00-00-00" && n < 96) {
+        bool found = 0;
         if(n < 10){
             for(auto &d: devices_){
-                if(d.mac_address() == line.substr(6, 17))
+                if(d.mac_address() == line.substr(6, 17)) {
                     d.set_is_blocked(1);
+                    found = 1;
+                }
+            }
+            if (!found) {
+                blocked_device.set_id(devices_.size());
+                blocked_device.set_mac_address(line.substr(6, 17));
+                blocked_device.set_is_blocked(1);
+                devices_.push_back(blocked_device);
             }
         }
         else {
             for(auto &d: devices_){
-                if(d.mac_address() == line.substr(7, 17))
+                if(d.mac_address() == line.substr(7, 17)) {
                     d.set_is_blocked(1);
+                    found = 1;
+                }
+            }
+            if (!found) {
+                blocked_device.set_id(devices_.size());
+                blocked_device.set_mac_address(line.substr(7, 17));
+                blocked_device.set_is_blocked(1);
+                devices_.push_back(blocked_device);
             }
         }
+        
         
         // go to the next mac address
         pos += line.find('\n') + 1;

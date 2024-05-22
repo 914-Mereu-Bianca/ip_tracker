@@ -15,6 +15,7 @@ ClientView::ClientView(QWidget *parent) : QObject(parent)
     connect(main_widget_, &MainWidget::setRequest, this, &ClientView::setRequest);
     connect(main_widget_, &MainWidget::setFilter, this, &ClientView::setFilter);
     connect(main_widget_, &MainWidget::saveCredentials, this, &ClientView::saveCredentials);
+    connect(main_widget_, &MainWidget::saveEmail, this, &ClientView::saveEmail);
 
     main_window_->show();
 }
@@ -35,6 +36,12 @@ void ClientView::authenticate(const std::string &username, const std::string &pa
 void ClientView::saveCredentials(const std::string &username, const std::string &password, const std::string &current_password) {
     std::cout<<username<<" "<<password<<" " <<current_password<<std::endl;
     auto response = client_->ChangeCredentials(username, password, current_password);
+    emit displayMessageDialog(response.message());
+}
+
+void ClientView::saveEmail(const std::string &email, const std::string &current_password) {
+    std::cout<<email<<" " <<current_password<<std::endl;
+    auto response = client_->ChangeEmail(email, current_password);
     emit displayMessageDialog(response.message());
 }
 

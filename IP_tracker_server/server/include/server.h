@@ -1,11 +1,11 @@
 #ifndef _SERVER_H_
 #define _SERVER_H_
 
-#include "../build/proto_generated/ip_tracker.grpc.pb.h"
-#include "../build/proto_generated/ip_tracker.pb.h"
-#include "../include/router_communication/request_handler.h"
-#include "../include/mail_communication/send_mail.h"
-#include "../include/data_parser.h"
+#include "../../build/proto_generated/ip_tracker.grpc.pb.h"
+#include "../../build/proto_generated/ip_tracker.pb.h"
+#include "../../router_communication/include/request_handler.h"
+#include "../../mail_communication/include/send_mail.h"
+#include "../../parser/include/data_parser.h"
 #include "../include/admin.h"
 #include <thread>
 #include <mutex>
@@ -25,6 +25,7 @@ private:
     grpc::Status StreamData(grpc::ServerContext* context, grpc::ServerReaderWriter<data::Response, data::Request>* stream) override;
     grpc::Status Authenticate(grpc::ServerContext* context, const data::Credentials* request, data::OperationResponse* response) override;
     grpc::Status ChangeCredentials(grpc::ServerContext* context, const data::NewCredentials* request, data::OperationResponse* response) override;
+    grpc::Status ChangeEmail(grpc::ServerContext* context, const data::Email* request, data::OperationResponse* response) override;
 
     std::string ip_;
     uint16_t port_;

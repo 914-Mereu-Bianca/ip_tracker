@@ -21,6 +21,7 @@ public:
     void StreamData();
     bool Authenticate(const std::string& username, const std::string& password);
     data::OperationResponse ChangeCredentials(const std::string& username, const std::string& password, const std::string& current_password);
+    data::OperationResponse ChangeEmail(const std::string& email, const std::string& password);
     inline bool isAuth() { return is_auth_; }
     inline void setAuth(bool auth) { is_auth_ = auth; }
     inline void Stop() { is_running_ = 0; }

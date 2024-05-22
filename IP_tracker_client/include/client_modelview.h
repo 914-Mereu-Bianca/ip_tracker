@@ -35,6 +35,7 @@ signals:
 public slots:
     void authenticate(const std::string &username, const std::string &password);
     void saveCredentials(const std::string &username, const std::string &password, const std::string &current_password);
+    void saveEmail(const std::string &email, const std::string &current_password);
     void setRequest(const std::string &request, const std::string &name, const std::string &mac);
     void setFilter(int filter_number);
 

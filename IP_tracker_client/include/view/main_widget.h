@@ -23,11 +23,13 @@ public:
     void LoadStylesheet();
     void SetupLoginPage();
     void SetupDialogBox();
+    void SetupEmailDialogBox();
     void SetupButtonsMainPage();
 
 signals:
     void authenticate(const std::string &username, const std::string &password);
     void saveCredentials(const std::string &username, const std::string &password, const std::string &current_password);
+    void saveEmail(const std::string &email, const std::string &current_password);
     void setRequest(const std::string &request, const std::string &name, const std::string &mac);
     void setFilter(int filter_number);
 
@@ -51,14 +53,23 @@ private:
     QLabel *error_label_;
     
     QPushButton *admin_button_;
-    QPushButton *button_save_credentials_;
+    
     QDialog *dialog_box_;
     QVBoxLayout *dialog_box_layout_;
     QLineEdit *new_username_;
     QLineEdit *new_password_;
     QLineEdit *current_password_;
+    QPushButton *button_save_credentials_;
     QLabel *error_label_box_;
     
+    QPushButton *change_email_button_;
+    QDialog *dialog_box_email_;
+    QVBoxLayout *dialog_box_layout_email_;
+    QLineEdit *new_email_;
+    QLineEdit *current_password_email_;
+    QPushButton *button_save_email_;
+    QLabel *error_label_box_email_;
+
     QLabel *router_ip_;
     QLabel *router_mac_;
 

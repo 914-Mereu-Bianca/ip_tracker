@@ -11,6 +11,8 @@ find_package(Threads REQUIRED)
 
 find_package(CURL REQUIRED)
 
+find_package(SQLite3 REQUIRED)
+
 # Find Protobuf installation
 # Looks for protobuf-config.cmake file installed by Protobuf's cmake installation.
 option(protobuf_MODULE_COMPATIBLE TRUE)
@@ -86,22 +88,24 @@ target_link_libraries(GrpcProtoLib
 set(
   PROJECT_SOURCES
   main.cpp
-  src/data_parser.cpp
-  src/server.cpp
-  src/admin.cpp
-  src/router_communication/router.cpp
-  src/router_communication/request_handler.cpp
-  src/mail_communication/send_mail.cpp
+  parser/src/data_parser.cpp
+  server/src/server.cpp
+  server/src/admin.cpp
+  router_communication/src/router.cpp
+  router_communication/src/request_handler.cpp
+  mail_communication/src/send_mail.cpp
+  database/src/sql_connector.cpp
 )
 
 # Sets the project headers file
 set(PROJECT_HEADERS
-  include/data_parser.h
-  include/server.h
-  include/admin.h
-  include/router_communication/router.h
-  include/router_communication/request_handler.h
-  include/mail_communication/send_mail.h
+  parser/include/data_parser.h
+  server/include/server.h
+  server/include/admin.h
+  router_communication/include/router.h
+  router_communication/include/request_handler.h
+  mail_communication/include/send_mail.h
+  database/include/sql_connector.h
 ) 
 
 add_executable(
@@ -119,6 +123,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF}
   ${CURL_LIBRARIES}
+  SQLite::SQLite3
 )
 
 add_subdirectory(tests)

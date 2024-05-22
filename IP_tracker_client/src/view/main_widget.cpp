@@ -78,6 +78,7 @@ void MainWidget::setupMainPage() {
     SetupButtonsMainPage();
     // Design and add the admin button
     layout_->addWidget(admin_button_, 0, Qt::AlignRight);
+    layout_->addWidget(change_email_button_, 0, Qt::AlignRight);
 
     // Add the labels for the router's information
     router_ip_ = new QLabel("Router's IP address:", this);
@@ -92,6 +93,21 @@ void MainWidget::setupMainPage() {
     layout_->addLayout(button_layout_);
 
     SetupDialogBox();
+    connect(admin_button_, &QPushButton::clicked, [&]() {
+        dialog_box_->exec();
+    });
+    connect(button_save_credentials_, &QPushButton::clicked, [&]() {
+        emit saveCredentials(new_username_->text().toStdString().c_str(), new_password_->text().toStdString().c_str(), current_password_->text().toStdString().c_str());
+    });
+
+    SetupEmailDialogBox();
+    connect(change_email_button_, &QPushButton::clicked, [&]() {
+        dialog_box_email_->exec();
+    });
+    connect(button_save_email_, &QPushButton::clicked, [&]() {
+        emit saveEmail(new_email_->text().toStdString().c_str(), current_password_->text().toStdString().c_str());
+    });
+
     // Desgin and add the table
     table_ = new QTableWidget;
     layout_->addWidget(table_); 
@@ -134,13 +150,34 @@ void MainWidget::SetupDialogBox() {
     error_label_box_ = new QLabel("Error", this);
     error_label_box_->setStyleSheet("color: rgb(235, 235, 235);");
     dialog_box_layout_->addWidget(error_label_box_, 0, Qt::AlignCenter);
+}
 
-    connect(admin_button_, &QPushButton::clicked, [&]() {
-        dialog_box_->exec();
-    });
-    connect(button_save_credentials_, &QPushButton::clicked, [&]() {
-        emit saveCredentials(new_username_->text().toStdString().c_str(), new_password_->text().toStdString().c_str(), current_password_->text().toStdString().c_str());
-    });
+void MainWidget::SetupEmailDialogBox() {
+    dialog_box_email_ = new QDialog(this);
+    dialog_box_email_->setWindowTitle("New Email");
+    dialog_box_layout_email_ = new QVBoxLayout(dialog_box_email_);
+
+    new_email_ = new QLineEdit;
+    new_email_->setFixedWidth(240);
+    new_email_->setPlaceholderText("New Email");
+    new_email_->setStyleSheet("QLineEdit { height: 30px; background-color: white; border: 1px solid rgb(37, 39, 48); border-radius: 15px; padding-left: 10px; } QLineEdit:hover { border-color: rgb(129, 140, 140);}");
+    dialog_box_layout_email_->addWidget(new_email_);
+
+    current_password_email_ = new QLineEdit;
+    current_password_email_->setFixedWidth(240);
+    current_password_email_->setEchoMode(QLineEdit::Password);
+    current_password_email_->setPlaceholderText("Current Password");
+    current_password_email_->setStyleSheet("QLineEdit { height: 30px; background-color: white; border: 1px solid rgb(37, 39, 48); border-radius: 15px; padding-left: 10px; } QLineEdit:hover { border-color: rgb(129, 140, 140);}");
+    dialog_box_layout_email_->addWidget(current_password_email_);
+
+    button_save_email_ = new QPushButton("Save");
+    button_save_email_->setFixedWidth(100);
+    button_save_email_->setStyleSheet("QPushButton { height: 30px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 15px; } QPushButton:hover { background-color: rgb(129, 140, 140);}");
+    dialog_box_layout_email_->addWidget(button_save_email_, 0, Qt::AlignCenter);
+
+    error_label_box_email_ = new QLabel("Error", this);
+    error_label_box_email_->setStyleSheet("color: rgb(235, 235, 235);");
+    dialog_box_layout_email_->addWidget(error_label_box_email_, 0, Qt::AlignCenter);
 }
 
 void MainWidget::displayMessageDialog(const std::string &message) {
@@ -157,8 +194,10 @@ void MainWidget::SetupButtonsMainPage() {
     button_filter_all_ = new QPushButton("All devices", this);
     button_filter_online_ = new QPushButton("Online Devices", this);  
     button_filter_blocked_ = new QPushButton("Blocked Devices", this);  
-    admin_button_ = new QPushButton("Admin", this);
-    admin_button_->setFixedWidth(100);
+    admin_button_ = new QPushButton("Change Credentials", this);
+    admin_button_->setFixedWidth(200);
+    change_email_button_ = new QPushButton("Change Email", this);
+    change_email_button_->setFixedWidth(200);
     connect(button_filter_all_, &QPushButton::clicked, [&]() {
         emit setFilter(0);
     });

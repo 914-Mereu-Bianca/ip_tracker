@@ -1,4 +1,4 @@
-#include "../../include/router_communication/request_handler.h"
+#include "../include/request_handler.h"
 
 #include <curl/curl.h>
 #include <thread>
@@ -7,7 +7,7 @@
 
 RequestHandler::RequestHandler()
 {
-    router_.setToken("hH5Opd%7BGE8he5rxvGo%5Di%24VC%3E)L1C0i%7B("); 
+    router_.setToken("f4DQr2oGB%2C5.4r%2C%2C%2BDVW(KNAv%24C%2Cvo%2CC"); 
     get_devices_thread_ = std::thread(&RequestHandler::runBackgroundGetDevices, this);
     get_blocked_devices_thread_ = std::thread(&RequestHandler::runBackgroundGetBlockedDevices, this);
 }

@@ -31,8 +31,6 @@ grpc::Status MainService::Authenticate(grpc::ServerContext *context, const data:
 }
 
 grpc::Status MainService::ChangeCredentials(grpc::ServerContext *context, const data::NewCredentials* request, data::OperationResponse* response) {
-    std::cout<<request->username()<< " "<<request->password()<<" " <<request->old_password()<<std::endl;
-
     if (request->password() != "") {
         if(admin_.computeHash(request->old_password()) == admin_.getPasswordHashed()) {
             admin_.saveCredentials(request->username(), request->password());
@@ -46,7 +44,23 @@ grpc::Status MainService::ChangeCredentials(grpc::ServerContext *context, const 
         response->set_success(false);
         response->set_message("New password cannot be empty!");
     }
-    
+    return grpc::Status::OK;
+}
+
+grpc::Status MainService::ChangeEmail(grpc::ServerContext *context, const data::Email* request, data::OperationResponse* response) {
+    if (request->email() != "") {
+        if(admin_.computeHash(request->password()) == admin_.getPasswordHashed()) {
+            // save mail
+            response->set_success(true);
+            response->set_message("Success");
+        } else {
+            response->set_success(false);
+            response->set_message("Wrong password");
+        }
+    } else {
+        response->set_success(false);
+        response->set_message("Wrong email format!");
+    }
     return grpc::Status::OK;
 }
 
@@ -96,8 +110,9 @@ void MainService::updateDevices() {
         if(response != "")
             parser_.parseData(response);
         response = request_handler_.getAllBlockedDevicesResponse();
-        if(response != "") 
+        if(response != "") {
             parser_.parseBlockedDevices(response);
+        }
 
         old_devices_ = devices_;
         devices_ = parser_.getDevices();

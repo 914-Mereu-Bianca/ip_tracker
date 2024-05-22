@@ -80,6 +80,25 @@ data::OperationResponse MainClient::ChangeCredentials(const std::string& usernam
     }
 }
 
+data::OperationResponse MainClient::ChangeEmail(const std::string& email, const std::string& password) {
+    data::Email request;
+    request.set_email(email);
+    request.set_password(password);
+
+    data::OperationResponse response;
+    grpc::ClientContext context;
+
+    grpc::Status status = _stub->ChangeEmail(&context, request, &response);
+
+    if (status.ok()) {
+      std::cout << "RPC send successfully: " << response.message() << std::endl;
+      return response;
+    } else {
+      std::cout << "RPC failed: " << status.error_message() << std::endl;
+      return response;
+    }
+}
+
 void MainClient::runClient() {
     read_data_thread_ = std::thread(&MainClient::StreamData, this);
 }
