@@ -55,3 +55,11 @@ void Admin::saveCredentials(const std::string &username, const std::string &pass
         std::cerr << "Unable to open file" << std::endl;
     }
 }
+
+bool Admin::checkUsername(const std::string &username) {
+    return computeHash(username) == username_hashed_;
+}
+
+bool Admin::checkPassword(const std::string &password) {
+    return computeHash(password) == password_hashed_;
+}

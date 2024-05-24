@@ -1,5 +1,5 @@
-#ifndef _REQUEST_HANDLER_H_
-#define _REQUEST_HANDLER_H_
+#ifndef _ROUTER_CONTROLLER_H_
+#define _ROUTER_CONTROLLER_H_
 
 #include <string>
 #include <curl/curl.h>
@@ -9,12 +9,12 @@
 #include "../../build/proto_generated/ip_tracker.grpc.pb.h"
 #include "../../build/proto_generated/ip_tracker.pb.h"
 
-class RequestHandler {
+class RouterController {
 
 public:
 
-    RequestHandler();
-    ~RequestHandler();
+    RouterController();
+    ~RouterController();
     void runBackgroundGetDevices();
     void runBackgroundGetBlockedDevices();
     std::string handleRequest(data::Request request);
@@ -36,4 +36,4 @@ private:
 
 };
 
-#endif //_REQUEST_HANDLER_H_
+#endif //_ROUTER_CONTROLLER_H_

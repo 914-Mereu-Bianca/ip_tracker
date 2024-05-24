@@ -90,9 +90,10 @@ set(
   main.cpp
   parser/src/data_parser.cpp
   server/src/server.cpp
+  server/src/server_controller.cpp
   server/src/admin.cpp
   router_communication/src/router.cpp
-  router_communication/src/request_handler.cpp
+  router_communication/src/router_controller.cpp
   mail_communication/src/send_mail.cpp
   database/src/sql_connector.cpp
 )
@@ -102,8 +103,9 @@ set(PROJECT_HEADERS
   parser/include/data_parser.h
   server/include/server.h
   server/include/admin.h
+  server/include/server_controller.h
   router_communication/include/router.h
-  router_communication/include/request_handler.h
+  router_communication/include/router_controller.h
   mail_communication/include/send_mail.h
   database/include/sql_connector.h
 ) 

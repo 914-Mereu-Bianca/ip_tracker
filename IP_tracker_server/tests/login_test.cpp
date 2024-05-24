@@ -1,10 +1,11 @@
 #include <gtest/gtest.h>
 #include "../router_communication/src/router.cpp"
-#include "../router_communication/src/request_handler.cpp"
+#include "../router_communication/src/router_controller.cpp"
 #include "../mail_communication/src/send_mail.cpp"
 #include "../parser/src/data_parser.cpp"
 #include "../server/src/admin.cpp"
 #include "../server/src/server.cpp"
+#include "../server/src/server_controller.cpp"
 
 class FakeClient {
 public:

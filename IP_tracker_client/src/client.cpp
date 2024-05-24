@@ -83,6 +83,7 @@ data::OperationResponse MainClient::ChangeCredentials(const std::string& usernam
 data::OperationResponse MainClient::ChangeEmail(const std::string& email, const std::string& password) {
     data::Email request;
     request.set_email(email);
+    std::cout<<password<<std::endl;
     request.set_password(password);
 
     data::OperationResponse response;

@@ -1,6 +1,7 @@
 #include "server/include/server.h"
 #include "server/include/admin.h"
 #include "database/include/sql_connector.h"
+#include "mail_communication/include/send_mail.h"
 #include <fstream>
 #include <sstream>
 #include <memory>
@@ -12,7 +13,7 @@ int main() {
     server.runServer();
 
     /*SqlConnector sc;
-    sc.dropTable("DEVICE");
+    //sc.dropTable("DEVICE");
     sc.createTable("DEVICE");
     data::Device d;
     d.set_id(0);
@@ -24,5 +25,8 @@ int main() {
     d.set_is_trusted(1);
     sc.addDevice(d);
     sc.getDevices();*/
+
+    /*SendMail sm;
+    sm.send();*/
     
 }

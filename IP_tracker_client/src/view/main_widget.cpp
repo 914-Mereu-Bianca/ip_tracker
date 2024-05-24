@@ -12,7 +12,8 @@
 #include <QFile>
 
 MainWidget::MainWidget(QMainWindow *parent)
-        :QWidget(parent) {
+        :QWidget(parent),
+        credentialsDialog_(new CredentialsDialog(this)) {
 
     layout_ = new QVBoxLayout;
     central_widget_ = new QWidget;
@@ -22,6 +23,9 @@ MainWidget::MainWidget(QMainWindow *parent)
 
     LoadStylesheet();
     SetupLoginPage();
+
+    connect(credentialsDialog_, &CredentialsDialog::saveCredentials, this, &MainWidget::saveCredentials);
+    connect(this, &MainWidget::displayMessageDialogCredentials, credentialsDialog_, &CredentialsDialog::displayMessageDialogCredentials);
 }
 
 void MainWidget::LoadStylesheet() {
@@ -92,20 +96,14 @@ void MainWidget::setupMainPage() {
     button_layout_->addWidget(button_filter_blocked_);
     layout_->addLayout(button_layout_);
 
-    SetupDialogBox();
-    connect(admin_button_, &QPushButton::clicked, [&]() {
-        dialog_box_->exec();
-    });
-    connect(button_save_credentials_, &QPushButton::clicked, [&]() {
-        emit saveCredentials(new_username_->text().toStdString().c_str(), new_password_->text().toStdString().c_str(), current_password_->text().toStdString().c_str());
-    });
+    connect(admin_button_, &QPushButton::clicked, credentialsDialog_, &QDialog::exec);
 
     SetupEmailDialogBox();
     connect(change_email_button_, &QPushButton::clicked, [&]() {
         dialog_box_email_->exec();
     });
     connect(button_save_email_, &QPushButton::clicked, [&]() {
-        emit saveEmail(new_email_->text().toStdString().c_str(), current_password_->text().toStdString().c_str());
+        emit saveEmail(new_email_->text().toStdString().c_str(), current_password_email_->text().toStdString().c_str());
     });
 
     // Desgin and add the table
@@ -115,41 +113,6 @@ void MainWidget::setupMainPage() {
     table_->setHorizontalHeaderLabels(QStringList() << "ID" << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked" << "Trusted" << "Manage device");
     table_->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     connect(table_, &QTableWidget::cellClicked, this, &MainWidget::onCellClicked);
-}
-
-void MainWidget::SetupDialogBox() {
-    dialog_box_ = new QDialog(this);
-    dialog_box_->setWindowTitle("New Credentials");
-    dialog_box_layout_ = new QVBoxLayout(dialog_box_);
-
-    new_username_ = new QLineEdit;
-    new_username_->setFixedWidth(240);
-    new_username_->setPlaceholderText("New Username");
-    new_username_->setStyleSheet("QLineEdit { height: 30px; background-color: white; border: 1px solid rgb(37, 39, 48); border-radius: 15px; padding-left: 10px; } QLineEdit:hover { border-color: rgb(129, 140, 140);}");
-    dialog_box_layout_->addWidget(new_username_);
-
-    new_password_ = new QLineEdit;
-    new_password_->setFixedWidth(240);
-    new_password_->setEchoMode(QLineEdit::Password);
-    new_password_->setPlaceholderText("New Password");
-    new_password_->setStyleSheet("QLineEdit { height: 30px; background-color: white; border: 1px solid rgb(37, 39, 48); border-radius: 15px; padding-left: 10px; } QLineEdit:hover { border-color: rgb(129, 140, 140);}");
-    dialog_box_layout_->addWidget(new_password_);
-
-    current_password_ = new QLineEdit;
-    current_password_->setFixedWidth(240);
-    current_password_->setEchoMode(QLineEdit::Password);
-    current_password_->setPlaceholderText("Current Password");
-    current_password_->setStyleSheet("QLineEdit { height: 30px; background-color: white; border: 1px solid rgb(37, 39, 48); border-radius: 15px; padding-left: 10px; } QLineEdit:hover { border-color: rgb(129, 140, 140);}");
-    dialog_box_layout_->addWidget(current_password_);
-
-    button_save_credentials_ = new QPushButton("Save");
-    button_save_credentials_->setFixedWidth(100);
-    button_save_credentials_->setStyleSheet("QPushButton { height: 30px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 15px; } QPushButton:hover { background-color: rgb(129, 140, 140);}");
-    dialog_box_layout_->addWidget(button_save_credentials_, 0, Qt::AlignCenter);
-
-    error_label_box_ = new QLabel("Error", this);
-    error_label_box_->setStyleSheet("color: rgb(235, 235, 235);");
-    dialog_box_layout_->addWidget(error_label_box_, 0, Qt::AlignCenter);
 }
 
 void MainWidget::SetupEmailDialogBox() {
@@ -180,11 +143,11 @@ void MainWidget::SetupEmailDialogBox() {
     dialog_box_layout_email_->addWidget(error_label_box_email_, 0, Qt::AlignCenter);
 }
 
-void MainWidget::displayMessageDialog(const std::string &message) {
-    error_label_box_->setText(QString::fromStdString(message));
-    error_label_box_->setStyleSheet("color: red;");
+void MainWidget::displayMessageDialogEmail(const std::string &message) {
+    error_label_box_email_->setText(QString::fromStdString(message));
+    error_label_box_email_->setStyleSheet("color: red;");
     QTimer::singleShot(1500, [=]() {
-        error_label_box_->setStyleSheet("color: rgb(235, 235, 235);");
+        error_label_box_email_->setStyleSheet("color: rgb(235, 235, 235);");
     });
 }
 
@@ -221,7 +184,7 @@ void MainWidget::onCellClicked(int row, int column) {
     }
 }
 
-void MainWidget::displayErrorMessage() {
+void MainWidget::displayErrorMessageLogin() {
     error_label_->setStyleSheet("QLabel { color: red; }");
     QTimer::singleShot(1500, [=]() {
         error_label_->setStyleSheet("QLabel { color: rgb(182, 197, 219); }");

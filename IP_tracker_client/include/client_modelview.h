@@ -8,6 +8,7 @@
 #include "client.h"
 #include "view/main_window.h"
 #include "view/main_widget.h"
+#include "view/credentials_dialog.h"
 #include <memory>
 #include <thread>
 
@@ -29,8 +30,9 @@ public:
 signals:
     void populateTable(data::Response data);
     void setupMainPage();
-    void displayErrorMessage();
-    void displayMessageDialog(const std::string &message);
+    void displayErrorMessageLogin();
+    void displayMessageDialogCredentials(const std::string &message);
+    void displayMessageDialogEmail(const std::string &message);
 
 public slots:
     void authenticate(const std::string &username, const std::string &password);

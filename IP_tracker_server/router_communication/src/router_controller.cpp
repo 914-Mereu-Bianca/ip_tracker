@@ -1,18 +1,18 @@
-#include "../include/request_handler.h"
+#include "../include/router_controller.h"
 
 #include <curl/curl.h>
 #include <thread>
 #include <mutex>
 
 
-RequestHandler::RequestHandler()
+RouterController::RouterController()
 {
-    router_.setToken("f4DQr2oGB%2C5.4r%2C%2C%2BDVW(KNAv%24C%2Cvo%2CC"); 
-    get_devices_thread_ = std::thread(&RequestHandler::runBackgroundGetDevices, this);
-    get_blocked_devices_thread_ = std::thread(&RequestHandler::runBackgroundGetBlockedDevices, this);
+    router_.setToken("cc%3Cey%7DVyvY%5D%3EXAzc5P3quWc(ufQ5c0f%3E"); 
+    get_devices_thread_ = std::thread(&RouterController::runBackgroundGetDevices, this);
+    get_blocked_devices_thread_ = std::thread(&RouterController::runBackgroundGetBlockedDevices, this);
 }
 
-RequestHandler::~RequestHandler()
+RouterController::~RouterController()
 {
     if (get_devices_thread_.joinable()) {
         get_devices_thread_.join();
@@ -22,7 +22,7 @@ RequestHandler::~RequestHandler()
     }
 }
 
-std::string RequestHandler::handleRequest(data::Request request) {
+std::string RouterController::handleRequest(data::Request request) {
     if(request.request()!="")
         std::cout<<request.request()<<std::endl<<request.name()<<std::endl<<request.mac()<<std::endl;
     
@@ -46,7 +46,7 @@ std::string RequestHandler::handleRequest(data::Request request) {
 }
 
 
-void RequestHandler::runBackgroundGetDevices() {
+void RouterController::runBackgroundGetDevices() {
     std::string response = "";
     while(is_running_) {
 
@@ -62,12 +62,12 @@ void RequestHandler::runBackgroundGetDevices() {
     }
 }
 
-std::string RequestHandler::getAllDevicesResponse() {
+std::string RouterController::getAllDevicesResponse() {
     std::lock_guard lock(get_devices_mutex_);
     return router_response_get_all_;
 }
 
-void RequestHandler::runBackgroundGetBlockedDevices() {
+void RouterController::runBackgroundGetBlockedDevices() {
     std::string response = "";
     while(is_running_) {
 
@@ -83,7 +83,7 @@ void RequestHandler::runBackgroundGetBlockedDevices() {
     }
 }
 
-std::string RequestHandler::getAllBlockedDevicesResponse() {
+std::string RouterController::getAllBlockedDevicesResponse() {
     std::lock_guard lock(get_blocked_devices_mutex_);
     return router_response_get_all_blocked_;
 }

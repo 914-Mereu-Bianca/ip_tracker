@@ -5,21 +5,17 @@
 #include <mutex>
 
 MainService::MainService(const std::string& ip, uint16_t port, Admin admin) : ip_(ip), port_(port), admin_(admin) {
-    update_devices_ = std::thread(&MainService::updateDevices, this);
+   
 }
 
 MainService::~MainService() {
     is_running_ = false;
-    if(update_devices_.joinable()) {
-        update_devices_.join();
-    }
-    request_handler_.stop();
 }
 
 grpc::Status MainService::Authenticate(grpc::ServerContext *context, const data::Credentials* request, data::OperationResponse* response) {
     std::cout<<request->username()<< " "<<request->password()<<std::endl;
 
-    if (admin_.computeHash(request->username()) == admin_.getUsernameHashed() && admin_.computeHash(request->password()) == admin_.getPasswordHashed()) {
+    if (admin_.checkUsername(request->username()) && admin_.checkPassword(request->password())) {
         response->set_success(true);
         response->set_message("Authentication successful");
     } else {
@@ -32,7 +28,7 @@ grpc::Status MainService::Authenticate(grpc::ServerContext *context, const data:
 
 grpc::Status MainService::ChangeCredentials(grpc::ServerContext *context, const data::NewCredentials* request, data::OperationResponse* response) {
     if (request->password() != "") {
-        if(admin_.computeHash(request->old_password()) == admin_.getPasswordHashed()) {
+        if(admin_.checkPassword(request->old_password())) {
             admin_.saveCredentials(request->username(), request->password());
             response->set_success(true);
             response->set_message("Success");
@@ -49,8 +45,9 @@ grpc::Status MainService::ChangeCredentials(grpc::ServerContext *context, const 
 
 grpc::Status MainService::ChangeEmail(grpc::ServerContext *context, const data::Email* request, data::OperationResponse* response) {
     if (request->email() != "") {
-        if(admin_.computeHash(request->password()) == admin_.getPasswordHashed()) {
-            // save mail
+        if(admin_.checkPassword(request->password())) {
+            server_controller_.changeMail(request->email());
+            std::cout<<request->email()<<std::endl;
             response->set_success(true);
             response->set_message("Success");
         } else {
@@ -72,9 +69,10 @@ grpc::Status MainService::StreamData(grpc::ServerContext *context, grpc::ServerR
     do {
         // Read the request from the client and send it to be handled
         stream->Read(&request);
-        request_handler_.handleRequest(request);
-
+        
+        server_controller_.sendHandleRequest(request);
         response.clear_devices();
+        devices_ = server_controller_.getDevices();
 
         for(const auto &d: devices_) {
             response.add_devices()->CopyFrom(d);
@@ -97,50 +95,5 @@ void MainService::runServer() {
     std::cout << "Server listening on " << server_address << std::endl;
 
     server->Wait();
-
-}
-
-void MainService::updateDevices() {
-    // The parser gets the data from the handler 
-    // to get the devices together with information about each of them
-    std::string response;
-    while (is_running_) {
-        std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(4));
-        response = request_handler_.getAllDevicesResponse();
-        if(response != "")
-            parser_.parseData(response);
-        response = request_handler_.getAllBlockedDevicesResponse();
-        if(response != "") {
-            parser_.parseBlockedDevices(response);
-        }
-
-        old_devices_ = devices_;
-        devices_ = parser_.getDevices();
-        checkNewDevices();
-    }
-}
-
-void MainService::checkNewDevices() {
-
-    if(old_devices_.size() && old_devices_.size() != devices_.size()) {
-        for (const auto& newDevice : devices_) {
-            // Check if newDevice's MAC address is not in old_devices_
-            if (std::find_if(old_devices_.begin(), old_devices_.end(), 
-                            [&newDevice](const auto& oldDevice) {
-                                return oldDevice.mac_address() == newDevice.mac_address();
-                            }) == old_devices_.end()) {
-                new_devices_.push_back(newDevice);
-                std::cout<<newDevice.mac_address()<<std::endl;
-            }
-        }
-        for (const auto& device : new_devices_) {
-            data::Request request;
-            request.set_request("Block");
-            request.set_mac(device.mac_address());
-            request_handler_.handleRequest(request);
-            mail_.send();
-        }
-        new_devices_.clear();
-    }
 
 }

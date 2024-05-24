@@ -1,11 +1,11 @@
 #!/bin/bash
 
-SMTP_SERVER="smtps://smtp.gmail.com:465"
-USERNAME="routera575@gmail.com"
-PASSWORD="njya umcc pzyz wgab"
-MAIL_FROM="routera575@gmail.com"
-MAIL_RCPT="biamereu2002@gmail.com"
-MAIL_FILE="/home/bianca/ip_tracker/IP_tracker_server/utils/mail.txt"
+SMTP_SERVER=$1
+USERNAME=$2
+PASSWORD=$3
+MAIL_FROM=$4
+MAIL_RCPT=$5
+MAIL_FILE=$6
 
 curl --ssl-reqd \
      --url "$SMTP_SERVER" \

@@ -89,6 +89,7 @@ set(PROJECT_SOURCES
   src/client_modelview.cpp
   src/view/main_window.cpp
   src/view/main_widget.cpp
+  src/view/credentials_dialog.cpp
 )
 
 # Sets the project headers file
@@ -97,6 +98,7 @@ set(PROJECT_HEADERS
   include/client_modelview.h
   include/view/main_window.h
   include/view/main_widget.h
+  include/view/credentials_dialog.h
 )
 
 # Sets the executable

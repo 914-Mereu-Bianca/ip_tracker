@@ -7,14 +7,13 @@ class Admin {
 
 public:
     Admin(const std::string &file_name);
-    inline std::string getUsernameHashed() { return username_hashed_; }
-    inline std::string getPasswordHashed() { return password_hashed_; }
-    //void readCredentials(const std::string &file_name);
-    void saveCredentials(const std::string &username_hashed, const std::string &password_hashed);
-
-    std::string computeHash(const std::string &credential);
+    bool checkPassword(const std::string &password);
+    bool checkUsername(const std::string &username);
+    void saveCredentials(const std::string &username, const std::string &password);
 
 private:
+
+    std::string computeHash(const std::string &credential);
 
     std::string file_name_;
     std::string username_hashed_;

@@ -3,9 +3,7 @@
 
 #include "../../build/proto_generated/ip_tracker.grpc.pb.h"
 #include "../../build/proto_generated/ip_tracker.pb.h"
-#include "../../router_communication/include/request_handler.h"
-#include "../../mail_communication/include/send_mail.h"
-#include "../../parser/include/data_parser.h"
+#include "../include/server_controller.h"
 #include "../include/admin.h"
 #include <thread>
 #include <mutex>
@@ -16,8 +14,6 @@ public:
     MainService(const std::string& ip, uint16_t port, Admin admin);
     ~MainService();
     void runServer();
-    void checkNewDevices();
-    void updateDevices();
     inline void shutdown() { server->Shutdown(); }
 
 private:
@@ -31,16 +27,10 @@ private:
     uint16_t port_;
     bool is_running_ = 1;
 
-    Parser parser_;
-    RequestHandler request_handler_;
-    SendMail mail_;
+    ServerController server_controller_;
     Admin admin_;
 
-    std::thread update_devices_;
-    std::mutex devices_mutex_;
     std::vector<data::Device> devices_;
-    std::vector<data::Device> old_devices_;
-    std::vector<data::Device> new_devices_;
     std::unique_ptr<grpc::Server> server;
 
 };

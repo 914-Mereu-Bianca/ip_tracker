@@ -9,8 +9,9 @@ ClientView::ClientView(QWidget *parent) : QObject(parent)
     
     connect(this, &ClientView::populateTable, main_widget_, &MainWidget::populate);
     connect(this, &ClientView::setupMainPage, main_widget_, &MainWidget::setupMainPage);
-    connect(this, &ClientView::displayErrorMessage, main_widget_, &MainWidget::displayErrorMessage);
-    connect(this, &ClientView::displayMessageDialog, main_widget_, &MainWidget::displayMessageDialog);
+    connect(this, &ClientView::displayErrorMessageLogin, main_widget_, &MainWidget::displayErrorMessageLogin);
+    connect(this, &ClientView::displayMessageDialogCredentials, main_widget_, &MainWidget::displayMessageDialogCredentials);
+    connect(this, &ClientView::displayMessageDialogEmail, main_widget_, &MainWidget::displayMessageDialogEmail);
     connect(main_widget_, &MainWidget::authenticate, this, &ClientView::authenticate);
     connect(main_widget_, &MainWidget::setRequest, this, &ClientView::setRequest);
     connect(main_widget_, &MainWidget::setFilter, this, &ClientView::setFilter);
@@ -28,7 +29,7 @@ void ClientView::authenticate(const std::string &username, const std::string &pa
         emit setupMainPage();
         auth_mutex_.unlock();
     }else {
-        emit displayErrorMessage();
+        emit displayErrorMessageLogin();
     }
     
 }
@@ -36,13 +37,13 @@ void ClientView::authenticate(const std::string &username, const std::string &pa
 void ClientView::saveCredentials(const std::string &username, const std::string &password, const std::string &current_password) {
     std::cout<<username<<" "<<password<<" " <<current_password<<std::endl;
     auto response = client_->ChangeCredentials(username, password, current_password);
-    emit displayMessageDialog(response.message());
+    emit displayMessageDialogCredentials(response.message());
 }
 
 void ClientView::saveEmail(const std::string &email, const std::string &current_password) {
     std::cout<<email<<" " <<current_password<<std::endl;
     auto response = client_->ChangeEmail(email, current_password);
-    emit displayMessageDialog(response.message());
+    emit displayMessageDialogEmail(response.message());
 }
 
 void ClientView::setRequest(const std::string &request, const std::string &name, const std::string &mac) {
@@ -54,7 +55,7 @@ void ClientView::setFilter(int filter_number) {
 }
 
 data::Response ClientView::filterDevices(data::Response devices) {
-    if(filter_number_ == 0)  return devices;
+    if(devices.devices().size() == 0 || filter_number_ == 0) return devices;
 
     data::Response filteredDevices;
     // copy the first device which contains the router's info and filter the rest
