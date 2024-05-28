@@ -31,6 +31,7 @@ target_link_libraries(ServerTests
   GrpcProtoLib
   GTest::gtest_main
   ${CURL_LIBRARIES}
+  mysqlcppconn
 )
 
 include(GoogleTest)

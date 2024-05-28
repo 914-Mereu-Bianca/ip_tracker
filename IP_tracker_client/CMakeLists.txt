@@ -90,6 +90,7 @@ set(PROJECT_SOURCES
   src/view/main_window.cpp
   src/view/main_widget.cpp
   src/view/credentials_dialog.cpp
+  src/view/email_dialog.cpp
 )
 
 # Sets the project headers file
@@ -99,6 +100,7 @@ set(PROJECT_HEADERS
   include/view/main_window.h
   include/view/main_widget.h
   include/view/credentials_dialog.h
+  include/view/email_dialog.h
 )
 
 # Sets the executable

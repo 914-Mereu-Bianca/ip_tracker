@@ -13,6 +13,9 @@ find_package(CURL REQUIRED)
 
 find_package(SQLite3 REQUIRED)
 
+#find_package(MySQL REQUIRED)
+
+
 # Find Protobuf installation
 # Looks for protobuf-config.cmake file installed by Protobuf's cmake installation.
 option(protobuf_MODULE_COMPATIBLE TRUE)
@@ -44,6 +47,8 @@ endif()
 # include protobuf
 include_directories(${Protobuf_INCLUDE_DIRS})
 include_directories(${CURL_INCLUDE_DIRS})
+include_directories("/usr/include/cppconn")
+#include_directories(${MySQL_INCLUDE_DIRS})
  
 # Gets the protos file path
 
@@ -125,7 +130,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF}
   ${CURL_LIBRARIES}
-  SQLite::SQLite3
+  #${MySQL_LIBRARIES}
+  mysqlcppconn
 )
 
 add_subdirectory(tests)

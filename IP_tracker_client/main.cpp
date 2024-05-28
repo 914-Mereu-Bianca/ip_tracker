@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
 
     QApplication app(argc, argv); 
 
-    ClientView client_;
+    ClientModelView client_;
 
     client_.runClient();
 

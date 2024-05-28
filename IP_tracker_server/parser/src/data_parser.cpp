@@ -27,7 +27,7 @@ void Parser::parseIP(const std::string &string) {
         else {
             d.set_ip_address(line.substr(6, line.size() - 7));
         }
-        d.set_id(n);
+        d.set_id(n + 1);
         devices_.push_back(d);
 
         // go to the next ip address
@@ -137,7 +137,7 @@ void Parser::parseMacBlocked(const std::string &string) {
                 }
             }
             if (!found) {
-                blocked_device.set_id(devices_.size());
+                blocked_device.set_id(devices_.size() + 1);
                 blocked_device.set_mac_address(line.substr(6, 17));
                 blocked_device.set_is_blocked(1);
                 devices_.push_back(blocked_device);
@@ -151,7 +151,7 @@ void Parser::parseMacBlocked(const std::string &string) {
                 }
             }
             if (!found) {
-                blocked_device.set_id(devices_.size());
+                blocked_device.set_id(devices_.size() + 1);
                 blocked_device.set_mac_address(line.substr(7, 17));
                 blocked_device.set_is_blocked(1);
                 devices_.push_back(blocked_device);

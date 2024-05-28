@@ -2,6 +2,7 @@
 
 
 ServerController::ServerController() {
+    setDevices(SQL_connector_.getDevices());
     update_devices_ = std::thread(&ServerController::updateDevices, this);
 }
 
@@ -17,18 +18,17 @@ void ServerController::changeMail(const std::string &new_email) {
     mail_.setEmail(new_email);
 }
 
-void ServerController::sendHandleRequest(data::Request request) {
+void ServerController::sendHandleRequest(const data::Request &request) {
     router_controller_.handleRequest(request);
 }
 
 std::vector<data::Device> ServerController::getDevices() {
-    std::unique_lock lock(devices_mutex_);
+    std::lock_guard lock(devices_mutex_);
     return devices_;
-
 }
 
 void ServerController::setDevices(std::vector<data::Device> devices) { 
-    std::unique_lock lock(devices_mutex_);
+    std::lock_guard lock(devices_mutex_);
     devices_ = devices;
 }
 
@@ -46,35 +46,64 @@ void ServerController::updateDevices() {
             parser_.parseBlockedDevices(response);
         }
 
-        old_devices_ = getDevices();
-        setDevices(parser_.getDevices());
-        checkNewDevices();
+        parsed_devices_ = parser_.getDevices();
+        checkNewDevices(parser_.getDevices());
     }
 }
 
-void ServerController::checkNewDevices() {
+void ServerController::checkNewDevices(std::vector<data::Device> parsed_devices) {
 
-    current_devices_ = getDevices();
-
-    if(old_devices_.size() && old_devices_.size() != current_devices_.size()) {
-        for (const auto& newDevice : current_devices_) {
-            // Check if newDevice's MAC address is not in old_devices_
-            if (std::find_if(old_devices_.begin(), old_devices_.end(), 
-                            [&newDevice](const auto& oldDevice) {
-                                return oldDevice.mac_address() == newDevice.mac_address();
-                            }) == old_devices_.end()) {
-                new_devices_.push_back(newDevice);
-                std::cout<<newDevice.mac_address()<<std::endl;
+    // if in the database has no device initially, all the devices connected are added
+    if(SQL_connector_.getDevices().size() == 0) {
+        std::lock_guard lock(devices_mutex_);
+        for(auto& newDevice : parsed_devices) {
+            devices_.push_back(newDevice);
+            eliminateNonPrintChar(newDevice);
+            SQL_connector_.addDevice(newDevice);
+        }
+    }
+    else {
+        std::lock_guard lock(devices_mutex_);
+        std::vector<data::Device> new_devices;
+        for (auto& device : parsed_devices) {
+            if(SQL_connector_.checkIfMacExists(device.mac_address())) {
+                for(auto &d: devices_) {
+                    if(d.mac_address() == device.mac_address()) { 
+                        eliminateNonPrintChar(device);
+                        SQL_connector_.updateDevice(device);
+                        d = device;
+                    }
+                }
+            }
+            else {
+                manageNewDevice(device);
             }
         }
-        for (const auto& device : new_devices_) {
-            data::Request request;
-            request.set_request("Block");
-            request.set_mac(device.mac_address());
-            router_controller_.handleRequest(request);
-            mail_.send();
-        }
-        new_devices_.clear();
     }
 
+}
+
+void ServerController::manageNewDevice(data::Device &device) {
+    // Here enters only the new devices for the router
+    device.set_is_blocked(1);
+    eliminateNonPrintChar(device);
+    SQL_connector_.addDevice(device);
+    data::Request request;
+    request.set_request("Block");
+    request.set_mac(device.mac_address());
+    router_controller_.handleRequest(request);
+    mail_.send();
+    
+}
+
+void ServerController::eliminateNonPrintChar(data::Device &device) {
+    std::string name = device.name();
+    std::string ip = device.ip_address();
+    std::string mac = device.mac_address();
+    name.erase(std::remove_if(name.begin(), name.end(), [](unsigned char c){ return !std::isprint(c);}), name.end());
+    ip.erase(std::remove_if(ip.begin(), ip.end(), [](unsigned char c){return !std::isprint(c);}), ip.end());    
+    mac.erase(std::remove_if(mac.begin(), mac.end(), [](unsigned char c){return !std::isprint(c);}), mac.end());    
+    device.set_name(name);
+    device.set_ip_address(ip);
+    device.set_mac_address(mac);
 }

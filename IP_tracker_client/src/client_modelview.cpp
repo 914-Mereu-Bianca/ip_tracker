@@ -1,28 +1,28 @@
 #include "client_modelview.h"
 
-ClientView::ClientView(QWidget *parent) : QObject(parent)
+ClientModelView::ClientModelView(QWidget *parent) : QObject(parent)
 {
     std::shared_ptr<grpc::Channel> channel = grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials());
     client_ = std::make_shared<MainClient>(channel);
     main_window_ = new MainWindow(900, 600, client_);
     main_widget_ = new MainWidget(main_window_);
     
-    connect(this, &ClientView::populateTable, main_widget_, &MainWidget::populate);
-    connect(this, &ClientView::setupMainPage, main_widget_, &MainWidget::setupMainPage);
-    connect(this, &ClientView::displayErrorMessageLogin, main_widget_, &MainWidget::displayErrorMessageLogin);
-    connect(this, &ClientView::displayMessageDialogCredentials, main_widget_, &MainWidget::displayMessageDialogCredentials);
-    connect(this, &ClientView::displayMessageDialogEmail, main_widget_, &MainWidget::displayMessageDialogEmail);
-    connect(main_widget_, &MainWidget::authenticate, this, &ClientView::authenticate);
-    connect(main_widget_, &MainWidget::setRequest, this, &ClientView::setRequest);
-    connect(main_widget_, &MainWidget::setFilter, this, &ClientView::setFilter);
-    connect(main_widget_, &MainWidget::saveCredentials, this, &ClientView::saveCredentials);
-    connect(main_widget_, &MainWidget::saveEmail, this, &ClientView::saveEmail);
+    connect(this, &ClientModelView::populateTable, main_widget_, &MainWidget::populate);
+    connect(this, &ClientModelView::setupMainPage, main_widget_, &MainWidget::setupMainPage);
+    connect(this, &ClientModelView::displayErrorMessageLogin, main_widget_, &MainWidget::displayErrorMessageLogin);
+    connect(this, &ClientModelView::displayMessageDialogCredentials, main_widget_, &MainWidget::displayMessageDialogCredentials);
+    connect(this, &ClientModelView::displayMessageDialogEmail, main_widget_, &MainWidget::displayMessageDialogEmail);
+    connect(main_widget_, &MainWidget::authenticate, this, &ClientModelView::authenticate);
+    connect(main_widget_, &MainWidget::setRequest, this, &ClientModelView::setRequest);
+    connect(main_widget_, &MainWidget::setFilter, this, &ClientModelView::setFilter);
+    connect(main_widget_, &MainWidget::saveCredentials, this, &ClientModelView::saveCredentials);
+    connect(main_widget_, &MainWidget::saveEmail, this, &ClientModelView::saveEmail);
 
     main_window_->show();
 }
 
 
-void ClientView::authenticate(const std::string &username, const std::string &password)
+void ClientModelView::authenticate(const std::string &username, const std::string &password)
 {   
     authenticated = client_->Authenticate(username, password);
     if (authenticated) {
@@ -34,27 +34,27 @@ void ClientView::authenticate(const std::string &username, const std::string &pa
     
 }
 
-void ClientView::saveCredentials(const std::string &username, const std::string &password, const std::string &current_password) {
+void ClientModelView::saveCredentials(const std::string &username, const std::string &password, const std::string &current_password) {
     std::cout<<username<<" "<<password<<" " <<current_password<<std::endl;
     auto response = client_->ChangeCredentials(username, password, current_password);
     emit displayMessageDialogCredentials(response.message());
 }
 
-void ClientView::saveEmail(const std::string &email, const std::string &current_password) {
+void ClientModelView::saveEmail(const std::string &email, const std::string &current_password) {
     std::cout<<email<<" " <<current_password<<std::endl;
     auto response = client_->ChangeEmail(email, current_password);
     emit displayMessageDialogEmail(response.message());
 }
 
-void ClientView::setRequest(const std::string &request, const std::string &name, const std::string &mac) {
+void ClientModelView::setRequest(const std::string &request, const std::string &name, const std::string &mac) {
     client_->setRequest(request, name, mac);
 }
 
-void ClientView::setFilter(int filter_number) {
+void ClientModelView::setFilter(int filter_number) {
     filter_number_ = filter_number;
 }
 
-data::Response ClientView::filterDevices(data::Response devices) {
+data::Response ClientModelView::filterDevices(data::Response devices) {
     if(devices.devices().size() == 0 || filter_number_ == 0) return devices;
 
     data::Response filteredDevices;
@@ -78,7 +78,7 @@ data::Response ClientView::filterDevices(data::Response devices) {
     return filteredDevices;
 }
 
-void ClientView::startApplication() {
+void ClientModelView::startApplication() {
 
     auth_mutex_.lock();
     client_->runClient();
@@ -91,13 +91,13 @@ void ClientView::startApplication() {
 
 }
 
-void ClientView::runClient() 
+void ClientModelView::runClient() 
 {
     auth_mutex_.lock();
-    main_thread_ = std::thread(&ClientView::startApplication, this);
+    main_thread_ = std::thread(&ClientModelView::startApplication, this);
 }
 
-ClientView::~ClientView()
+ClientModelView::~ClientModelView()
 {
     if(main_thread_.joinable())
         main_thread_.join();

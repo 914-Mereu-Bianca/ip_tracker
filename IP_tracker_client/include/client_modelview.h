@@ -12,20 +12,20 @@
 #include <memory>
 #include <thread>
 
-class ClientView : public QObject {
+class ClientModelView : public QObject {
     Q_OBJECT
 //This class controls the way the data from the client is displayed
 public:
-    ClientView( QWidget *parent = nullptr);
-    ClientView(ClientView &other) = delete;
-    ClientView& operator=(ClientView &other) = delete;
-    ClientView(ClientView &&other) = default;
-    ClientView& operator=(ClientView &&other) = default;
+    ClientModelView(QWidget *parent = nullptr);
+    ClientModelView(ClientModelView &other) = delete;
+    ClientModelView& operator=(ClientModelView &other) = delete;
+    ClientModelView(ClientModelView &&other) = default;
+    ClientModelView& operator=(ClientModelView &&other) = default;
     // This function allows the client to authenticate to the server
     void startApplication();
     void runClient();
     data::Response filterDevices(data::Response devices);
-    ~ClientView();
+    ~ClientModelView();
 
 signals:
     void populateTable(data::Response data);

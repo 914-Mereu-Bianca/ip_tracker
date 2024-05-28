@@ -7,6 +7,7 @@ service IPService {
     rpc Authenticate(Credentials) returns (OperationResponse) {}
     rpc ChangeCredentials(NewCredentials) returns (OperationResponse) {}
     rpc ChangeEmail(Email) returns (OperationResponse) {}
+    rpc ManageDevice(OperationDevice) returns (OperationResponse) {}
 }
 
 message Request {
@@ -17,6 +18,11 @@ message Request {
 
 message Response {
     repeated Device devices = 1;
+}
+
+message OperationDevice {
+    string operation = 1;
+    Device device = 2;
 }
 
 message Device {

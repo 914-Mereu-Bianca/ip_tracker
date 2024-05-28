@@ -6,6 +6,7 @@
 #include "../server/src/admin.cpp"
 #include "../server/src/server.cpp"
 #include "../server/src/server_controller.cpp"
+#include "../database/src/sql_connector.cpp"
 
 class FakeClient {
 public:

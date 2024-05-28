@@ -3,72 +3,73 @@
 #include <iostream>
 
 SqlConnector::SqlConnector() {
-    int response = sqlite3_open("/home/bianca/ip_tracker/IP_tracker_server/database/ip_tracker.db", &database_);
-    if (response != SQLITE_OK) {
-        std::cout << "Can't open database: " << sqlite3_errmsg(database_) << std::endl;
-    } 
+
+    driver = get_driver_instance();
+    con.reset(driver->connect("tcp://127.0.0.1:3306", "bia", "root"));
+    con->setSchema("ip_tracker");
+    pstmt = std::unique_ptr<sql::PreparedStatement>(con->prepareStatement(
+        "UPDATE device SET name=?, ip=?, blocked=?, trust=? WHERE mac=?"));
+
 }
 
 SqlConnector::~SqlConnector() {
-    sqlite3_close(database_);
 }
 
-void SqlConnector::executeCommand(const std::string &command) {
-    char *errMsg = nullptr;
-    int response = sqlite3_exec(database_, command.c_str(), nullptr, 0, &errMsg);
-    if (response != SQLITE_OK) {
-        std::cerr << "SQL error: " << errMsg << std::endl;
-        sqlite3_free(errMsg);
-    } else {
-        std::cout << "Command executed successfully" << std::endl;
-    }
+void SqlConnector::clearTable() {
+    stmt.reset(con->createStatement());
+    std::string truncateQuery = "TRUNCATE TABLE device";
+    stmt->executeUpdate(truncateQuery);
 }
-
-void SqlConnector::createTable(const std::string &table) {
-    std::string sql = "CREATE TABLE IF NOT EXISTS " + table + "(" \
-                      "ID INTEGER PRIMARY KEY AUTOINCREMENT," \
-                      "NAME         TEXT," \
-                      "IP           TEXT    NOT NULL," \
-                      "MAC          TEXT    NOT NULL," \
-                      "BLOCKED      INT    NOT NULL," \
-                      "TRUSTED      INT    NOT NULL);";
-    executeCommand(sql);
-}
-
-void SqlConnector::dropTable(const std::string &table) {
-    std::string sql = "DROP TABLE IF EXISTS " + table + ";";
-    return executeCommand(sql);
-}
-
 
 void SqlConnector::addDevice(data::Device device) {
-    std::string sql = "INSERT INTO DEVICE (NAME, IP, MAC, BLOCKED, TRUSTED)" \
-        "VALUES ( '" + device.name() + "', '" + device.ip_address() + "', '" + device.mac_address() + "', '" + (device.is_blocked() ? "1" : "0") + "', '" + (device.is_trusted() ? "1" : "0") + "');";
-    executeCommand(sql);
+    stmt.reset(con->createStatement());
+    std::string insertQuery = "INSERT INTO device (name, ip, mac, blocked, trust) VALUES ('" + device.name() + "', '" + device.ip_address() + "', '" + device.mac_address() + "', " + (device.is_blocked() ? "1" : "0") + ", " + (device.is_trusted() ? "1" : "0") + ")";
+    stmt->executeUpdate(insertQuery);
 }
 
 
-std::vector<data::Device> SqlConnector::getDevices() {
-    std::vector<data::Device> dev;
-    std::string sql = "SELECT * FROM DEVICE;";
-    sqlite3_stmt *stmt;
-    int response = sqlite3_prepare_v2(database_, sql.c_str(), -1, &stmt, nullptr);
-    if (response == SQLITE_OK) {
-        while (sqlite3_step(stmt) == SQLITE_ROW) {
-            int id = sqlite3_column_int(stmt, 0);
-            auto name = sqlite3_column_text(stmt, 1);
-            auto ip = sqlite3_column_text(stmt, 2);
-            auto mac = sqlite3_column_text(stmt, 3);
-            auto blocked = sqlite3_column_int(stmt, 4);
-            auto trusted = sqlite3_column_int(stmt, 5);
-            std::cout << "id: " << id << " name: " << name << " ip: " << ip << " mac: " << mac << " blocked: " << blocked << " trusted: " << trusted << std::endl;
-        }
-        std::cout<<"OK1"<<std::endl;
-        sqlite3_finalize(stmt);
-        std::cout<<"OK2"<<std::endl;
-    } else {
-        std::cerr << "Failed to execute query: " << sqlite3_errmsg(database_) << std::endl;
+void SqlConnector::updateDevice(data::Device device) {
+    pstmt->setString(1, device.name());
+    pstmt->setString(2, device.ip_address());
+    pstmt->setInt(3, device.is_blocked() ? 1 : 0);
+    pstmt->setInt(4, device.is_trusted() ? 1 : 0);
+    pstmt->setString(5, device.mac_address());
+
+    pstmt->executeUpdate();
+}
+
+void SqlConnector::removeDevice(const std::string &mac_address) {
+    stmt.reset(con->createStatement());
+    std::string deleteQuery = "DELETE FROM device WHERE mac = '" + mac_address + "'";
+    stmt->executeUpdate(deleteQuery);
+}
+
+bool SqlConnector::checkIfMacExists(const std::string &mac_address) {
+    stmt.reset(con->createStatement());
+    std::string checkQuery = "SELECT COUNT(*) FROM device WHERE mac = '" + mac_address + "'";
+    res.reset(stmt->executeQuery(checkQuery));
+    if (res->next() && res->getInt(1) > 0) {
+       return true;
     }
-    return dev;
+    return false;
+}
+
+std::vector<data::Device> SqlConnector::getDevices() {
+    std::vector<data::Device> devices;
+    stmt.reset(con->createStatement());
+
+    res.reset(stmt->executeQuery("SELECT * FROM device"));
+
+    data::Device device;
+    while (res->next()) {
+        device.set_id(res->getInt("id"));
+        device.set_name(res->getString("name"));
+        device.set_ip_address(res->getString("ip"));
+        device.set_mac_address(res->getString("mac"));
+        device.set_is_blocked(res->getInt("blocked"));
+        device.set_is_trusted(res->getInt("trust"));
+        devices.push_back(device);
+    }
+    return devices;
 }
     

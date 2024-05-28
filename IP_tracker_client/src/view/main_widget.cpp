@@ -13,7 +13,7 @@
 
 MainWidget::MainWidget(QMainWindow *parent)
         :QWidget(parent),
-        credentialsDialog_(new CredentialsDialog(this)) {
+        credentialsDialog_(new CredentialsDialog(this)), emailDialog_(new EmailDialog(this)) {
 
     layout_ = new QVBoxLayout;
     central_widget_ = new QWidget;
@@ -25,7 +25,9 @@ MainWidget::MainWidget(QMainWindow *parent)
     SetupLoginPage();
 
     connect(credentialsDialog_, &CredentialsDialog::saveCredentials, this, &MainWidget::saveCredentials);
+    connect(emailDialog_, &EmailDialog::saveEmail, this, &MainWidget::saveEmail);
     connect(this, &MainWidget::displayMessageDialogCredentials, credentialsDialog_, &CredentialsDialog::displayMessageDialogCredentials);
+    connect(this, &MainWidget::displayMessageDialogEmail, emailDialog_, &EmailDialog::displayMessageDialogEmail);
 }
 
 void MainWidget::LoadStylesheet() {
@@ -37,7 +39,6 @@ void MainWidget::LoadStylesheet() {
 }
 
 void MainWidget::SetupLoginPage() {
-
     // ------ Setup the Logo -------
     QPixmap pixmap("/home/bianca/ip_tracker/IP_tracker_client/utils/iptrackerlogo.png");
     image_label_ = new QLabel(this);
@@ -69,6 +70,11 @@ void MainWidget::SetupLoginPage() {
     error_label_ = new QLabel("Authentication Failed!", this);
     error_label_->setStyleSheet("QLabel { color: rgb(182, 197, 219); }");
     layout_->addWidget(error_label_, 0, Qt::AlignCenter);
+
+    reset_credentials_button_ = new QPushButton("Reset Credentials", this);
+    reset_credentials_button_->setFixedSize(150, 35);
+    reset_credentials_button_->setStyleSheet(" QPushButton:hover {background-color: red;} QPushButton:focus {background-color: red;}");
+    layout_->addWidget(reset_credentials_button_, 0, Qt::AlignCenter);
 }
 
 void MainWidget::setupMainPage() {
@@ -78,6 +84,7 @@ void MainWidget::setupMainPage() {
     button_->setVisible(0);
     error_label_->setVisible(0);
     image_label_->setVisible(0);
+    reset_credentials_button_->setVisible(0);
     
     SetupButtonsMainPage();
     // Design and add the admin button
@@ -98,57 +105,25 @@ void MainWidget::setupMainPage() {
 
     connect(admin_button_, &QPushButton::clicked, credentialsDialog_, &QDialog::exec);
 
-    SetupEmailDialogBox();
-    connect(change_email_button_, &QPushButton::clicked, [&]() {
-        dialog_box_email_->exec();
-    });
-    connect(button_save_email_, &QPushButton::clicked, [&]() {
-        emit saveEmail(new_email_->text().toStdString().c_str(), current_password_email_->text().toStdString().c_str());
-    });
+    connect(change_email_button_, &QPushButton::clicked, emailDialog_, &QDialog::exec);
+    
 
     // Desgin and add the table
     table_ = new QTableWidget;
     layout_->addWidget(table_); 
-    table_->setColumnCount(8);
-    table_->setHorizontalHeaderLabels(QStringList() << "ID" << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked" << "Trusted" << "Manage device");
-    table_->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    table_->setColumnCount(9);
+    table_->setHorizontalHeaderLabels(QStringList() << "ID" << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked" << "Trusted" << "Manage device" << "");
+    
+    for (int i = 1; i < table_->columnCount() - 1; ++i) {
+        table_->horizontalHeader()->setSectionResizeMode(i, QHeaderView::Stretch);
+    }
+    table_->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);
+    table_->horizontalHeader()->setSectionResizeMode(table_->columnCount() - 1, QHeaderView::Interactive);
+    table_->setColumnWidth(0, 30);
+    table_->setColumnWidth(table_->columnCount() - 1, 30);
+
+    table_->horizontalHeader()->setStyleSheet("QHeaderView::section { height: 20px; background-color: black; color: white; padding: 4px; border: 1px solid gray; }");
     connect(table_, &QTableWidget::cellClicked, this, &MainWidget::onCellClicked);
-}
-
-void MainWidget::SetupEmailDialogBox() {
-    dialog_box_email_ = new QDialog(this);
-    dialog_box_email_->setWindowTitle("New Email");
-    dialog_box_layout_email_ = new QVBoxLayout(dialog_box_email_);
-
-    new_email_ = new QLineEdit;
-    new_email_->setFixedWidth(240);
-    new_email_->setPlaceholderText("New Email");
-    new_email_->setStyleSheet("QLineEdit { height: 30px; background-color: white; border: 1px solid rgb(37, 39, 48); border-radius: 15px; padding-left: 10px; } QLineEdit:hover { border-color: rgb(129, 140, 140);}");
-    dialog_box_layout_email_->addWidget(new_email_);
-
-    current_password_email_ = new QLineEdit;
-    current_password_email_->setFixedWidth(240);
-    current_password_email_->setEchoMode(QLineEdit::Password);
-    current_password_email_->setPlaceholderText("Current Password");
-    current_password_email_->setStyleSheet("QLineEdit { height: 30px; background-color: white; border: 1px solid rgb(37, 39, 48); border-radius: 15px; padding-left: 10px; } QLineEdit:hover { border-color: rgb(129, 140, 140);}");
-    dialog_box_layout_email_->addWidget(current_password_email_);
-
-    button_save_email_ = new QPushButton("Save");
-    button_save_email_->setFixedWidth(100);
-    button_save_email_->setStyleSheet("QPushButton { height: 30px; background-color: rgb(37, 39, 48); color: rgb(255, 255, 255); border-radius: 15px; } QPushButton:hover { background-color: rgb(129, 140, 140);}");
-    dialog_box_layout_email_->addWidget(button_save_email_, 0, Qt::AlignCenter);
-
-    error_label_box_email_ = new QLabel("Error", this);
-    error_label_box_email_->setStyleSheet("color: rgb(235, 235, 235);");
-    dialog_box_layout_email_->addWidget(error_label_box_email_, 0, Qt::AlignCenter);
-}
-
-void MainWidget::displayMessageDialogEmail(const std::string &message) {
-    error_label_box_email_->setText(QString::fromStdString(message));
-    error_label_box_email_->setStyleSheet("color: red;");
-    QTimer::singleShot(1500, [=]() {
-        error_label_box_email_->setStyleSheet("color: rgb(235, 235, 235);");
-    });
 }
 
 void MainWidget::SetupButtonsMainPage() {
@@ -198,7 +173,7 @@ void MainWidget::populate(data::Response data) {
     int row = -1;
 
     for(const auto &device: data.devices()) {
-        if(device.id() == 0)
+        if(device.id() == 1)
         {
             router_ip_->setText("Router's IP address: " + QString::fromStdString(device.ip_address()));
             router_mac_->setText("Router's MAC address: " + QString::fromStdString(device.mac_address()));
@@ -236,12 +211,18 @@ void MainWidget::populate(data::Response data) {
             table_->setItem(row, 6, item_is_t);
 
             QTableWidgetItem *item_b = new QTableWidgetItem(QString::fromStdString("Block"));
-            item_b->setBackground(Qt::red);
+            item_b->setBackground(QColor(173, 2, 19)); // dark red
+            item_b->setTextAlignment(Qt::AlignCenter);
             if(device.is_blocked()){
-                item_b = new QTableWidgetItem(QString::fromStdString("Unblock"));
-                item_b->setBackground(Qt::green);
+                item_b->setText(QString::fromStdString("Unblock"));
+                item_b->setBackground(QColor(11, 105, 1));  // dark green
             }
             table_->setItem(row, 7, item_b);
+
+            QTableWidgetItem *item_delete = new QTableWidgetItem(QString::fromStdString("X"));
+            item_delete->setBackground(QColor(173, 2, 19)); // dark red
+            item_delete->setTextAlignment(Qt::AlignCenter);
+            table_->setItem(row, 8, item_delete);
         }
     }
 
