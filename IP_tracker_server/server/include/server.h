@@ -20,8 +20,9 @@ private:
 
     grpc::Status StreamData(grpc::ServerContext* context, grpc::ServerReaderWriter<data::Response, data::Request>* stream) override;
     grpc::Status Authenticate(grpc::ServerContext* context, const data::Credentials* request, data::OperationResponse* response) override;
-    grpc::Status ChangeCredentials(grpc::ServerContext* context, const data::NewCredentials* request, data::OperationResponse* response) override;
+    grpc::Status ChangeCredentials(grpc::ServerContext* context, const data::Credentials* request, data::OperationResponse* response) override;
     grpc::Status ChangeEmail(grpc::ServerContext* context, const data::Email* request, data::OperationResponse* response) override;
+    grpc::Status ManageDevice(grpc::ServerContext* context, const data::Request* request, data::OperationResponse* response) override;
 
     std::string ip_;
     uint16_t port_;

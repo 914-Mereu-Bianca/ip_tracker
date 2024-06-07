@@ -25,9 +25,4 @@ private:
 
 };
 
-
-
-// classes for each
-
-
 #endif // _PARSER_H_

@@ -22,6 +22,7 @@ public:
     void removeDevice(const std::string &mac_address);
     void clearTable();
     bool checkIfMacExists(const std::string &mac_address);
+    bool checkIsBlocked(const std::string &mac_address);
 
     std::vector<data::Device> getDevices();
 

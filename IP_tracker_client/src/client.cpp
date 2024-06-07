@@ -47,6 +47,7 @@ void MainClient::StreamData()
         std::lock_guard<std::mutex> lock_2(request_mutex_);
 
         devices_ = response;
+
         request.set_request(request_);
         request.set_name(name_);
         request.set_mac(mac_);
@@ -60,11 +61,12 @@ void MainClient::StreamData()
     }
 }
 
-data::OperationResponse MainClient::ChangeCredentials(const std::string& username, const std::string& password, const std::string& current_password) {
-    data::NewCredentials request;
+data::OperationResponse MainClient::ChangeCredentials(const std::string& username, const std::string& password, const std::string& current_password, bool reset) {
+    data::Credentials request;
     request.set_username(username);
     request.set_password(password);
     request.set_old_password(current_password);
+    request.set_reset(reset);
 
     data::OperationResponse response;
     grpc::ClientContext context;
@@ -90,6 +92,25 @@ data::OperationResponse MainClient::ChangeEmail(const std::string& email, const 
     grpc::ClientContext context;
 
     grpc::Status status = _stub->ChangeEmail(&context, request, &response);
+
+    if (status.ok()) {
+      std::cout << "RPC send successfully: " << response.message() << std::endl;
+      return response;
+    } else {
+      std::cout << "RPC failed: " << status.error_message() << std::endl;
+      return response;
+    }
+}
+
+data::OperationResponse MainClient::ManageDevice(const std::string& operation, const std::string& name, const std::string &mac) {
+    data::Request request;
+    request.set_request(operation);
+    request.set_name(name);
+    request.set_mac(mac);
+    data::OperationResponse response;
+    grpc::ClientContext context;
+
+    grpc::Status status = _stub->ManageDevice(&context, request, &response);
 
     if (status.ok()) {
       std::cout << "RPC send successfully: " << response.message() << std::endl;

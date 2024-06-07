@@ -26,6 +26,7 @@ public:
     std::vector<data::Device> getDevices();
     void setDevices(std::vector<data::Device> devices);
     void changeMail(const std::string &new_email);
+    void deleteDevice(const std::string &mac);
 
 private:
 

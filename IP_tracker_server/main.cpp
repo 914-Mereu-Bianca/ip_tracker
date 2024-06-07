@@ -22,13 +22,14 @@ int main() {
     
     /*SqlConnector sc;
     data::Device d;
-    d.set_id(3); d.set_name(""); d.set_ip_address("172.20.10.9"); d.set_mac_address("f8-94-c2-04-34-c2");
-    d.set_is_blocked(0); d.set_is_online(1); d.set_is_trusted(0);
-    sc.updateDevice(d);*/
+    d.set_id(5); d.set_name("Iphone"); d.set_ip_address(""); d.set_mac_address("c2-9c-39-ab-b4-12");
+    d.set_is_blocked(1); d.set_is_online(0); d.set_is_trusted(0);
+    sc.addDevice(d);*/
+    //sc.updateDevice(d);
     //sc.clearTable();
     /*d.set_id(0); d.set_name("deviceee"); d.set_ip_address("1.2.2.3"); d.set_mac_address("4a-35-2b-90-22-44");
     d.set_is_blocked(1); d.set_is_online(1); d.set_is_trusted(1);
-    //sc.addDevice(d);
+    sc.addDevice(d);
     //d.set_mac_address("54-8c-a0-3a-8c-ba");
     //sc.removeDevice(d.mac_address());
     for(const auto &d : sc.getDevices()) {

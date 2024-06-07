@@ -17,6 +17,7 @@ ClientModelView::ClientModelView(QWidget *parent) : QObject(parent)
     connect(main_widget_, &MainWidget::setFilter, this, &ClientModelView::setFilter);
     connect(main_widget_, &MainWidget::saveCredentials, this, &ClientModelView::saveCredentials);
     connect(main_widget_, &MainWidget::saveEmail, this, &ClientModelView::saveEmail);
+    connect(main_widget_, &MainWidget::manageDevice, this, &ClientModelView::manageDevice);
 
     main_window_->show();
 }
@@ -36,14 +37,24 @@ void ClientModelView::authenticate(const std::string &username, const std::strin
 
 void ClientModelView::saveCredentials(const std::string &username, const std::string &password, const std::string &current_password) {
     std::cout<<username<<" "<<password<<" " <<current_password<<std::endl;
-    auto response = client_->ChangeCredentials(username, password, current_password);
+    auto response = client_->ChangeCredentials(username, password, current_password, 0);
     emit displayMessageDialogCredentials(response.message());
+}
+
+void ClientModelView::resetCredentials() {
+    std::cout<<"resetting credentials"<<std::endl;
+    auto response = client_->ChangeCredentials("", "", "", 1);
 }
 
 void ClientModelView::saveEmail(const std::string &email, const std::string &current_password) {
     std::cout<<email<<" " <<current_password<<std::endl;
     auto response = client_->ChangeEmail(email, current_password);
     emit displayMessageDialogEmail(response.message());
+}
+
+void ClientModelView::manageDevice(const std::string &request, const std::string &name, const std::string &mac) {
+    std::cout<<request<<" "<<name<<" "<<mac<<std::endl;
+    auto response = client_->ManageDevice(request, name, mac);
 }
 
 void ClientModelView::setRequest(const std::string &request, const std::string &name, const std::string &mac) {

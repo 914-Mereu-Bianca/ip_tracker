@@ -8,7 +8,7 @@ SqlConnector::SqlConnector() {
     con.reset(driver->connect("tcp://127.0.0.1:3306", "bia", "root"));
     con->setSchema("ip_tracker");
     pstmt = std::unique_ptr<sql::PreparedStatement>(con->prepareStatement(
-        "UPDATE device SET name=?, ip=?, blocked=?, trust=? WHERE mac=?"));
+        "UPDATE device SET name=?, ip=?, blocked=?, remembered=? WHERE mac=?"));
 
 }
 
@@ -23,7 +23,7 @@ void SqlConnector::clearTable() {
 
 void SqlConnector::addDevice(data::Device device) {
     stmt.reset(con->createStatement());
-    std::string insertQuery = "INSERT INTO device (name, ip, mac, blocked, trust) VALUES ('" + device.name() + "', '" + device.ip_address() + "', '" + device.mac_address() + "', " + (device.is_blocked() ? "1" : "0") + ", " + (device.is_trusted() ? "1" : "0") + ")";
+    std::string insertQuery = "INSERT INTO device (name, ip, mac, blocked, remembered) VALUES ('" + device.name() + "', '" + device.ip_address() + "', '" + device.mac_address() + "', " + (device.is_blocked() ? "1" : "0") + ", " + (device.is_remembered() ? "1" : "0") + ")";
     stmt->executeUpdate(insertQuery);
 }
 
@@ -32,7 +32,7 @@ void SqlConnector::updateDevice(data::Device device) {
     pstmt->setString(1, device.name());
     pstmt->setString(2, device.ip_address());
     pstmt->setInt(3, device.is_blocked() ? 1 : 0);
-    pstmt->setInt(4, device.is_trusted() ? 1 : 0);
+    pstmt->setInt(4, device.is_remembered() ? 1 : 0);
     pstmt->setString(5, device.mac_address());
 
     pstmt->executeUpdate();
@@ -54,6 +54,17 @@ bool SqlConnector::checkIfMacExists(const std::string &mac_address) {
     return false;
 }
 
+bool SqlConnector::checkIsBlocked(const std::string &mac_address) {
+    stmt.reset(con->createStatement());
+    std::string checkQuery = "SELECT blocked FROM device WHERE mac = '" + mac_address + "'";
+    res.reset(stmt->executeQuery(checkQuery));
+    if (res->next()) {
+        return res->getInt(1);
+    } else {
+        throw std::runtime_error("No matching records found.");
+    }
+}
+
 std::vector<data::Device> SqlConnector::getDevices() {
     std::vector<data::Device> devices;
     stmt.reset(con->createStatement());
@@ -67,7 +78,7 @@ std::vector<data::Device> SqlConnector::getDevices() {
         device.set_ip_address(res->getString("ip"));
         device.set_mac_address(res->getString("mac"));
         device.set_is_blocked(res->getInt("blocked"));
-        device.set_is_trusted(res->getInt("trust"));
+        device.set_is_remembered(res->getInt("remembered"));
         devices.push_back(device);
     }
     return devices;

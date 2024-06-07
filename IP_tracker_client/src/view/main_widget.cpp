@@ -1,19 +1,16 @@
 #include "view/main_widget.h"
 #include "view/main_window.h"
 #include "client_modelview.h"
+#include "view/rounded_item_delegate.h"
 #include <iostream>
 #include <memory>
 #include <thread>
 #include <chrono>
-#include <QStringList>
-#include <QMessageBox>
-#include <QTimer>
-#include <QHeaderView>
-#include <QFile>
+
 
 MainWidget::MainWidget(QMainWindow *parent)
         :QWidget(parent),
-        credentialsDialog_(new CredentialsDialog(this)), emailDialog_(new EmailDialog(this)) {
+        credentialsDialog_(new CredentialsDialog(this)), emailDialog_(new EmailDialog(this)), validationDialog_(new ValidationDialog(this)), changeNameDialog_(new ChangeNameDialog(this)) {
 
     layout_ = new QVBoxLayout;
     central_widget_ = new QWidget;
@@ -26,6 +23,8 @@ MainWidget::MainWidget(QMainWindow *parent)
 
     connect(credentialsDialog_, &CredentialsDialog::saveCredentials, this, &MainWidget::saveCredentials);
     connect(emailDialog_, &EmailDialog::saveEmail, this, &MainWidget::saveEmail);
+    connect(changeNameDialog_, &ChangeNameDialog::saveName, this, &MainWidget::manageDevice);
+    connect(validationDialog_, &ValidationDialog::performRequest, this, &MainWidget::performRequest);
     connect(this, &MainWidget::displayMessageDialogCredentials, credentialsDialog_, &CredentialsDialog::displayMessageDialogCredentials);
     connect(this, &MainWidget::displayMessageDialogEmail, emailDialog_, &EmailDialog::displayMessageDialogEmail);
 }
@@ -64,6 +63,7 @@ void MainWidget::SetupLoginPage() {
     button_ = new QPushButton("Login", this);  
     button_->setFixedSize(100, 35);
     layout_->addWidget(button_, 0, Qt::AlignCenter);
+    button_->setDefault(true);
     connect(button_, &QPushButton::clicked, this, &MainWidget::HandleLogin);
 
     // ------ Setup the Error Message -------
@@ -75,6 +75,9 @@ void MainWidget::SetupLoginPage() {
     reset_credentials_button_->setFixedSize(150, 35);
     reset_credentials_button_->setStyleSheet(" QPushButton:hover {background-color: red;} QPushButton:focus {background-color: red;}");
     layout_->addWidget(reset_credentials_button_, 0, Qt::AlignCenter);
+    connect(reset_credentials_button_, &QPushButton::clicked, [&]() {
+        emit validationDialog_->execute("new credentials", "", "");
+    });
 }
 
 void MainWidget::setupMainPage() {
@@ -111,9 +114,9 @@ void MainWidget::setupMainPage() {
     // Desgin and add the table
     table_ = new QTableWidget;
     layout_->addWidget(table_); 
-    table_->setColumnCount(9);
-    table_->setHorizontalHeaderLabels(QStringList() << "ID" << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked" << "Trusted" << "Manage device" << "");
-    
+    table_->setColumnCount(8);
+    table_->setHorizontalHeaderLabels(QStringList() << "ID" << "Device Name" << "IP Address" << "MAC Address" << "Online" << "Blocked" << "Manage device" << "");
+    table_->setShowGrid(false);
     for (int i = 1; i < table_->columnCount() - 1; ++i) {
         table_->horizontalHeader()->setSectionResizeMode(i, QHeaderView::Stretch);
     }
@@ -121,8 +124,9 @@ void MainWidget::setupMainPage() {
     table_->horizontalHeader()->setSectionResizeMode(table_->columnCount() - 1, QHeaderView::Interactive);
     table_->setColumnWidth(0, 30);
     table_->setColumnWidth(table_->columnCount() - 1, 30);
-
+    table_->setItemDelegate(new RoundedItemDelegate(table_));
     table_->horizontalHeader()->setStyleSheet("QHeaderView::section { height: 20px; background-color: black; color: white; padding: 4px; border: 1px solid gray; }");
+    
     connect(table_, &QTableWidget::cellClicked, this, &MainWidget::onCellClicked);
 }
 
@@ -154,8 +158,26 @@ void MainWidget::HandleLogin() {
 
 void MainWidget::onCellClicked(int row, int column) {
     std::cout<<row<<" "<<column<<" "<<table_->item(row, column)->text().toStdString().c_str()<<std::endl<<table_->item(row, 1)->text().toStdString().c_str()<<std::endl<< table_->item(row, 3)->text().toStdString().c_str()<<std::endl;
+    if(column == 1) {
+        changeNameDialog_->execute(table_->item(row, 1)->text().toStdString().c_str(), table_->item(row, 3)->text().toStdString().c_str());
+    }
+    if(column == 6) {
+        validationDialog_->execute(table_->item(row, column)->text().toStdString().c_str(), table_->item(row, 1)->text().toStdString().c_str(), table_->item(row, 3)->text().toStdString().c_str());
+        //emit setRequest(table_->item(row, column)->text().toStdString().c_str(), table_->item(row, 1)->text().toStdString().c_str(), table_->item(row, 3)->text().toStdString().c_str());
+    }
     if(column == 7) {
-        emit setRequest(table_->item(row, column)->text().toStdString().c_str(), table_->item(row, 1)->text().toStdString().c_str(), table_->item(row, 3)->text().toStdString().c_str());
+        validationDialog_->execute("delete", table_->item(row, 1)->text().toStdString().c_str(), table_->item(row, 3)->text().toStdString().c_str());
+    }
+}
+ 
+// preformRequest from validation meaning request can be "delete", "Block" or "Unblock"
+void MainWidget::performRequest(const std::string &request, const std::string &name, const std::string &mac) {
+    std::cout<<request<<std::endl;
+    if(request == "delete") {
+        emit manageDevice(request, name, mac);
+    }
+    else {
+        emit setRequest(request, name, mac);
     }
 }
 
@@ -171,7 +193,7 @@ void MainWidget::populate(data::Response data) {
     table_->clearContents();
     table_->setRowCount(data.devices_size() - 1);
     int row = -1;
-
+    
     for(const auto &device: data.devices()) {
         if(device.id() == 1)
         {
@@ -180,10 +202,21 @@ void MainWidget::populate(data::Response data) {
         }
         else {
             row++;
-            table_->setItem(row, 0, new QTableWidgetItem(QString::number(device.id())));
-            table_->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(device.name())));
-            table_->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(device.ip_address())));
-            table_->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(device.mac_address())));
+
+            QTableWidgetItem* idItem = new QTableWidgetItem(QString::number(device.id()));
+            QTableWidgetItem* nameItem = new QTableWidgetItem(QString::fromStdString(device.name()));
+            QTableWidgetItem* ipItem = new QTableWidgetItem(QString::fromStdString(device.ip_address()));
+            QTableWidgetItem* macItem = new QTableWidgetItem(QString::fromStdString(device.mac_address()));
+
+            idItem->setData(Qt::UserRole, device.is_remembered());
+            nameItem->setData(Qt::UserRole, device.is_remembered());
+            ipItem->setData(Qt::UserRole, device.is_remembered());
+            macItem->setData(Qt::UserRole, device.is_remembered());
+
+            table_->setItem(row, 0, idItem);
+            table_->setItem(row, 1, nameItem);
+            table_->setItem(row, 2, ipItem);
+            table_->setItem(row, 3, macItem);
 
             QTableWidgetItem *item_is_o = new QTableWidgetItem(QString::fromStdString("off"));
             item_is_o->setForeground(Qt::red);
@@ -191,6 +224,7 @@ void MainWidget::populate(data::Response data) {
                 item_is_o = new QTableWidgetItem(QString::fromStdString("on"));
                 item_is_o->setForeground(QColor(0, 100, 0));
             }
+            item_is_o->setData(Qt::UserRole, device.is_remembered());
             table_->setItem(row, 4, item_is_o);
             
 
@@ -200,29 +234,21 @@ void MainWidget::populate(data::Response data) {
                 item_is_b = new QTableWidgetItem(QString::fromStdString("yes"));
                 item_is_b->setForeground(Qt::red);
             }
+            item_is_b->setData(Qt::UserRole, device.is_remembered());
             table_->setItem(row, 5, item_is_b);
 
-            QTableWidgetItem *item_is_t = new QTableWidgetItem(QString::fromStdString("no"));
-            item_is_t->setForeground(QColor(0, 100, 0));
-            if(device.is_trusted()){
-                item_is_t = new QTableWidgetItem(QString::fromStdString("yes"));
-                item_is_t->setForeground(Qt::red);
-            }
-            table_->setItem(row, 6, item_is_t);
-
             QTableWidgetItem *item_b = new QTableWidgetItem(QString::fromStdString("Block"));
-            item_b->setBackground(QColor(173, 2, 19)); // dark red
             item_b->setTextAlignment(Qt::AlignCenter);
             if(device.is_blocked()){
                 item_b->setText(QString::fromStdString("Unblock"));
-                item_b->setBackground(QColor(11, 105, 1));  // dark green
             }
-            table_->setItem(row, 7, item_b);
+            table_->setItem(row, 6, item_b);
 
             QTableWidgetItem *item_delete = new QTableWidgetItem(QString::fromStdString("X"));
-            item_delete->setBackground(QColor(173, 2, 19)); // dark red
             item_delete->setTextAlignment(Qt::AlignCenter);
-            table_->setItem(row, 8, item_delete);
+            item_delete->setForeground(Qt::white);
+            table_->setItem(row, 7, item_delete);
+
         }
     }
 

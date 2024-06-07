@@ -20,6 +20,18 @@ void ServerController::changeMail(const std::string &new_email) {
 
 void ServerController::sendHandleRequest(const data::Request &request) {
     router_controller_.handleRequest(request);
+
+    data::Device device;
+    device.set_name(request.name());
+    device.set_mac_address(request.mac());
+    if(request.request() == "Block") {
+        device.set_is_blocked(1);
+        SQL_connector_.updateDevice(device);
+    }
+    else if(request.request() == "Unblock") {
+        device.set_is_blocked(0);
+        SQL_connector_.updateDevice(device);
+    }
 }
 
 std::vector<data::Device> ServerController::getDevices() {
@@ -64,7 +76,7 @@ void ServerController::checkNewDevices(std::vector<data::Device> parsed_devices)
     }
     else {
         std::lock_guard lock(devices_mutex_);
-        std::vector<data::Device> new_devices;
+        // Iterate through all the devices and check is there are new ones
         for (auto& device : parsed_devices) {
             if(SQL_connector_.checkIfMacExists(device.mac_address())) {
                 for(auto &d: devices_) {
@@ -79,12 +91,20 @@ void ServerController::checkNewDevices(std::vector<data::Device> parsed_devices)
                 manageNewDevice(device);
             }
         }
+        // Sync devices_ with database for the devices that are not remembered
+        for(auto& d: devices_) {
+            if(!d.is_remembered()) {
+                d.set_is_blocked(SQL_connector_.checkIsBlocked(d.mac_address()));
+            }
+        }
+
+
     }
 
 }
 
 void ServerController::manageNewDevice(data::Device &device) {
-    // Here enters only the new devices for the router
+    // Here enters only the new devices (not present in database)
     device.set_is_blocked(1);
     eliminateNonPrintChar(device);
     SQL_connector_.addDevice(device);
@@ -95,6 +115,12 @@ void ServerController::manageNewDevice(data::Device &device) {
     mail_.send();
     
 }
+
+
+void ServerController::deleteDevice(const std::string &mac) {
+    //delete dev
+}
+
 
 void ServerController::eliminateNonPrintChar(data::Device &device) {
     std::string name = device.name();

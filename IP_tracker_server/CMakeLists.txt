@@ -11,11 +11,6 @@ find_package(Threads REQUIRED)
 
 find_package(CURL REQUIRED)
 
-find_package(SQLite3 REQUIRED)
-
-#find_package(MySQL REQUIRED)
-
-
 # Find Protobuf installation
 # Looks for protobuf-config.cmake file installed by Protobuf's cmake installation.
 option(protobuf_MODULE_COMPATIBLE TRUE)
@@ -130,7 +125,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF}
   ${CURL_LIBRARIES}
-  #${MySQL_LIBRARIES}
   mysqlcppconn
 )
 

@@ -26,7 +26,9 @@ grpc::Status MainService::Authenticate(grpc::ServerContext *context, const data:
     return grpc::Status::OK;
 }
 
-grpc::Status MainService::ChangeCredentials(grpc::ServerContext *context, const data::NewCredentials* request, data::OperationResponse* response) {
+grpc::Status MainService::ChangeCredentials(grpc::ServerContext *context, const data::Credentials* request, data::OperationResponse* response) {
+    
+    
     if (request->password() != "") {
         if(admin_.checkPassword(request->old_password())) {
             admin_.saveCredentials(request->username(), request->password());
@@ -57,6 +59,16 @@ grpc::Status MainService::ChangeEmail(grpc::ServerContext *context, const data::
     } else {
         response->set_success(false);
         response->set_message("Wrong email format!");
+    }
+    return grpc::Status::OK;
+}
+
+grpc::Status MainService::ManageDevice(grpc::ServerContext *context, const data::Request* request, data::OperationResponse* response) {
+    std::cout<<request->request()<<" " <<request->name()<<" "<<request->mac()<<std::endl;
+    if (request->request() == "rename") {
+        
+    } else if (request->request() == "delete") {
+        server_controller_.deleteDevice(request->mac());
     }
     return grpc::Status::OK;
 }

@@ -20,7 +20,6 @@ public slots:
     void displayMessageDialogEmail(const std::string &message);
 
 private:
-    QPushButton *change_email_button_;
     QVBoxLayout *dialog_box_layout_email_;
     QLineEdit *new_email_;
     QLineEdit *current_password_email_;

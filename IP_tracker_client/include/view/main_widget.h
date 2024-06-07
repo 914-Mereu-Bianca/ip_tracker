@@ -17,6 +17,8 @@
 #include <../build/proto_generated/ip_tracker.pb.h>
 #include "credentials_dialog.h"
 #include "email_dialog.h"
+#include "validation_dialog.h"
+#include "change_name_dialog.h"
 
 class MainWidget: public QWidget {
 public:
@@ -24,13 +26,13 @@ public:
     ~MainWidget()=default;
     void LoadStylesheet();
     void SetupLoginPage();
-    //void SetupEmailDialogBox();
     void SetupButtonsMainPage();
 
 signals:
     void authenticate(const std::string &username, const std::string &password);
     void saveCredentials(const std::string &username, const std::string &password, const std::string &current_password);
     void saveEmail(const std::string &email, const std::string &current_password);
+    void manageDevice(const std::string &request, const std::string &name, const std::string &mac);
     void setRequest(const std::string &request, const std::string &name, const std::string &mac);
     void setFilter(int filter_number);
     void displayMessageDialogCredentials(const std::string &message);
@@ -42,6 +44,7 @@ public slots:
     void populate(data::Response devices);
     void setupMainPage();
     void displayErrorMessageLogin(); 
+    void performRequest(const std::string &request, const std::string &name, const std::string &mac);
     
     
 private:
@@ -61,13 +64,9 @@ private:
     
     QPushButton *change_email_button_;
     EmailDialog *emailDialog_;
-    
-    /*QDialog *dialog_box_email_;
-    QVBoxLayout *dialog_box_layout_email_;
-    QLineEdit *new_email_;
-    QLineEdit *current_password_email_;
-    QPushButton *button_save_email_;
-    QLabel *error_label_box_email_;*/
+
+    ValidationDialog *validationDialog_;
+    ChangeNameDialog *changeNameDialog_;
 
     QLabel *router_ip_;
     QLabel *router_mac_;
