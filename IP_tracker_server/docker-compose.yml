@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: my_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ip_tracker
+      MYSQL_USER: bia
+      MYSQL_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  server:
+    build: ./Server
+    container_name: cpp_server
+    depends_on:
+      - db
+    networks:
+      - app-network
+    ports:
+      - "8080:8080"
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db_data:

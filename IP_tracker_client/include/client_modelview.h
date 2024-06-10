@@ -14,7 +14,6 @@
 
 class ClientModelView : public QObject {
     Q_OBJECT
-//This class controls the way the data from the client is displayed
 public:
     ClientModelView(QWidget *parent = nullptr);
     ClientModelView(ClientModelView &other) = delete;

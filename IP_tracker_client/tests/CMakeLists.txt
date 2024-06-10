@@ -20,7 +20,7 @@ enable_testing()
 # Sets test for ClientTests
 set(ClientTests_SOURCES
   main.cpp
-  login_test.cpp
+  client_test.cpp
 )
 
 add_executable(ClientTests

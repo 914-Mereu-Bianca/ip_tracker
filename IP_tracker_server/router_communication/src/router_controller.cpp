@@ -7,7 +7,7 @@
 
 RouterController::RouterController()
 {
-    router_.setToken("4sk*%2B4o14qoInoz%2CYB%3CmDsysyrHAVQN%2B"); 
+    router_.setToken("%2By(yXVXZVqhbrC%7Cl70%7BKrtkr%7D(WiJe7w"); 
     get_devices_thread_ = std::thread(&RouterController::runBackgroundGetDevices, this);
     get_blocked_devices_thread_ = std::thread(&RouterController::runBackgroundGetBlockedDevices, this);
 }

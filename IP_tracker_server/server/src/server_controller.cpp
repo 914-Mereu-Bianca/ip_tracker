@@ -51,10 +51,10 @@ void ServerController::updateDevices() {
     while (is_running_) {
         std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(4));
         response = router_controller_.getAllDevicesResponse();
-        if(response != "")
+        if(response != "" && response.size() > 200)
             parser_.parseData(response);
         response = router_controller_.getAllBlockedDevicesResponse();
-        if(response != "") {
+        if(response != "" && response.size() > 200) {
             parser_.parseBlockedDevices(response);
         }
 
@@ -108,6 +108,7 @@ void ServerController::manageNewDevice(data::Device &device) {
     device.set_is_blocked(1);
     eliminateNonPrintChar(device);
     SQL_connector_.addDevice(device);
+    devices_.push_back(device);
     data::Request request;
     request.set_request("Block");
     request.set_mac(device.mac_address());

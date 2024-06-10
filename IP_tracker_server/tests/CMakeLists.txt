@@ -20,7 +20,11 @@ enable_testing()
 # Sets test for ServerTests
 set(ServerTests_SOURCES
   main.cpp
-  login_test.cpp
+  service_test.cpp
+  parser_test.cpp
+  send_mail_test.cpp 
+  sql_connector_test.cpp 
+  router_controller_test.cpp
 )
 
 add_executable(ServerTests
