@@ -80,8 +80,7 @@ std::string Router::getAllBlockedDevices() {
 }
 
 
-std::string Router::blockDevice(std::string &name, std::string &mac)
-{
+std::string Router::blockDevice(std::string &name, std::string &mac) {
 
     curl = curl_easy_init();
     std::string response;
@@ -119,8 +118,7 @@ std::string Router::blockDevice(std::string &name, std::string &mac)
 
 }
 
-std::string Router::unblockDevice(std::string &mac)
-{
+std::string Router::unblockDevice(std::string &mac) {
 
     curl = curl_easy_init();
     std::string response;
@@ -141,7 +139,44 @@ std::string Router::unblockDevice(std::string &mac)
 
         res = curl_easy_perform(curl); // Perform the POST request
 
-        // Check for errors
+        if (res != CURLE_OK) {
+            std::cout << "Failed to perform POST request: " << curl_easy_strerror(res) << std::endl;
+            response = "failed";
+        }
+
+        curl_easy_cleanup(curl);
+
+    } else {
+        std::cerr << "Failed to initialize libcurl" << std::endl;
+    }
+
+    return response;
+
+}
+
+
+std::string Router::renameDevice(std::string &name, std::string &mac) {
+
+    curl = curl_easy_init();
+    std::string response;
+    if (curl) {
+        
+        curl_easy_setopt(curl, CURLOPT_URL, url_block_.c_str());
+        curl_easy_setopt(curl, CURLOPT_POST, 1L);
+
+        name.erase(std::remove_if(name.begin(), name.end(), [](unsigned char c){ return !std::isprint(c);}), name.end());
+        mac.erase(std::remove_if(mac.begin(), mac.end(), [](unsigned char c){return !std::isprint(c);}), mac.end());
+        
+        std::string body = "main staMgt -add mac:"+ mac +" name:"+ name +" upload:0 download:0";  
+        
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str()); // Set the body data
+        
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Router::WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5);
+
+        res = curl_easy_perform(curl); // Perform the POST request
+
         if (res != CURLE_OK) {
             std::cout << "Failed to perform POST request: " << curl_easy_strerror(res) << std::endl;
             response = "failed";

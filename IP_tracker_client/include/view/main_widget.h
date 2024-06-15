@@ -44,6 +44,7 @@ public slots:
     void populate(data::Response devices);
     void setupMainPage();
     void displayErrorMessageLogin(); 
+    void displayMainMessage(const std::string &message);
     void performRequest(const std::string &request, const std::string &name, const std::string &mac);
     
     
@@ -76,6 +77,7 @@ private:
     QPushButton *button_filter_all_;
     QHBoxLayout *button_layout_;
     QTableWidget *table_;
+    QLabel *main_message_;
 
     QLatin1String *styleSheet_;
 

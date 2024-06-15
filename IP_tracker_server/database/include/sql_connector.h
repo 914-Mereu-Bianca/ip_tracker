@@ -23,6 +23,10 @@ public:
     void clearTable();
     bool checkIfMacExists(const std::string &mac_address);
     bool checkIsBlocked(const std::string &mac_address);
+    bool checkIsRemembered(const std::string &mac_address);
+    void renameDevice(const std::string &name, const std::string &mac_address);
+    void setRemembered(bool remembered, const std::string &mac_address);
+    std::string getName(const std::string &mac_address);
 
     std::vector<data::Device> getDevices();
 
@@ -33,6 +37,8 @@ private:
     std::unique_ptr<sql::Statement> stmt;
     std::unique_ptr<sql::ResultSet> res;
     std::unique_ptr<sql::PreparedStatement> pstmt;
+    std::unique_ptr<sql::PreparedStatement> pstmt_rename;
+    std::unique_ptr<sql::PreparedStatement> pstmt_remembered;
 
 };
 

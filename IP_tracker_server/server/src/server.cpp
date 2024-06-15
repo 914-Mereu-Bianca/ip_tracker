@@ -66,7 +66,7 @@ grpc::Status MainService::ChangeEmail(grpc::ServerContext *context, const data::
 grpc::Status MainService::ManageDevice(grpc::ServerContext *context, const data::Request* request, data::OperationResponse* response) {
     std::cout<<request->request()<<" " <<request->name()<<" "<<request->mac()<<std::endl;
     if (request->request() == "rename") {
-        
+        server_controller_.renameDevice(*request);
     } else if (request->request() == "delete") {
         server_controller_.deleteDevice(request->mac());
     }

@@ -32,6 +32,7 @@ signals:
     void displayErrorMessageLogin();
     void displayMessageDialogCredentials(const std::string &message);
     void displayMessageDialogEmail(const std::string &message);
+    void displayMainMessage(const std::string &message);
 
 public slots:
     void authenticate(const std::string &username, const std::string &password);

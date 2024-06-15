@@ -9,6 +9,10 @@ SqlConnector::SqlConnector() {
     con->setSchema("ip_tracker");
     pstmt = std::unique_ptr<sql::PreparedStatement>(con->prepareStatement(
         "UPDATE device SET name=?, ip=?, blocked=?, remembered=? WHERE mac=?"));
+    pstmt_rename = std::unique_ptr<sql::PreparedStatement>(con->prepareStatement(
+        "UPDATE device SET name=? WHERE mac=?"));
+    pstmt_remembered = std::unique_ptr<sql::PreparedStatement>(con->prepareStatement(
+        "UPDATE device SET remembered=? WHERE mac=?"));
 
 }
 
@@ -38,6 +42,21 @@ void SqlConnector::updateDevice(data::Device device) {
     pstmt->executeUpdate();
 }
 
+void SqlConnector::renameDevice(const std::string &name, const std::string &mac_address) {
+    pstmt_rename->setString(1, name);
+    pstmt_rename->setString(2, mac_address);
+
+    pstmt_rename->executeUpdate();
+}
+
+void SqlConnector::setRemembered(bool remembered, const std::string &mac_address) {
+    pstmt_remembered->setInt(1, remembered);
+    pstmt_remembered->setString(2, mac_address);
+
+    pstmt_remembered->executeUpdate();
+}
+
+
 void SqlConnector::removeDevice(const std::string &mac_address) {
     stmt.reset(con->createStatement());
     std::string deleteQuery = "DELETE FROM device WHERE mac = '" + mac_address + "'";
@@ -60,6 +79,28 @@ bool SqlConnector::checkIsBlocked(const std::string &mac_address) {
     res.reset(stmt->executeQuery(checkQuery));
     if (res->next()) {
         return res->getInt(1);
+    } else {
+        throw std::runtime_error("No matching records found.");
+    }
+}
+
+bool SqlConnector::checkIsRemembered(const std::string &mac_address) {
+    stmt.reset(con->createStatement());
+    std::string checkQuery = "SELECT remembered FROM device WHERE mac = '" + mac_address + "'";
+    res.reset(stmt->executeQuery(checkQuery));
+    if (res->next()) {
+        return res->getInt(1);
+    } else {
+        throw std::runtime_error("No matching records found.");
+    }
+}
+
+std::string SqlConnector::getName(const std::string &mac_address) {
+    stmt.reset(con->createStatement());
+    std::string checkQuery = "SELECT name FROM device WHERE mac = '" + mac_address + "'";
+    res.reset(stmt->executeQuery(checkQuery));
+    if (res->next()) {
+        return res->getString(1);
     } else {
         throw std::runtime_error("No matching records found.");
     }

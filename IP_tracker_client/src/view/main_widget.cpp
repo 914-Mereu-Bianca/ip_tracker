@@ -128,6 +128,11 @@ void MainWidget::setupMainPage() {
     table_->horizontalHeader()->setStyleSheet("QHeaderView::section { height: 20px; background-color: black; color: white; padding: 4px; border: 1px solid gray; }");
     
     connect(table_, &QTableWidget::cellClicked, this, &MainWidget::onCellClicked);
+
+    main_message_ = new QLabel("main message", this);
+    main_message_->setFixedHeight(30);
+    main_message_->setStyleSheet("QLabel { color: rgb(182, 197, 219); background-color: rgb(182, 197, 219);}");
+    layout_->addWidget(main_message_, 0, Qt::AlignCenter);
 }
 
 void MainWidget::SetupButtonsMainPage() {
@@ -185,6 +190,17 @@ void MainWidget::displayErrorMessageLogin() {
     error_label_->setStyleSheet("QLabel { color: red; }");
     QTimer::singleShot(1500, [=]() {
         error_label_->setStyleSheet("QLabel { color: rgb(182, 197, 219); }");
+    });
+}
+
+void MainWidget::displayMainMessage(const std::string &message) {
+    if(message == "rename") {
+        main_message_->setText("renaming the device...");
+    }
+    //main_message_->setText(message); 
+    main_message_->setStyleSheet("QLabel { padding: 10px; border-radius: 15px; color: black; background-color: gray;}");
+    QTimer::singleShot(1500, [=]() {
+        main_message_->setStyleSheet("QLabel { color: rgb(182, 197, 219); background-color: rgb(182, 197, 219); }");
     });
 }
 

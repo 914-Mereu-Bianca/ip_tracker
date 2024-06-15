@@ -27,6 +27,7 @@ public:
     void setDevices(std::vector<data::Device> devices);
     void changeMail(const std::string &new_email);
     void deleteDevice(const std::string &mac);
+    void renameDevice(const data::Request &request);
 
 private:
 

@@ -12,6 +12,7 @@ ClientModelView::ClientModelView(QWidget *parent) : QObject(parent)
     connect(this, &ClientModelView::displayErrorMessageLogin, main_widget_, &MainWidget::displayErrorMessageLogin);
     connect(this, &ClientModelView::displayMessageDialogCredentials, main_widget_, &MainWidget::displayMessageDialogCredentials);
     connect(this, &ClientModelView::displayMessageDialogEmail, main_widget_, &MainWidget::displayMessageDialogEmail);
+    connect(this, &ClientModelView::displayMainMessage, main_widget_, &MainWidget::displayMainMessage);
     connect(main_widget_, &MainWidget::authenticate, this, &ClientModelView::authenticate);
     connect(main_widget_, &MainWidget::setRequest, this, &ClientModelView::setRequest);
     connect(main_widget_, &MainWidget::setFilter, this, &ClientModelView::setFilter);
@@ -55,6 +56,7 @@ void ClientModelView::saveEmail(const std::string &email, const std::string &cur
 void ClientModelView::manageDevice(const std::string &request, const std::string &name, const std::string &mac) {
     std::cout<<request<<" "<<name<<" "<<mac<<std::endl;
     auto response = client_->ManageDevice(request, name, mac);
+    emit displayMainMessage(request);
 }
 
 void ClientModelView::setRequest(const std::string &request, const std::string &name, const std::string &mac) {

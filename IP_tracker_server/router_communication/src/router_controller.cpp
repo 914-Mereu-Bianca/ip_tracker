@@ -7,7 +7,7 @@
 
 RouterController::RouterController()
 {
-    router_.setToken("%2By(yXVXZVqhbrC%7Cl70%7BKrtkr%7D(WiJe7w"); 
+    router_.setToken("Zhl0%7CO~(Dx5z3%24fxq0!A26CF)uuvS%7CEP"); 
     get_devices_thread_ = std::thread(&RouterController::runBackgroundGetDevices, this);
     get_blocked_devices_thread_ = std::thread(&RouterController::runBackgroundGetBlockedDevices, this);
 }
@@ -27,17 +27,20 @@ std::string RouterController::handleRequest(data::Request request) {
         std::cout<<request.request()<<std::endl<<request.name()<<std::endl<<request.mac()<<std::endl;
     
     std::string response = "";
-
+    
+    std::string name = request.name();
+    std::string mac = request.mac();
     if(request.request() == "Block") {
         std::unique_lock u_lock(request_mutex_);
-        std::string name = request.name();
-        std::string mac = request.mac();
         response = router_.blockDevice(name, mac);
         std::cout<<response<<std::endl;
     } else if (request.request() == "Unblock") {
         std::unique_lock u_lock(request_mutex_);
-        std::string mac = request.mac();
         response = router_.unblockDevice(mac);
+        std::cout<<response<<std::endl;
+    } else if (request.request() == "rename") {
+        std::unique_lock u_lock(request_mutex_);
+        response = router_.renameDevice(name, mac);
         std::cout<<response<<std::endl;
     }
 

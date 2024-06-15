@@ -7,7 +7,6 @@
 class Router {
 
 public:
-
     Router();
     ~Router();
     static size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *output);
@@ -15,10 +14,10 @@ public:
     std::string getAllBlockedDevices();
     std::string blockDevice(std::string &name, std::string &mac);
     std::string unblockDevice(std::string &mac);
+    std::string renameDevice(std::string &name, std::string &mac);
     void setToken(const std::string &token);
 
 private:
-
     std::string token_;
     CURL *curl;
     CURLcode res;
