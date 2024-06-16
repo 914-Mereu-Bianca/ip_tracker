@@ -1,33 +1,67 @@
-# Use the grpc/cxx image as the base
-FROM grpc/cxx:latest
+# Stage 1: Build stage
+FROM debian:buster as build
 
-# Install dependencies (if any additional are needed)
+# Set environment variables
+ENV MY_INSTALL_DIR=/usr/local
+ENV PATH="$MY_INSTALL_DIR/bin:$PATH"
+
+# Install necessary build tools and dependencies
 RUN apt-get update && apt-get install -y \
+    autoconf \
+    automake \
+    build-essential \
     cmake \
     curl \
+    g++ \
+    git \
+    libtool \
+    make \
+    pkg-config \
+    unzip \
+    libcurl4-openssl-dev \
     libmysqlcppconn-dev \
-    libcurl4-openssl-dev
+    libssl-dev \
+    && apt-get clean
 
-# Create a working directory
-WORKDIR /usr/src/app
+# Verify cmake installation
+RUN cmake --version
 
-# Copy your project files to the container
-COPY . .
+# Clone gRPC repository with submodules
+RUN git clone --recurse-submodules -b v1.56.0 --depth 1 --shallow-submodules https://github.com/grpc/grpc /var/local/git/grpc
 
-# Create build directory
-RUN mkdir -p build
+# Build and install gRPC
+RUN mkdir -p /var/local/git/grpc/cmake/build && \
+    cd /var/local/git/grpc/cmake/build && \
+    cmake -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=$MY_INSTALL_DIR ../.. && \
+    make -j 4 && \
+    make install
 
-# Change to build directory
-WORKDIR /usr/src/app/build
+# Copy application source code
+COPY . /usr/local/src/server
 
-# Run cmake to configure the project
-RUN cmake ..
+COPY ./../IP_tracker_proto /usr/local/src/IP_tracker_proto
 
-# Build the project
-RUN cmake --build .
+# Build the application
+RUN mkdir -p /usr/local/src/server/build && cd /usr/local/src/server/build && \
+    cmake .. && cmake --build .
 
-# Run tests (optional)
-# RUN make test
+# Stage 2: Runtime stage
+FROM debian:buster-slim
 
-# Define the command to run your executable (update `Server` to your executable name if different)
-CMD ["./Server"]
+# Set environment variables
+ENV MY_INSTALL_DIR=/usr/local
+ENV PATH="$MY_INSTALL_DIR/bin:$PATH"
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    libcurl4 \
+    libmysqlcppconn-dev \
+    libssl1.1 \
+    && apt-get clean
+
+# Copy the built application from the build stage
+COPY --from=build /usr/local/src/server/build /usr/local/bin
+COPY --from=build $MY_INSTALL_DIR $MY_INSTALL_DIR
+
+# Set the entrypoint for the application
+ENTRYPOINT ["/usr/local/bin/Server"]

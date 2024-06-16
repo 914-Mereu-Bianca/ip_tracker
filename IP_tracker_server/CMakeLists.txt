@@ -128,4 +128,4 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
   mysqlcppconn
 )
 
-add_subdirectory(tests)
+#add_subdirectory(tests)

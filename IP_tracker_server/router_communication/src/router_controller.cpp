@@ -31,15 +31,15 @@ std::string RouterController::handleRequest(data::Request request) {
     std::string name = request.name();
     std::string mac = request.mac();
     if(request.request() == "Block") {
-        std::unique_lock u_lock(request_mutex_);
+        std::unique_lock<std::mutex> u_lock(request_mutex_);
         response = router_.blockDevice(name, mac);
         std::cout<<response<<std::endl;
     } else if (request.request() == "Unblock") {
-        std::unique_lock u_lock(request_mutex_);
+        std::unique_lock<std::mutex> u_lock(request_mutex_);
         response = router_.unblockDevice(mac);
         std::cout<<response<<std::endl;
     } else if (request.request() == "rename") {
-        std::unique_lock u_lock(request_mutex_);
+        std::unique_lock<std::mutex> u_lock(request_mutex_);
         response = router_.renameDevice(name, mac);
         std::cout<<response<<std::endl;
     }
@@ -53,20 +53,20 @@ void RouterController::runBackgroundGetDevices() {
     std::string response = "";
     while(is_running_) {
 
-        std::unique_lock u_lock(request_mutex_);
+        std::unique_lock<std::mutex> u_lock(request_mutex_);
         response = router_.getAllDevices();
         u_lock.unlock();
         
         if(response != "failed") {
             std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(3));
-            std::lock_guard lock(get_devices_mutex_);
+            std::lock_guard<std::mutex> lock(get_devices_mutex_);
             router_response_get_all_ = response;
         }   
     }
 }
 
 std::string RouterController::getAllDevicesResponse() {
-    std::lock_guard lock(get_devices_mutex_);
+    std::lock_guard<std::mutex> lock(get_devices_mutex_);
     return router_response_get_all_;
 }
 
@@ -74,19 +74,19 @@ void RouterController::runBackgroundGetBlockedDevices() {
     std::string response = "";
     while(is_running_) {
 
-        std::unique_lock u_lock(request_mutex_);
+        std::unique_lock<std::mutex> u_lock(request_mutex_);
         response = router_.getAllBlockedDevices();
         u_lock.unlock();
 
         if(response != "failed") {
             std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(3));
-            std::lock_guard lock(get_blocked_devices_mutex_);
+            std::lock_guard<std::mutex> lock(get_blocked_devices_mutex_);
             router_response_get_all_blocked_ = response;
         }   
     }
 }
 
 std::string RouterController::getAllBlockedDevicesResponse() {
-    std::lock_guard lock(get_blocked_devices_mutex_);
+    std::lock_guard<std::mutex> lock(get_blocked_devices_mutex_);
     return router_response_get_all_blocked_;
 }

@@ -1,5 +1,5 @@
 #include "../include/sql_connector.h"
-#include <sqlite3.h>
+//#include <sqlite3.h>
 #include <iostream>
 
 SqlConnector::SqlConnector() {

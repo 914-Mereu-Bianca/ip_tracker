@@ -42,12 +42,12 @@ void ServerController::sendHandleRequest(const data::Request &request) {
 }
 
 std::vector<data::Device> ServerController::getDevices() {
-    std::lock_guard lock(devices_mutex_);
+    std::lock_guard<std::mutex> lock(devices_mutex_);
     return devices_;
 }
 
 void ServerController::setDevices(std::vector<data::Device> devices) { 
-    std::lock_guard lock(devices_mutex_);
+    std::lock_guard<std::mutex> lock(devices_mutex_);
     devices_ = devices;
 }
 
@@ -74,7 +74,7 @@ void ServerController::checkNewDevices(std::vector<data::Device> parsed_devices)
 
     // if in the database has no device initially, all the devices connected are added
     if(SQL_connector_.getDevices().size() == 0) {
-        std::lock_guard lock(devices_mutex_);
+        std::lock_guard<std::mutex> lock(devices_mutex_);
         for(auto& newDevice : parsed_devices) {
             devices_.push_back(newDevice);
             eliminateNonPrintChar(newDevice);
@@ -82,7 +82,7 @@ void ServerController::checkNewDevices(std::vector<data::Device> parsed_devices)
         }
     }
     else {
-        std::lock_guard lock(devices_mutex_);
+        std::lock_guard<std::mutex> lock(devices_mutex_);
         // Suppose each device has been forgotten by the router
         for(auto &d: devices_) d.set_is_remembered(0);
         // Iterate through all the devices and check if there are new ones
@@ -135,7 +135,7 @@ void ServerController::manageNewDevice(data::Device &device) {
 
 
 void ServerController::deleteDevice(const std::string &mac) {
-    std::lock_guard lock(devices_mutex_);
+    std::lock_guard<std::mutex> lock(devices_mutex_);
     SQL_connector_.removeDevice(mac);
     for(auto it = devices_.begin(); it != devices_.end(); ++it) {
         if((*it).mac_address() == mac) {
