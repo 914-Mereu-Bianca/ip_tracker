@@ -4,17 +4,9 @@
 #include <fstream>
 #include <iostream>
 
-Admin::Admin(const std::string &file_name) {
-    file_name_ = file_name;
-    std::ifstream file(file_name_);
-    if (file.is_open()) {
-        std::getline(file, username_hashed_);
-        std::getline(file, password_hashed_);
-
-        file.close();
-    } else {
-        std::cerr << "Unable to open file" << std::endl;
-    }
+Admin::Admin(std::shared_ptr<SqlConnector> sql_connector) : SQL_connector_(sql_connector) {
+   username_hashed_ = SQL_connector_->getUsername();
+   password_hashed_ = SQL_connector_->getPassword();
 }
 
 std::string Admin::computeHash(const std::string &credential) {
@@ -44,16 +36,9 @@ std::string Admin::computeHash(const std::string &credential) {
 
 void Admin::saveCredentials(const std::string &username, const std::string &password)
 {
-    std::ofstream file(file_name_);
-    username_hashed_ = computeHash(username);
-    password_hashed_ = computeHash(password);
-    if (file.is_open()) {
-        file << username_hashed_ << std::endl;
-        file << password_hashed_;
-        file.close();
-    } else {
-        std::cerr << "Unable to open file" << std::endl;
-    }
+   username_hashed_ = computeHash(username);
+   password_hashed_ = computeHash(password);
+   SQL_connector_->setCredentials(username_hashed_, password_hashed_);
 }
 
 bool Admin::checkUsername(const std::string &username) {

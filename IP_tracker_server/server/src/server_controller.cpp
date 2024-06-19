@@ -1,8 +1,8 @@
 #include "../include/server_controller.h"
 
 
-ServerController::ServerController() {
-    setDevices(SQL_connector_.getDevices());
+ServerController::ServerController(std::shared_ptr<SqlConnector> sql_connector) : SQL_connector_(sql_connector) {
+    setDevices(SQL_connector_->getDevices());
     update_devices_ = std::thread(&ServerController::updateDevices, this);
 }
 
@@ -14,15 +14,20 @@ ServerController::~ServerController() {
     router_controller_.stop();
 
     for(auto &d: devices_) {
-        if(SQL_connector_.checkIfMacExists(d.mac_address()))
-            SQL_connector_.updateDevice(d);
+        if(SQL_connector_->checkIfMacExists(d.mac_address()))
+            SQL_connector_->updateDevice(d);
         else 
-            SQL_connector_.addDevice(d);
+            SQL_connector_->addDevice(d);
     }
 }
 
 void ServerController::changeMail(const std::string &new_email) {
     mail_.setEmail(new_email);
+    SQL_connector_->setEmail(new_email);
+}
+
+void ServerController::resetCredetials(const std::string &username, const std::string &password) {
+    mail_.resetCredentials(username, password);
 }
 
 void ServerController::sendHandleRequest(const data::Request &request) {
@@ -33,11 +38,11 @@ void ServerController::sendHandleRequest(const data::Request &request) {
     device.set_mac_address(request.mac());
     if(request.request() == "Block") {
         device.set_is_blocked(1);
-        SQL_connector_.updateDevice(device);
+        SQL_connector_->updateDevice(device);
     }
     else if(request.request() == "Unblock") {
         device.set_is_blocked(0);
-        SQL_connector_.updateDevice(device);
+        SQL_connector_->updateDevice(device);
     }
 }
 
@@ -73,12 +78,12 @@ void ServerController::updateDevices() {
 void ServerController::checkNewDevices(std::vector<data::Device> parsed_devices) {
 
     // if in the database has no device initially, all the devices connected are added
-    if(SQL_connector_.getDevices().size() == 0) {
+    if(SQL_connector_->getDevices().size() == 0) {
         std::lock_guard<std::mutex> lock(devices_mutex_);
         for(auto& newDevice : parsed_devices) {
             devices_.push_back(newDevice);
             eliminateNonPrintChar(newDevice);
-            SQL_connector_.addDevice(newDevice);
+            SQL_connector_->addDevice(newDevice);
         }
     }
     else {
@@ -92,7 +97,7 @@ void ServerController::checkNewDevices(std::vector<data::Device> parsed_devices)
                 if(d.mac_address() == device.mac_address()) { 
                     eliminateNonPrintChar(device);
                     device.set_is_remembered(1);
-                    SQL_connector_.updateDevice(device);
+                    SQL_connector_->updateDevice(device);
                     d = device;
                     found = 1;
                     break;
@@ -104,16 +109,16 @@ void ServerController::checkNewDevices(std::vector<data::Device> parsed_devices)
         // Sync devices_ with database for the devices that are not remembered
         for(auto it = devices_.begin(); it != devices_.end(); ++it) {
             if(!(*it).is_remembered()) {
-                if(SQL_connector_.checkIsRemembered((*it).mac_address())) 
-                    SQL_connector_.setRemembered(0, (*it).mac_address());
-                if(SQL_connector_.checkIfMacExists((*it).mac_address())) {
-                    (*it).set_is_blocked(SQL_connector_.checkIsBlocked((*it).mac_address()));
-                    (*it).set_name(SQL_connector_.getName((*it).mac_address()));
+                if(SQL_connector_->checkIsRemembered((*it).mac_address())) 
+                    SQL_connector_->setRemembered(0, (*it).mac_address());
+                if(SQL_connector_->checkIfMacExists((*it).mac_address())) {
+                    (*it).set_is_blocked(SQL_connector_->checkIsBlocked((*it).mac_address()));
+                    (*it).set_name(SQL_connector_->getName((*it).mac_address()));
                 }
             }
             else {
-                if(!SQL_connector_.checkIsRemembered((*it).mac_address())) 
-                    SQL_connector_.setRemembered(1, (*it).mac_address());
+                if(!SQL_connector_->checkIsRemembered((*it).mac_address())) 
+                    SQL_connector_->setRemembered(1, (*it).mac_address());
             }
         }
     }
@@ -123,7 +128,7 @@ void ServerController::manageNewDevice(data::Device &device) {
     // Here enters only the new devices (not present in database)
     device.set_is_blocked(1);
     eliminateNonPrintChar(device);
-    SQL_connector_.addDevice(device);
+    SQL_connector_->addDevice(device);
     devices_.push_back(device);
     data::Request request;
     request.set_request("Block");
@@ -136,7 +141,7 @@ void ServerController::manageNewDevice(data::Device &device) {
 
 void ServerController::deleteDevice(const std::string &mac) {
     std::lock_guard<std::mutex> lock(devices_mutex_);
-    SQL_connector_.removeDevice(mac);
+    SQL_connector_->removeDevice(mac);
     for(auto it = devices_.begin(); it != devices_.end(); ++it) {
         if((*it).mac_address() == mac) {
             devices_.erase(it);
@@ -145,10 +150,10 @@ void ServerController::deleteDevice(const std::string &mac) {
 }
 
 void ServerController::renameDevice(const data::Request &request) {
-    if(SQL_connector_.checkIsRemembered(request.mac())) {
+    if(SQL_connector_->checkIsRemembered(request.mac())) {
         sendHandleRequest(request);
     } else {
-        SQL_connector_.renameDevice(request.name(), request.mac());
+        SQL_connector_->renameDevice(request.name(), request.mac());
     }
 }
 

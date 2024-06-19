@@ -11,7 +11,7 @@
 
 class MainService : public data::IPService::Service {
 public:
-    MainService(const std::string& ip, uint16_t port, Admin admin);
+    MainService(const std::string& ip, uint16_t port);
     ~MainService();
     void runServer();
     inline void shutdown() { server->Shutdown(); }
@@ -28,6 +28,7 @@ private:
     uint16_t port_;
     bool is_running_ = 1;
 
+    std::shared_ptr<SqlConnector> SQL_connector_;
     ServerController server_controller_;
     Admin admin_;
 

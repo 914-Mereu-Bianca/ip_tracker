@@ -8,12 +8,16 @@
 class SendMail {
 
 public:
-    SendMail() : email_receiver_("biamereu2002@gmail.com") {}
+    SendMail();
     SendMail(const std::string &email_receiver) : email_receiver_(email_receiver) {}
     void setEmail(const std::string &email_receiver);
     void send();
+    void resetCredentials(const std::string &username, const std::string &password);
 
 private:
+
+    void updateMailContent();
+    void updateMailContentReset(const std::string &username, const std::string &password);
 
     std::mutex mail_mutex_;
 
@@ -21,8 +25,8 @@ private:
     std::string email_receiver_ = "";
     std::string email_sender_ = "routera575@gmail.com";
     std::string password_sender_ = "njya umcc pzyz wgab";
-    std::string mail_file_ = "/home/bianca/ip_tracker/IP_tracker_server/utils/mail.txt";
-    std::string command_;
+    std::string command_blocked_;
+    std::string command_reset_;
 
 };
 

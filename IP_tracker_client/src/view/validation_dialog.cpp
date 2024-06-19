@@ -33,7 +33,7 @@ void ValidationDialog::execute(const std::string &request, const std::string &na
     request_ = request;
     name_ = name;
     mac_ = mac;
-    if(request == "new credentials")
+    if(request == "reset credentials")
         validation_label_->setText("  Are you sure you want to \n    reset the credentials?");
     else 
         validation_label_->setText(QString::fromStdString("  Are you sure you want to " + std::string(request) + "\nthe device having its MAC address\n           " + std::string(mac)));

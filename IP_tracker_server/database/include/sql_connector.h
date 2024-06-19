@@ -26,6 +26,11 @@ public:
     bool checkIsRemembered(const std::string &mac_address);
     void renameDevice(const std::string &name, const std::string &mac_address);
     void setRemembered(bool remembered, const std::string &mac_address);
+    void setCredentials(const std::string &username, const std::string &password);
+    void setEmail(const std::string &email);
+    std::string getUsername();
+    std::string getPassword();
+    std::string getEmail();
     std::string getName(const std::string &mac_address);
 
     std::vector<data::Device> getDevices();
@@ -39,6 +44,8 @@ private:
     std::unique_ptr<sql::PreparedStatement> pstmt;
     std::unique_ptr<sql::PreparedStatement> pstmt_rename;
     std::unique_ptr<sql::PreparedStatement> pstmt_remembered;
+    std::unique_ptr<sql::PreparedStatement> pstmt_credentials;
+    std::unique_ptr<sql::PreparedStatement> pstmt_email;
 
 };
 

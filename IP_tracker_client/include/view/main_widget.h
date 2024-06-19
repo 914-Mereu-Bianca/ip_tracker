@@ -37,6 +37,7 @@ signals:
     void setFilter(int filter_number);
     void displayMessageDialogCredentials(const std::string &message);
     void displayMessageDialogEmail(const std::string &message);
+    void resetCredentials();
 
 public slots:
     void HandleLogin();

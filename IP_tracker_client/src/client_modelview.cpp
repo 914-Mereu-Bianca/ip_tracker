@@ -19,6 +19,7 @@ ClientModelView::ClientModelView(QWidget *parent) : QObject(parent)
     connect(main_widget_, &MainWidget::saveCredentials, this, &ClientModelView::saveCredentials);
     connect(main_widget_, &MainWidget::saveEmail, this, &ClientModelView::saveEmail);
     connect(main_widget_, &MainWidget::manageDevice, this, &ClientModelView::manageDevice);
+    connect(main_widget_, &MainWidget::resetCredentials, this, &ClientModelView::resetCredentials);
 
     main_window_->show();
 }

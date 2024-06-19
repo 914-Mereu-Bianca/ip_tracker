@@ -13,8 +13,6 @@
 
 
 int main() {
-    Admin admin("../utils/credentials.txt");
-    MainService server("0.0.0.0", 50051, admin); 
+    MainService server("0.0.0.0", 50051); 
     server.runServer();
-    
 }

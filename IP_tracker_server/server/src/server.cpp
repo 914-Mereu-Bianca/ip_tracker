@@ -4,8 +4,7 @@
 #include <thread>
 #include <mutex>
 
-MainService::MainService(const std::string& ip, uint16_t port, Admin admin) : ip_(ip), port_(port), admin_(admin) {
-   
+MainService::MainService(const std::string& ip, uint16_t port) : ip_(ip), port_(port), SQL_connector_(std::make_shared<SqlConnector>()), admin_(SQL_connector_), server_controller_(SQL_connector_) {
 }
 
 MainService::~MainService() {
@@ -28,19 +27,27 @@ grpc::Status MainService::Authenticate(grpc::ServerContext *context, const data:
 
 grpc::Status MainService::ChangeCredentials(grpc::ServerContext *context, const data::Credentials* request, data::OperationResponse* response) {
     
-    
-    if (request->password() != "") {
-        if(admin_.checkPassword(request->old_password())) {
-            admin_.saveCredentials(request->username(), request->password());
-            response->set_success(true);
-            response->set_message("Success");
+    if (request->reset()) {
+        srand(static_cast<unsigned int>(time(0)));
+        std::string username = "admin" + std::to_string(100 + rand() % 900);
+        std::string password = "admin" + std::to_string(100 + rand() % 900);
+        admin_.saveCredentials(username, password);
+        server_controller_.resetCredetials(username, password);
+    }
+    else {
+        if (request->password() != "") {
+            if(admin_.checkPassword(request->old_password())) {
+                admin_.saveCredentials(request->username(), request->password());
+                response->set_success(true);
+                response->set_message("Success");
+            } else {
+                response->set_success(false);
+                response->set_message("Wrong current password");
+            }
         } else {
             response->set_success(false);
-            response->set_message("Wrong current password");
+            response->set_message("New password cannot be empty!");
         }
-    } else {
-        response->set_success(false);
-        response->set_message("New password cannot be empty!");
     }
     return grpc::Status::OK;
 }

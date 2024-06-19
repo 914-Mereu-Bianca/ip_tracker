@@ -17,7 +17,7 @@ class ServerController {
 // This class is responsible to define the logic between the router devices and the database devices
 public:
 
-    ServerController();
+    ServerController(std::shared_ptr<SqlConnector> sql_onnector);
     ~ServerController();
     void checkNewDevices(std::vector<data::Device> parsed_devices);
     void manageNewDevice(data::Device &device);
@@ -26,6 +26,7 @@ public:
     std::vector<data::Device> getDevices();
     void setDevices(std::vector<data::Device> devices);
     void changeMail(const std::string &new_email);
+    void resetCredetials(const std::string &username, const std::string &password);
     void deleteDevice(const std::string &mac);
     void renameDevice(const data::Request &request);
 
@@ -36,7 +37,7 @@ private:
     SendMail mail_;
     Parser parser_;
     RouterController router_controller_;
-    SqlConnector SQL_connector_;
+    std::shared_ptr<SqlConnector> SQL_connector_;
     std::thread update_devices_;
     std::mutex devices_mutex_;
     std::mutex db_devices_mutex_;

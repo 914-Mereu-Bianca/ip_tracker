@@ -76,7 +76,7 @@ void MainWidget::SetupLoginPage() {
     reset_credentials_button_->setStyleSheet(" QPushButton:hover {background-color: red;} QPushButton:focus {background-color: red;}");
     layout_->addWidget(reset_credentials_button_, 0, Qt::AlignCenter);
     connect(reset_credentials_button_, &QPushButton::clicked, [&]() {
-        emit validationDialog_->execute("new credentials", "", "");
+        emit validationDialog_->execute("reset credentials", "", "");
     });
 }
 
@@ -180,6 +180,9 @@ void MainWidget::performRequest(const std::string &request, const std::string &n
     std::cout<<request<<std::endl;
     if(request == "delete") {
         emit manageDevice(request, name, mac);
+    }
+    else if(request == "reset credentials") {
+        emit resetCredentials();
     }
     else {
         emit setRequest(request, name, mac);

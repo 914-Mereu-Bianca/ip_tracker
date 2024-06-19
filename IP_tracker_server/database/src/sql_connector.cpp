@@ -1,5 +1,4 @@
 #include "../include/sql_connector.h"
-//#include <sqlite3.h>
 #include <iostream>
 
 SqlConnector::SqlConnector() {
@@ -13,7 +12,10 @@ SqlConnector::SqlConnector() {
         "UPDATE device SET name=? WHERE mac=?"));
     pstmt_remembered = std::unique_ptr<sql::PreparedStatement>(con->prepareStatement(
         "UPDATE device SET remembered=? WHERE mac=?"));
-
+    pstmt_credentials = std::unique_ptr<sql::PreparedStatement>(con->prepareStatement(
+        "UPDATE admin SET username=?, password=? WHERE id=1"));
+    pstmt_email = std::unique_ptr<sql::PreparedStatement>(con->prepareStatement(
+        "UPDATE admin SET email=? WHERE id=1"));
 }
 
 SqlConnector::~SqlConnector() {
@@ -125,3 +127,49 @@ std::vector<data::Device> SqlConnector::getDevices() {
     return devices;
 }
     
+
+void SqlConnector::setCredentials(const std::string &username, const std::string &password) {
+    pstmt_credentials->setString(1, username);
+    pstmt_credentials->setString(2, password);
+
+    pstmt_credentials->executeUpdate();
+}
+
+void SqlConnector::setEmail(const std::string &email) {
+    pstmt_rename->setString(1, email);
+
+    pstmt_rename->executeUpdate();
+}
+
+std::string SqlConnector::getUsername() {
+    stmt.reset(con->createStatement());
+    std::string checkQuery = "SELECT username FROM admin WHERE id = 1";
+    res.reset(stmt->executeQuery(checkQuery));
+    if (res->next()) {
+        return res->getString(1);
+    } else {
+        throw std::runtime_error("No matching records found.");
+    }
+}
+
+std::string SqlConnector::getPassword() {
+    stmt.reset(con->createStatement());
+    std::string checkQuery = "SELECT password FROM admin WHERE id = 1";
+    res.reset(stmt->executeQuery(checkQuery));
+    if (res->next()) {
+        return res->getString(1);
+    } else {
+        throw std::runtime_error("No matching records found.");
+    }
+}
+
+std::string SqlConnector::getEmail() {
+    stmt.reset(con->createStatement());
+    std::string checkQuery = "SELECT email FROM admin WHERE id = 1";
+    res.reset(stmt->executeQuery(checkQuery));
+    if (res->next()) {
+        return res->getString(1);
+    } else {
+        throw std::runtime_error("No matching records found.");
+    }
+}
