@@ -2,31 +2,35 @@ version: '3.8'
 
 services:
   db:
-    image: mysql:5.7
-    container_name: my_db
+    image: mysql:latest
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: ip_tracker
       MYSQL_USER: bia
       MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
     volumes:
-      - db_data:/var/lib/mysql
-    networks:
-      - app-network
+      - ./db_init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 40s
+      timeout: 10s
+      retries: 5
 
-  server:
-    build: ./Server
-    container_name: cpp_server
+  app:
+    image: biamereuu/ip-tracker-server
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile
     depends_on:
-      - db
-    networks:
-      - app-network
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_USER: bia
+      DB_PASSWORD: root
+      DB_NAME: ip_tracker
     ports:
       - "8080:8080"
-
-networks:
-  app-network:
-    driver: bridge
-
-volumes:
-  db_data:

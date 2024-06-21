@@ -4,7 +4,8 @@
 SqlConnector::SqlConnector() {
 
     driver = get_driver_instance();
-    con.reset(driver->connect("tcp://127.0.0.1:3306", "bia", "root"));
+    con.reset(driver->connect("tcp://db:3306", "bia", "root"));
+    //con.reset(driver->connect("tcp://127.0.0.1:3306", "bia", "root"));
     con->setSchema("ip_tracker");
     pstmt = std::unique_ptr<sql::PreparedStatement>(con->prepareStatement(
         "UPDATE device SET name=?, ip=?, blocked=?, remembered=? WHERE mac=?"));

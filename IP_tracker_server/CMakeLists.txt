@@ -47,7 +47,7 @@ include_directories("/usr/include/cppconn")
  
 # Gets the protos file path
 
-get_filename_component(PROTO_FILE_IP "./../IP_tracker_proto/ip_tracker.proto" ABSOLUTE)
+get_filename_component(PROTO_FILE_IP "./IP_tracker_proto/ip_tracker.proto" ABSOLUTE)
 get_filename_component(PROTO_FILE_IP_PATH "${PROTO_FILE_IP}" PATH)
 
 # Sets the location for generated files

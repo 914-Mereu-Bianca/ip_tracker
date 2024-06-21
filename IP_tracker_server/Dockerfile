@@ -39,8 +39,6 @@ RUN mkdir -p /var/local/git/grpc/cmake/build && \
 # Copy application source code
 COPY . /usr/local/src/server
 
-COPY ./../IP_tracker_proto /usr/local/src/IP_tracker_proto
-
 # Build the application
 RUN mkdir -p /usr/local/src/server/build && cd /usr/local/src/server/build && \
     cmake .. && cmake --build .
