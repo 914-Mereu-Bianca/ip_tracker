@@ -1,6 +1,6 @@
 USE ip_tracker;
 
-CREATE TABLE new_device (
+CREATE TABLE device (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50),
     ip VARCHAR(50),

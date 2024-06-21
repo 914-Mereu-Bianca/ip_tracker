@@ -4,8 +4,8 @@
 SqlConnector::SqlConnector() {
     std::cout<<"OK"<<std::endl;
     driver = get_driver_instance();
-    std::cout<<"OK"<<std::endl;
-    con.reset(driver->connect("tcp://192.168.208.2:3308", "bia", "root"));
+    std::cout<<"OK 33060"<<std::endl;
+    con.reset(driver->connect("tcp://db:3306", "bia", "root"));
     std::cout<<"OK"<<std::endl;
     //con.reset(driver->connect("tcp://127.0.0.1:3306", "bia", "root"));
     con->setSchema("ip_tracker");
