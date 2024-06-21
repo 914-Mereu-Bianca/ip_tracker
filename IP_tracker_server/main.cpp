@@ -13,6 +13,7 @@
 
 
 int main() {
+    std::cout<<"OK"<<std::endl;
     MainService server("0.0.0.0", 50051); 
     server.runServer();
 }

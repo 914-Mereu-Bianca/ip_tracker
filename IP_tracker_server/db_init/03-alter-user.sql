@@ -1,3 +1,4 @@
+
 -- Ensure the user exists
 CREATE USER IF NOT EXISTS 'bia'@'%' IDENTIFIED BY 'root';
 

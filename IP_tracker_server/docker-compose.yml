@@ -3,6 +3,7 @@ version: '3.8'
 services:
   db:
     image: mysql:latest
+    command: ["mysqld", "--mysql-native-password=ON"]
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -10,9 +11,12 @@ services:
       MYSQL_USER: bia
       MYSQL_PASSWORD: root
     ports:
-      - "3306:3306"
+      - "3308:3306"
     volumes:
       - ./db_init:/docker-entrypoint-initdb.d
+      - ./my.cnf:/etc/mysql/my.cnf
+    networks:
+      - mynetwork
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 40s
@@ -34,3 +38,7 @@ services:
       DB_NAME: ip_tracker
     ports:
       - "8080:8080"
+
+networks:
+  mynetwork:
+    driver: bridge
